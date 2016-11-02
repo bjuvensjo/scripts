@@ -59,11 +59,11 @@ move = { root, dir ->
                 def newLine = line.replaceAll(oldValue, newValue)
                 newLine += '\n'
                 w << newLine
-                                   })
-                           })
+            })
+        })
 
         newFileBackup.delete()
-                    })
+    })
 }
 
 move(sourceDir, sourceDir)
