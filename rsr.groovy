@@ -45,7 +45,7 @@ move = { root, dir ->
         if (!(subDir.name =~ /.git/)) {
             move(root, subDir)
         }
-                   })
+    })
 
     newDir.eachFile(FileType.FILES, { file ->
         String newName = file.name.replaceAll(oldValue, newValue)
