@@ -188,6 +188,23 @@ def releaseBranch = { pomPath ->
     execute("git push")    
 }
 
+def hotfixBranch = { pomPath ->
+    execute("git checkout master")
+    
+    String originalVersion = getOriginalVersion(pomPath)
+    String hotfixVersion = getReleaseCandidateVersion(getReleaseVersion(getBumpVersion(originalVersion)))
+
+    println("originalVersion = $originalVersion")
+    println("hotfixVersion = $hotfixVersion")
+
+    execute("git checkout -b hotfix-$hotfixVersion")
+    updateToVersion(pomPath, hotfixVersion)    
+    execute("mvn clean install")
+    execute("git commit -am $hotfixVersion")
+    // execute("git push -u origin $hotfixVersion")
+}
+
+
 String thePomPath = "./pom.xml"
 
 // println(getReleaseVersion(getReleaseCandidateVersion(getOriginalVersion(thePomPath))))
@@ -197,12 +214,15 @@ switch (args[0]) {
     case "branch":
         releaseBranch(thePomPath)
         break 
-    case "tag":
-        releaseTag(thePomPath)            
-        break
+    case "hotfix":
+        hotfixBranch(thePomPath)
+        break       
     case "rcTag":
         releaseCandidateTag(thePomPath)
         break       
+    case "tag":
+        releaseTag(thePomPath)            
+        break
     default:
         println "Usage: release tag|branch|rcTag"
 } 
