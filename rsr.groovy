@@ -32,14 +32,13 @@ String encoding = 'UTF-8'
 
 def move
 move = { root, dir ->
-
-    String oldRelativePath = dir.canonicalPath.replaceAll(root.canonicalPath, '')
-
+    String oldRelativePath = dir.canonicalPath.replaceAll(Pattern.quote(root.canonicalPath), '')
     String newRelativePath = oldRelativePath.replaceAll(oldValue, newValue)
 
     File newDir = new File(root, newRelativePath)
-
-    dir.renameTo(newDir)
+    if (oldRelativePath != newRelativePath) {
+        dir.renameTo(newDir)        
+    }
 
     newDir.eachDir({ subDir ->
         if (!(subDir.name =~ /.git/)) {
@@ -48,21 +47,30 @@ move = { root, dir ->
     })
 
     newDir.eachFile(FileType.FILES, { file ->
-        String newName = file.name.replaceAll(oldValue, newValue)
-        File newFile = new File(file.parentFile, newName)
-        File newFileBackup = new File(file.parentFile, newName + '.backup')
-        
-        file.renameTo(newFileBackup)
+        boolean contentChanged = false
 
-        newFile.withWriter(encoding, { w ->
-            newFileBackup.eachLine(encoding, { line ->
-                def newLine = line.replaceAll(oldValue, newValue)
+        String tmpName = "rsr-tmp"
+        File tmpFile = new File(file.parentFile, tmpName)
+        tmpFile.withWriter(encoding, { w ->
+            file.eachLine(encoding, { line ->
+                String newLine = line.replaceAll(oldValue, newValue)
+                contentChanged = contentChanged || line != newLine                
                 newLine += '\n'
                 w << newLine
             })
         })
+        
+        if (contentChanged) {
+            tmpFile.renameTo(file)                
+        } else {
+            tmpFile.delete()
+        }
 
-        newFileBackup.delete()
+        String oldName = file.name
+        String newName = file.name.replaceAll(oldValue, newValue)        
+        if (oldName != newName) {
+            file.renameTo(new File(file.parentFile, newName))
+        }
     })
 }
 
