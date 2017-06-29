@@ -3,9 +3,19 @@
 import groovy.io.FileType
 import java.util.regex.Matcher
 
-String groupId = System.console().readLine 'groupId (default com.bjuvensjo.github): '
-String artifactId = System.console().readLine 'artifactId (default slask): '
-String version = System.console().readLine 'version (default 1.0.0-SNAPSHOT): '
+String groupId
+String artifactId
+String version
+
+if (args.length == 3) {
+    groupId = args[0]
+    artifactId = args[1]
+    version = args[2]
+} else {
+    groupId = System.console().readLine 'groupId (default com.bjuvensjo.github): '
+    artifactId = System.console().readLine 'artifactId (default slask): '
+    version = System.console().readLine 'version (default 1.0.0-SNAPSHOT): '
+}
 
 if (groupId.trim() == "") {
     groupId = "com.bjuvensjo.github"
