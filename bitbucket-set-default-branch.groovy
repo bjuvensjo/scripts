@@ -45,7 +45,7 @@ if (args.length == 3) {
 
 String urlRestApi = "http://cuso.edb.se/stash/rest/api/1.0"
 def uri = new File(".git/config").findResult { line ->
-    def m = line =~ /.*url = .*\/scm\/([^\/]+)\/(.*).git/
+    def m = line =~ /.*url = .*\/stash\/scm\/([^\/]+)\/(.*).git/
     if (m.matches()) {
         "projects/" + m[0][1] + "/repos/" + m[0][2] + "/branches/default"
     }
