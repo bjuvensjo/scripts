@@ -2,6 +2,7 @@
 
 @Grab(group='org.slf4j', module='slf4j-api', version='1.7.25')
 @Grab(group='ch.qos.logback', module='logback-classic', version='1.2.3')
+import groovy.util.FileNameByRegexFinder
 import groovy.util.logging.Slf4j
 import java.security.MessageDigest
 
@@ -67,12 +68,24 @@ class Artifactory {
     }
 
     Map publishMavenArtifact(File workDir, String username, String password) {
+        boolean inRepository = false
         File pomFile = new File(workDir, "pom.xml")
+        if (!pomFile.exists()) {
+            String fileName = new FileNameByRegexFinder().getFileNames(workDir.path, ".*pom").findResult { fileName ->
+                fileName
+            }
+println fileName
+            if (fileName) {
+                pomFile = new File(fileName)
+                inRepository = true
+            }
+        }
         def pom = new XmlSlurper().parse(pomFile)
 
-        String groupId = pom.groupId.text()
+        String groupId = pom.groupId.text() ?: pom.parent.groupId.text()
         String artifactId = pom.artifactId
-        String version = pom.version
+        String version = pom.version.text() ?: pom.parent.version.text()
+        String packaging = pom.packaging
         String artifactoryRepository
 
         if (version =~ /(?i).*SNAPSHOT.*/) {
@@ -85,25 +98,22 @@ class Artifactory {
             }
         }
 
-        String artifactPath = "$urlRestApi/$artifactoryRepository/${(groupId ?: pom.parent.groupId.text()).replaceAll("\\.", "/")}/$artifactId/$version"
+        String artifactPath = "$urlRestApi/$artifactoryRepository/${groupId.replaceAll("\\.", "/")}/$artifactId/$version"
 
-        File jarFile = new File(workDir, "target/${artifactId}-${version}.jar")
-        String pomUrl = "${artifactPath}/${jarFile.name.replace(".jar", ".pom")}"
+        String pomUrl = "${artifactPath}/${artifactId}-${version}.pom"
         log.info("pomFile: {}", pomFile.path)
         log.info("pomUrl: {}", pomUrl)
         Map pomResponse = pomUrl.toURL().put(getRequestProperties(username, password, pomFile), pomFile)
-        log.info("pomResponseCode: {}", pomResponse.responseCode)        
+        log.info("pomResponse: {}", pomResponse)        
 
-        String jarUrl
-        if (jarFile.exists()) {
-            jarUrl = "${artifactPath}/${jarFile.name}"
+        if (packaging == "jar") {
+            File jarFile = inRepository ? new File(workDir, "${artifactId}-${version}.jar") : new File(workDir, "target/${artifactId}-${version}.jar")
+            String jarUrl = "${artifactPath}/${jarFile.name}"
             log.info("jarFile: {}", jarFile.path)
             log.info("jarUrl: {}", jarUrl)
             Map jarResponse = jarUrl.toURL().put(getRequestProperties(username, password, jarFile), jarFile)
-            log.info("jarResponseCode: {}", jarResponse.responseCode)        
+            log.info("jarResponse: {}", jarResponse)        
         }
-
-        [pomUrl: pomUrl, jarUrl: jarUrl]
     }
 }
 
