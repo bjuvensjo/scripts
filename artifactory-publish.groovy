@@ -74,7 +74,7 @@ class Artifactory {
             String fileName = new FileNameByRegexFinder().getFileNames(workDir.path, ".*pom").findResult { fileName ->
                 fileName
             }
-println fileName
+
             if (fileName) {
                 pomFile = new File(fileName)
                 inRepository = true
