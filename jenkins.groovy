@@ -1,5 +1,6 @@
 #!/usr/bin/env groovy
 
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
 URL.metaClass.post = { Map requestProperties, String body ->
@@ -29,16 +30,17 @@ URL.metaClass.post = { Map requestProperties, String body ->
 
 String jenkinsUrl = "http://10.46.64.51:8080"
 
-def jobs = {
+jobs = {
     def map = new JsonSlurper().parseText("$jenkinsUrl/api/json?pretty=true&tree=jobs[url]".toURL().getText())
-    map.jobs.collect() { job ->
+    map = map.jobs.collect() { job ->
         job.url
     }
+    JsonOutput.prettyPrint(JsonOutput.toJson(map))
 }
 
-def statuses = {
+statuses = {
     def map = new JsonSlurper().parseText("$jenkinsUrl/api/json?pretty=true&tree=jobs[url,color]".toURL().getText())
-    map.jobs.inject([failed: [], success: []]) { result, job -> 
+    map = map.jobs.inject([failed: [], success: []]) { result, job -> 
         if (job.color == "red") {
             result.failed << job.url
         } else {
@@ -46,13 +48,14 @@ def statuses = {
         }
         result
     }
+    JsonOutput.prettyPrint(JsonOutput.toJson(map))
 }
 
 create = { String name, String configXml -> 
     "$jenkinsUrl/createItem?name=$name".toURL().post(["Content-Type": "application/xml"], configXml).responseCode
 }
 
-update = {String name, String configXml ->
+update = { String name, String configXml ->
     "$jenkinsUrl/job/$name/config.xml".toURL().post(["Content-Type": "application/xml"], configXml).responseCode
 }
 
