@@ -106,7 +106,7 @@ class Artifactory {
         Map pomResponse = pomUrl.toURL().put(getRequestProperties(username, password, pomFile), pomFile)
         log.info("pomResponse: {}", pomResponse)        
 
-        if (packaging == "jar") {
+        if (packaging == "jar" || packaging == "maven-plugin") {
             File jarFile = inRepository ? new File(workDir, "${artifactId}-${version}.jar") : new File(workDir, "target/${artifactId}-${version}.jar")
             String jarUrl = "${artifactPath}/${jarFile.name}"
             log.info("jarFile: {}", jarFile.path)
