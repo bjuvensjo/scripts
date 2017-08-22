@@ -51,24 +51,26 @@ statuses = {
     JsonOutput.prettyPrint(JsonOutput.toJson(map))
 }
 
-create = { String name, String configXml -> 
-    "$jenkinsUrl/createItem?name=$name".toURL().post(["Content-Type": "application/xml"], configXml).responseCode
+create = { String jobName, String configXml -> 
+    "$jenkinsUrl/createItem?name=$jobName".toURL().post(["Content-Type": "application/xml"], configXml).responseCode
 }
 
-update = { String name, String configXml ->
-    "$jenkinsUrl/job/$name/config.xml".toURL().post(["Content-Type": "application/xml"], configXml).responseCode
+update = { String jobName, String configXml ->
+    "$jenkinsUrl/job/$jobName/config.xml".toURL().post(["Content-Type": "application/xml"], configXml).responseCode
 }
 
-addToView = { String name, String view ->
-    "$jenkinsUrl/view/$view/addJobToView?name=$name".toURL().post([:], "").responseCode
+addToView = { String jobName, String view ->
+    "$jenkinsUrl/view/$view/addJobToView?name=$jobName".toURL().post([:], "").responseCode
 }
 
-delete = { String name ->
-    "$jenkinsUrl/job/$name/doDelete".toURL().post([:], "").responseCode
+delete = { String jobName ->
+    "$jenkinsUrl/job/$jobName/doDelete".toURL().post([:], "").responseCode
 }
 
-build = { String name ->
-    "$jenkinsUrl/job/$name/build".toURL().post([:], "").responseCode
+// Can be called without param from the root of a cloned stash repository
+build = { String jobName ->
+    jobName = jobName ?: name()
+    "$jenkinsUrl/job/$jobName/build".toURL().post([:], "").responseCode
 }
 
 // Returns 'standard' name based on stash project name, repository name and current git branch
@@ -294,7 +296,7 @@ createFromTemplate = {
     </buildWrappers>
     <prebuilders>
         <hudson.tasks.Shell>
-            <command>mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:list -DincludeParents=true -s /opt/cuso/jenkins/cuso-tools/es/settings.xml
+            <command>mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:list -DincludeParents=true -s /opt/cuso/jenkins/cuso-tools/lhb/settings.xml
             </command>
         </hudson.tasks.Shell>
 \t\t<hudson.tasks.Shell>
