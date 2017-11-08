@@ -7,6 +7,6 @@ else
 fi
 
 find "$root" -name ".git" -type d | while read git_dir; do
-  cd "$git_dir/.."
-  ($1)
+    cd "$git_dir/.."
+    eval "$1"
 done
