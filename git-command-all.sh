@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ -z "$2" ]; then
-    root="."
+    root="$(pwd)"
 else
     root="$2"
 fi
