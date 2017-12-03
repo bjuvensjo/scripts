@@ -7,4 +7,8 @@ else
 fi
 
 clone_url="$(git --git-dir="$git_dir" remote get-url origin | sed -E "s/(.*\/\/).*@(.*)/\1\2/" )"
-open "$clone_url"
+commits_url="$(sed -E "s/(.*\/)scm(.*\/)(.*)\.git/\1projects\2repos\/\3\/commits/" <<< $clone_url)"
+echo "clone_url: $clone_url"
+echo "commits_url: $commits_url"
+# open "$clone_url"
+open "$commits_url"
