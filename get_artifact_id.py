@@ -3,7 +3,6 @@
 import xml.etree.ElementTree as ET
 
 from os import name, system
-from sys import argv
 
 
 def get_artifact_id(pom):
