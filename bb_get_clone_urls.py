@@ -1,23 +1,11 @@
 #!/usr/bin/env python3
 
 import sys
-from base64 import encodebytes
-from json import loads
-from os import environ
-from urllib.request import Request, urlopen
-
-
-def get_basic_auth_header(username, password):
-    auth = f"{username}:{password}"
-    return f"Basic {encodebytes(auth.encode()).decode('UTF-8').strip()}"
+import bb_api
 
 
 def get_clone_urls(key, limit, start):
-    request = Request(f"http://cuso.edb.se/stash/rest/api/1.0/projects/{key}/repos?limit={limit}&start={start}")
-    request.add_header("Authorization", get_basic_auth_header(environ['U'], environ['P']))
-
-    data = urlopen(request).read()
-    response = loads(data.decode('UTF-8'))
+    response = bb_api.call(f"projects/{key}/repos?limit={limit}&start={start}")
     return response['size'], response['values'], response['isLastPage'], response.get('nextPageStart', -1)
 
 
