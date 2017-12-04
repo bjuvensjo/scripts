@@ -10,7 +10,7 @@ def get_cases(s):
     lower = [w.lower() for w in split]
     upper = [w.upper() for w in split]
     return '\n'.join([
-        ''.join(split),
+        ''.join([lower[0]] + capital[1:]),
         ''.join(capital),
         ''.join(lower),
         ''.join(upper),
