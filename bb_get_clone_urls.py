@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
-import sys
-import bb_api
+from sys import argv
+
+from bb_api import call
 
 
 def get_clone_urls(key, limit, start):
-    response = bb_api.call(f"projects/{key}/repos?limit={limit}&start={start}")
+    response = call(f"projects/{key}/repos?limit={limit}&start={start}")
     return response['size'], response['values'], response['isLastPage'], response.get('nextPageStart', -1)
 
 
@@ -20,11 +21,11 @@ def get_all_clone_urls(keys):
 
             if size:
                 for value in values:
-                    url = value['links']['clone'][0]['href']                    
+                    url = value['links']['clone'][0]['href']
                     yield key, value['slug'], url
 
 
 if __name__ == "__main__":
-    for project, repo, clone_url, in get_all_clone_urls(sys.argv[1:]):
+    for project, repo, clone_url, in get_all_clone_urls(argv[1:]):
         clone_dir = f"{project}/{repo.replace('.','/')}"
         print(f"git clone {clone_url} {clone_dir}")

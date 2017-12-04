@@ -1,36 +1,27 @@
 #!/usr/bin/env python3
 
-import subprocess
-import sys
+from sys import argv
 
 import bb_api
+from bb_utils import get_clone_url, get_project_and_repo
 
 
-def _get_clone_url(git_dir):
-    completed_process = subprocess.run(f"git --git-dir {git_dir} remote get-url origin".split(),
-                                       universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    if completed_process.returncode:
-        completed_process = subprocess.run(f"git --git-dir {git_dir + '/.git'} remote get-url origin".split(),
-                                           universal_newlines=True, stdout=subprocess.PIPE)
-
-    return completed_process.stdout.strip()
-
-
-def _get_uri(clone_url):
-    project = clone_url.split('/')[-2].upper()
-    repo = '.'.join(clone_url.split('/')[-1].split('.')[:-1])
+def _get_uri(project, repo):
     return f"projects/{project}/repos/{repo}" + \
            "/settings/hooks/com.atlassian.stash.plugin.stash-web-post-receive-hooks-plugin:postReceiveHook/enabled"
 
 
-def enable_web_hook(git_dirs):
-    for git_dir in git_dirs:
-        clone_url = _get_clone_url(git_dir)
-        uri = _get_uri(clone_url)
+def enable_web_hook(repo_specs):
+    for spec in repo_specs:
+        uri = _get_uri(spec[0], spec[1])
         request_data = '{"hook-url-0":"http://10.46.64.31:8000/cgi-bin/webhook/"}'.encode('UTF-8')
-        yield clone_url, bb_api.call(uri, request_data, "PUT")
+        yield spec, bb_api.call(uri, request_data, "PUT")
 
 
 if __name__ == "__main__":
-    for url, response in enable_web_hook(sys.argv[1:]):
-        print(url + ' enabled' if response['enabled'] else ' not enabled')
+    dirs = "." if len(argv) < 2 else argv[1:]
+
+    specs = [get_project_and_repo(get_clone_url(dir)) for dir in dirs]
+
+    for spec, response in enable_web_hook(specs):
+        print(f"{spec[0]}/{spec[1]}: {'enabled' if response['enabled'] else ' not enabled'}")

@@ -20,5 +20,6 @@ def call(uri, request_data=None, method="GET"):
                       },
                       method=method)
 
-    reponse_data = urlopen(request).read()
-    return loads(reponse_data.decode('UTF-8'))
+    response = urlopen(request)
+    response_data = response.read()
+    return loads(response_data.decode('UTF-8')) if response_data else response.getcode()
