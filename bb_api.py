@@ -7,13 +7,26 @@ from urllib.request import Request, urlopen
 
 
 def call(uri, request_data=None, method="GET"):
-    api_url = "http://cuso.edb.se/stash/rest/api/1.0"
+    """Makes a REST call to Bitbucket rest api 1.0.
+    Depends on three environment variables:
+    * BB_REST_API_URL, e.g. http://myorg.com/stash/rest/api/1.0
+    * U, the bitbucket username
+    * P, the bitbucket password
+
+    Args: 
+        uri (str): e.g. "projects/{project}/repos/{repo}/branches?filterText={branch}"
+        request_data (str): the JSON request
+        method: http method
+
+    Return:
+          the JSON response
+    """
     auth = f"{environ['U']}:{environ['P']}"
     basic_auth_header = f"Basic {encodebytes(auth.encode()).decode('UTF-8').strip()}"
-    url = f"{api_url}/{uri}"
+    url = f"{environ['BB_REST_API_URL']}/{uri}"
 
     request = Request(url,
-                      request_data,
+                      request_data.encode("UTF-8"),
                       {
                           "Authorization": basic_auth_header,
                           "Content-Type": "application/json"
@@ -23,3 +36,9 @@ def call(uri, request_data=None, method="GET"):
     response = urlopen(request)
     response_data = response.read()
     return loads(response_data.decode('UTF-8')) if response_data else response.getcode()
+
+
+if __name__ == "__main__":
+    import doctest
+
+    doctest.testmod()

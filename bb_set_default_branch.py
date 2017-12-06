@@ -2,7 +2,7 @@
 
 from sys import argv
 
-import bb_api
+from bb_api import call
 from bb_utils import get_clone_url, get_project_and_repo
 
 
@@ -13,8 +13,8 @@ def _get_uri(project, repo):
 def set_default_branch(repo_specs, branch):
     for spec in repo_specs:
         uri = _get_uri(spec[0], spec[1])
-        request_data = '{{"id":"refs/heads/{}"}}'.format(branch).encode('UTF-8')
-        yield spec, bb_api.call(uri, request_data, "PUT")
+        request_data = '{{"id":"refs/heads/{}"}}'.format(branch)
+        yield spec, call(uri, request_data, "PUT")
 
 
 if __name__ == "__main__":

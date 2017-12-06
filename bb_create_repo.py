@@ -12,7 +12,7 @@ def _get_uri(project):
 
 def create_repo(project, repo):
     uri = _get_uri(project)
-    request_data = '{{"name":"{}","scmId":"git","forkable":true}}'.format(repo).encode('UTF-8')
+    request_data = '{{"name":"{}","scmId":"git","forkable":true}}'.format(repo)
     return call(uri, request_data, "POST")
 
 
