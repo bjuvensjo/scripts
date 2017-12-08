@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-import re
 from os import remove, rename, replace, walk
 from os.path import join
+from re import match, sub
 
 
 def rsr(root, excludes, from_pattern, to_pattern):
@@ -14,7 +14,7 @@ def rsr(root, excludes, from_pattern, to_pattern):
                     with open(join(dir_path, file), "tr", encoding="UTF-8") as old_file, \
                             open(join(dir_path, file + ".tmp"), "tw", encoding="UTF-8") as new_file:
                         for line in old_file:
-                            new_line = re.sub(from_pattern, to_pattern, line)
+                            new_line = sub(from_pattern, to_pattern, line)
                             content_changed = content_changed or new_line != line
                             new_file.write(new_line)
                     if content_changed:
@@ -22,15 +22,15 @@ def rsr(root, excludes, from_pattern, to_pattern):
                     else:
                         remove(join(dir_path, file + ".tmp"))
 
-                    if re.match(from_pattern, file):
+                    if match(from_pattern, file):
                         rename(join(dir_path, file),
-                               join(dir_path, re.sub(from_pattern, to_pattern, file)))
+                               join(dir_path, sub(from_pattern, to_pattern, file)))
 
             for dir_name in dir_names:
                 if dir_name not in excludes:
-                    if re.match(from_pattern, dir_name):
+                    if match(from_pattern, dir_name):
                         rename(join(dir_path, dir_name),
-                               join(dir_path, re.sub(from_pattern, to_pattern, dir_name)))
+                               join(dir_path, sub(from_pattern, to_pattern, dir_name)))
 
 
 topdir = '/Users/ei4577/slask/xx/ZESIN/integration/createpayment/v1_0'
