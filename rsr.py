@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from os import remove, rename, replace, walk
-from os.path import join
+from os.path import join, sep
 from re import fullmatch, sub
 from sys import argv
 
@@ -32,7 +32,7 @@ def _in(name, regexps):
 
 def _rsr(root, excludes, from_pattern, to_pattern):
     for dir_path, dir_names, files in walk(root, False):
-        if not any(_in(d, excludes) for d in dir_path.split('/')):
+        if not any(_in(d, excludes) for d in dir_path.split(sep)):
             for file in files:
                 if not _in(file, excludes):
                     _replace_in_file(from_pattern, to_pattern, join(dir_path, file))
