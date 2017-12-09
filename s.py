@@ -26,6 +26,5 @@ def get_zipped_cases(strings):
 
 
 if __name__ == "__main__":
-    print(get_zipped_cases(argv[1:]))
     for items in get_zipped_cases(argv[1:]):
         print(' '.join(items))
