@@ -8,7 +8,7 @@ from sys import argv
 
 def _replace_in_file(from_pattern, to_pattern, path):
     content_changed = False
-    with open(path, "tr", encoding="UTF-8") as old_file, open(path + '.tmp', "tw", encoding="UTF-8") as new_file:
+    with open(path, 'tr', encoding='UTF-8') as old_file, open(path + '.tmp', 'tw', encoding='UTF-8') as new_file:
         for line in old_file:
             new_line = sub(from_pattern, to_pattern, line)
             content_changed = content_changed or new_line != line
@@ -44,17 +44,12 @@ def _rsr(root, excludes, from_pattern, to_pattern):
 
 
 def rsr(from_pattern, to_pattern, dirs):
-    for dir in dirs:
-        _rsr(dir, ['.git', '.gitignore'], from_pattern, to_pattern)
+    for d in dirs:
+        _rsr(d, ['.git', '.gitignore', 'target'], from_pattern, to_pattern)
 
 
-if __name__ == "__main__":
-    dirs = ["."]
-    branch = None
-
+if __name__ == '__main__':
     if len(argv) < 3:
-        print("Must specify from_pattern and to_pattern")
+        print('Must specify from_pattern and to_pattern')
     else:
-        if len(argv) > 3:
-            dirs = argv[3:]
-        rsr(argv[1], argv[2], dirs)
+        rsr(argv[1], argv[2], ['.'] if len(argv) == 3 else argv[3:])
