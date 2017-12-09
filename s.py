@@ -20,10 +20,12 @@ def get_cases(s):
         '-'.join(upper)
     ]
 
-# def get_cases 
+
+def get_zipped_cases(strings):
+    return zip(*[get_cases(s) for s in strings])
+
 
 if __name__ == "__main__":
-    for items in zip(*[get_cases(s) for s in argv[1:]]):
+    print(get_zipped_cases(argv[1:]))
+    for items in get_zipped_cases(argv[1:]):
         print(' '.join(items))
-
-        # print(get_cases(argv[1]))
