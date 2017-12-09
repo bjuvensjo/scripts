@@ -6,24 +6,24 @@ from re import fullmatch, sub
 from sys import argv
 
 
-def _replace_in_file(from_pattern, to_pattern, file_path):
+def _replace_in_file(from_pattern, to_pattern, path):
     content_changed = False
-    with open(file_path, "tr", encoding="UTF-8") as old_file, open(file_path + '.tmp', "tw", encoding="UTF-8") as new_file:
+    with open(path, "tr", encoding="UTF-8") as old_file, open(path + '.tmp', "tw", encoding="UTF-8") as new_file:
         for line in old_file:
             new_line = sub(from_pattern, to_pattern, line)
             content_changed = content_changed or new_line != line
             new_file.write(new_line)
     if content_changed:
-        replace(file_path + '.tmp', file_path)
+        replace(path + '.tmp', path)
     else:
-        remove(file_path + '.tmp')
+        remove(path + '.tmp')
 
 
-def _replace_file(from_pattern, to_pattern, dir_path, file):
+def _replace_file(from_pattern, to_pattern, path, file):
     new_file = sub(from_pattern, to_pattern, file)
     if new_file != file:
-        rename(join(dir_path, file),
-               join(dir_path, new_file))
+        rename(join(path, file),
+               join(path, new_file))
 
 
 def _in(name, regexps):
