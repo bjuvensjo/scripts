@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from sys import argv
+from sys import argv, exit
 
 from bb_api import call
 from bb_utils import get_clone_url, get_project_and_repo
@@ -23,6 +23,7 @@ if __name__ == "__main__":
 
     if len(argv) == 1:
         print("branch is mandatory")
+        exit(1)
     elif len(argv) == 2:
         branch = argv[1]
     elif len(argv) > 2:
