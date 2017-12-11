@@ -13,17 +13,13 @@ def _replace_in_file(from_pattern, to_pattern, path):
             new_line = sub(from_pattern, to_pattern, line)
             content_changed = content_changed or new_line != line
             new_file.write(new_line)
-    if content_changed:
-        replace(path + '.tmp', path)
-    else:
-        remove(path + '.tmp')
+    replace(path + '.tmp', path) if content_changed else remove(path + '.tmp')
 
 
 def _replace_file(from_pattern, to_pattern, path, file):
     new_file = sub(from_pattern, to_pattern, file)
     if new_file != file:
-        rename(join(path, file),
-               join(path, new_file))
+        rename(join(path, file), join(path, new_file))
 
 
 def _in(name, regexps):
