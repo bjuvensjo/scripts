@@ -3,6 +3,7 @@
 from json import dumps
 from sys import argv, exit
 
+from os.path import basename
 from bb_api import call
 from bb_utils import get_clone_url, get_project_and_repo
 
@@ -30,7 +31,7 @@ if __name__ == "__main__":
     fork_project = None
 
     if len(argv) == 1:
-        print("fork_project is mandatory")
+        print("Usage: {} fork_project [clone_dirs]".format(basename(__file__)))
         exit(1)
     elif len(argv) == 2:
         fork_project = argv[1]

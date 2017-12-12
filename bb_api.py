@@ -26,7 +26,7 @@ def call(uri, request_data=None, method="GET"):
     url = f"{environ['BB_REST_API_URL']}/{uri}"
 
     request = Request(url,
-                      request_data.encode("UTF-8"),
+                      request_data.encode("UTF-8") if request_data else None,
                       {
                           "Authorization": basic_auth_header,
                           "Content-Type": "application/json"
