@@ -18,7 +18,6 @@ def create_repo(project, repo):
 
 if __name__ == "__main__":
     dirs = ["."]
-    branch = None
 
     if len(argv) != 3:
         print("project key and repo name is mandatory")
