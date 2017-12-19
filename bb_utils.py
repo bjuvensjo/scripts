@@ -4,10 +4,10 @@ from subprocess import run, PIPE
 
 
 def get_clone_url(git_dir):
-    completed_process = run(f"git --git-dir {git_dir} remote get-url origin".split(),
+    completed_process = run('git --git-dir {} remote get-url origin'.format(git_dir).split(),
                             universal_newlines=True, stdout=PIPE, stderr=PIPE)
     if completed_process.returncode:
-        completed_process = run(f"git --git-dir {git_dir + '/.git'} remote get-url origin".split(),
+        completed_process = run('git --git-dir {}/.git remote get-url origin'.format(git_dir).split(),
                                 universal_newlines=True, stdout=PIPE)
 
     return completed_process.stdout.strip()

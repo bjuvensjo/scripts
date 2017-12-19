@@ -9,29 +9,29 @@ from bb_utils import get_clone_url, get_project_and_repo
 
 
 def _get_uri(project, repo):
-    return f"projects/{project}/repos/{repo}"
+    return '/rest/api/1.0/projects/{}/repos/{}'.format(project, repo)
 
 
 def fork_repo(repo_specs, fork_project):
     for spec in repo_specs:
         uri = _get_uri(spec[0], spec[1])
         request_dict = {
-            "slug": spec[1],
-            "project": {
-                "key": fork_project
+            'slug': spec[1],
+            'project': {
+                'key': fork_project
             }
         }
 
         request_data = dumps(request_dict)
-        yield spec, call(uri, request_data, "POST")
+        yield spec, call(uri, request_data, 'POST')
 
 
-if __name__ == "__main__":
-    dirs = ["."]
+if __name__ == '__main__':
+    dirs = ['.']
     fork_project = None
 
     if len(argv) == 1:
-        print("Usage: {} fork_project [clone_dirs]".format(basename(__file__)))
+        print('Usage: {} fork_project [clone_dirs]'.format(basename(__file__)))
         exit(1)
     elif len(argv) == 2:
         fork_project = argv[1]
@@ -42,4 +42,4 @@ if __name__ == "__main__":
     specs = [get_project_and_repo(get_clone_url(dir)) for dir in dirs]
 
     for spec, response in fork_repo(specs, fork_project):
-        print(f"{spec[0]}/{spec[1]}: {response}")
+        print('{}/{}: {}'.format(spec[0], spec[1], response))

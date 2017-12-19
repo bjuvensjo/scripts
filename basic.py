@@ -23,7 +23,7 @@ def get_basic_auth(username=environ['U'], password=environ['P']):
     return f"Basic {encodebytes(auth.encode()).decode('UTF-8').strip()}"
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     import doctest
 
     doctest.testmod()

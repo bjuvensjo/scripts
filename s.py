@@ -25,6 +25,6 @@ def get_zipped_cases(strings):
     return zip(*[get_cases(s) for s in strings])
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     for items in get_zipped_cases(argv[1:]):
         print(' '.join(items))

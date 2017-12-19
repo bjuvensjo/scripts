@@ -4,7 +4,7 @@ from bb_api import call
 
 
 def get_projects(limit, start):
-    response = call(f"projects?limit={limit}&start={start}")
+    response = call('/rest/api/1.0/projects?limit={}&start={}'.format(limit, start))
     return response['size'], response['values'], response['isLastPage'], response.get('nextPageStart', -1)
 
 
@@ -21,6 +21,6 @@ def get_all_projects():
                 yield value
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     for project in get_all_projects():
-        print(f"{project['key']}: {project['name']}")
+        print('{}: {}'.format(project['key'], project['name']))

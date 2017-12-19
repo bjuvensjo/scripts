@@ -10,7 +10,7 @@ def get_artifact_id(pom):
     return next(child for child in root if child.tag.split('}')[-1] == 'artifactId').text
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     import doctest
 
     doctest.testmod()
@@ -18,7 +18,7 @@ if __name__ == "__main__":
     artifact_id = get_artifact_id('./pom.xml')
 
     if name == 'posix':
-        system(f"echo '{artifact_id}\c' | pbcopy")
-        print(f"'{artifact_id}' copied to clipboard")
+        system('echo "{}\c" | pbcopy'.format(artifact_id))
+        print('"{}" copied to clipboard'.format(artifact_id))
     else:
         print(artifact_id)
