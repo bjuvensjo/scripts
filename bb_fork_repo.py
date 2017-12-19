@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 from json import dumps
+from os.path import basename
 from sys import argv, exit
 
-from os.path import basename
 from bb_api import call
 from bb_utils import get_clone_url, get_project_and_repo
 
@@ -27,19 +27,17 @@ def fork_repo(repo_specs, fork_project):
 
 
 if __name__ == '__main__':
-    dirs = ['.']
-    fork_project = None
-
-    if len(argv) == 1:
-        print('Usage: {} fork_project [clone_dirs]'.format(basename(__file__)))
+    if '-d' in argv and len(argv) > 2:
+        stripped_argv = [arg for arg in argv if arg != '-d']
+        fork_project = argv[1]
+        dirs = ['.'] if len(argv) == 2 else [arg for arg in argv[2:] if arg != '-d']
+        specs = [get_project_and_repo(get_clone_url(dir)) for dir in dirs]
+    elif len(argv) == 4:
+        fork_project = argv[1]
+        specs = [[argv[2], argv[3]]]
+    else:
+        print('Usage: {} fork_project [-d dirs] | [project repo]'.format(basename(__file__)))
         exit(1)
-    elif len(argv) == 2:
-        fork_project = argv[1]
-    elif len(argv) > 2:
-        fork_project = argv[1]
-        dirs = argv[2:]
-
-    specs = [get_project_and_repo(get_clone_url(dir)) for dir in dirs]
 
     for spec, response in fork_repo(specs, fork_project):
         print('{}/{}: {}'.format(spec[0], spec[1], response))

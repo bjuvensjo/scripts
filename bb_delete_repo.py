@@ -18,12 +18,12 @@ def delete_repo(repo_specs):
 
 if __name__ == '__main__':
     if '-d' in argv and len(argv) > 1:
-        dirs = [arg for arg in argv[1:] if arg != '-d']
+        dirs = ['.'] if len(argv) == 2 else [arg for arg in argv[1:] if arg != '-d']        
         specs = [get_project_and_repo(get_clone_url(dir)) for dir in dirs]
     elif len(argv) == 3:
         specs = [[argv[1], argv[2]]]
     else:
-        print('Usage: {} [dirs] | [project repo]'.format(basename(__file__)))
+        print('Usage: {} [-d dirs] | [project repo]'.format(basename(__file__)))
         exit(1)
 
     for spec, response in delete_repo(specs):

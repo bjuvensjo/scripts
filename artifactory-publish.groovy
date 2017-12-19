@@ -89,10 +89,10 @@ class Artifactory {
         String artifactoryRepository
 
         if (version =~ /(?i).*SNAPSHOT.*/) {
-            artifactoryRepository = "lhb-snapshot"
+            artifactoryRepository = "z-snapshot"
         } else {
             if (groupId.startsWith("com.evry")) {
-                artifactoryRepository = "lhb-release"
+                artifactoryRepository = "z-release"
             } else {
                 artifactoryRepository = "ext-release-local"
             }
@@ -118,7 +118,7 @@ class Artifactory {
 }
 
 File workDir = new File(args ? args[0] : ".")
-String username = System.getProperty("username") ?: System.console().readLine("Artifactory username: ")
-def password = System.getProperty("password") ?: System.console().readPassword("Artifactory password: ")
+String username = System.getenv("U") ?: System.console().readLine("Artifactory username: ")
+def password = System.getenv("P") ?: System.console().readPassword("Artifactory password: ")
 
 new Artifactory().publishMavenArtifact(workDir, username, new String(password))
