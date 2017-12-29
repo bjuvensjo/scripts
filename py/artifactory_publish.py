@@ -27,14 +27,14 @@ def get_checksum_headers(md5, sha1, sha256):
     }
 
 
-def get_pom_path(work_dir):
-    pom_path = '{}/pom.xml'.format(work_dir)
+def get_pom_path(pom_dir):
+    pom_path = '{}/pom.xml'.format(pom_dir)
     if exists(pom_path):
         return pom_path
 
-    pom_paths = glob("{}/*.pom".format(work_dir), recursive=True)
+    pom_paths = glob("{}/*.pom".format(pom_dir), recursive=True)
     if not pom_paths:
-        raise ValueError('No pom in {}'.format(work_dir))
+        raise ValueError('No pom in {}'.format(pom_dir))
     if len(pom_paths) == 1:
         return pom_paths[0]
     return sorted(pom_paths, key=len)[0]  # The pom without timestamp
