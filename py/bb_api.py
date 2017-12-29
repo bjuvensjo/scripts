@@ -6,7 +6,7 @@ from os import environ
 from urllib.request import Request, urlopen
 
 
-def call(uri, request_data=None, method="GET"):
+def call(uri, request_data=None, method='GET'):
     """Makes a REST call to Bitbucket rest api 1.0.
     Depends on three environment variables:
     * BB_REST_API_URL, e.g. http://myorg.com/stash
@@ -36,9 +36,3 @@ def call(uri, request_data=None, method="GET"):
     response = urlopen(request)
     response_data = response.read()
     return loads(response_data.decode('UTF-8')) if response_data else response.getcode()
-
-
-if __name__ == '__main__':
-    import doctest
-
-    doctest.testmod()

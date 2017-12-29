@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+""" Makes Maven project. """
+
 from os import makedirs
 
 POM_TEMPLATE = """<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -34,6 +36,7 @@ POM_TEMPLATE = """<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="
 
 
 def get_pom(group_id, artifact_id, version):
+    """ Returns pom content. """
     return POM_TEMPLATE \
         .replace('###group_id###', group_id) \
         .replace('###artifact_id###', artifact_id) \
@@ -41,6 +44,7 @@ def get_pom(group_id, artifact_id, version):
 
 
 def make_dirs(output_dir, group_id, artifact_id):
+    """ Make standard dirs of Maven project. """
     package_path = '/'.join(group_id.split('.') + artifact_id.split('.'))
     makedirs('{}/src/main/java/{}'.format(output_dir, package_path))
     makedirs('{}/src/main/resources/{}'.format(output_dir, package_path))
@@ -49,6 +53,7 @@ def make_dirs(output_dir, group_id, artifact_id):
 
 
 def make_project(output_dir, group_id, artifact_id, version):
+    """ Makes Maven project. """
     make_dirs(output_dir, group_id, artifact_id)
     pom = get_pom(group_id, artifact_id, version)
     with open('{}/pom.xml'.format(output_dir), 'wt', encoding='utf-8') as pom_file:
