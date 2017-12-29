@@ -34,7 +34,6 @@ def call(uri, extra_headers=None, request_data=None, method='GET'):
                       request_data if request_data else None,
                       headers,
                       method=method)
-
     response = urlopen(request)
     response_data = response.read()
     return loads(response_data.decode('UTF-8')) if response_data else response.getcode()

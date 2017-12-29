@@ -2,11 +2,12 @@
 import hashlib
 import json
 from glob import glob
-from os.path import exists, basename
+from os.path import basename
 
 from sys import argv
 
 import artifactory_api as api
+import artifactory_utils as utils
 import maven_pom
 
 
@@ -27,26 +28,6 @@ def get_checksum_headers(md5, sha1, sha256):
     }
 
 
-def get_pom_path(pom_dir):
-    pom_path = '{}/pom.xml'.format(pom_dir)
-    if exists(pom_path):
-        return pom_path
-
-    pom_paths = glob("{}/*.pom".format(pom_dir), recursive=True)
-    if not pom_paths:
-        raise ValueError('No pom in {}'.format(pom_dir))
-    if len(pom_paths) == 1:
-        return pom_paths[0]
-    return sorted(pom_paths, key=len)[0]  # The pom without timestamp
-
-
-def get_artifact_base_uri(artifactory_repository, group_id, artifact_id, version):
-    return '/{}/{}/{}/{}'.format(artifactory_repository,
-                                 '/'.join(group_id.split('.')),
-                                 artifact_id,
-                                 version)
-
-
 def get_pom_publish_name(pom_path, artifact_id, version):
     pom_name = pom_path.split('/')[-1]
     return pom_name if pom_name.split('.')[-1] == 'pom' else '{}-{}.pom'.format(artifact_id, version)
@@ -64,14 +45,15 @@ def get_publish_data(artifact_base_uri, path, name):
 
 def publish_maven_artifact(artifactory_repository, pom_dirs):
     for pom_dir in pom_dirs:
-        pom_info = maven_pom.get_pom_info(get_pom_path(pom_dir))
-        base_uri = get_artifact_base_uri(artifactory_repository,
-                                         pom_info['group_id'],
-                                         pom_info['artifact_id'],
-                                         pom_info['version'])
+        pom_info = maven_pom.get_pom_info(utils.get_pom_path(pom_dir))
+        base_uri = utils.get_artifact_base_uri(artifactory_repository,
+                                               pom_info['group_id'],
+                                               pom_info['artifact_id'],
+                                               pom_info['version'])
 
         publish_data = [get_publish_data(base_uri, pom_info['pom_path'],
-                                         get_pom_publish_name(pom_info['pom_path'], pom_info['artifact_id'],
+                                         get_pom_publish_name(pom_info['pom_path'],
+                                                              pom_info['artifact_id'],
                                                               pom_info['version']))] + \
                        [get_publish_data(base_uri, path, path.split('/')[-1]) for path in
                         glob('{}/**/*.jar'.format(pom_dir), recursive=True) +
@@ -86,6 +68,5 @@ if __name__ == '__main__':
     else:
         artifactory_repository = argv[1]
         pom_dirs = argv[2:] if len(argv) > 2 else ['.']
-        responses = publish_maven_artifact(artifactory_repository, pom_dirs)
-        for response in responses:
+        for response in publish_maven_artifact(artifactory_repository, pom_dirs):
             print(json.dumps(json.loads(str(response).replace("'", '"')), indent=2))
