@@ -49,10 +49,8 @@ def make_dirs(output_dir, group_id, artifact_id, packaging):
     makedirs(output_dir)
     if packaging in ['jar', 'war']:
         package_path = '/'.join(group_id.split('.') + artifact_id.split('.'))
-        makedirs('{}/src/main/java/{}'.format(output_dir, package_path))
-        makedirs('{}/src/main/resources/{}'.format(output_dir, package_path))
-        makedirs('{}/src/test/java/{}'.format(output_dir, package_path))
-        makedirs('{}/src/test/resources/{}'.format(output_dir, package_path))
+        for p in ['{}/src/main/java/{}', '{}/src/main/resources/{}', '{}/src/test/java/{}', '{}/src/test/resources/{}']:
+            makedirs(p.format(output_dir, package_path))
         if packaging in ['war']:
             makedirs('{}/src/main/webapp'.format(output_dir))
 
