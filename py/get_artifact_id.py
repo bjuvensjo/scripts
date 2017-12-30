@@ -11,10 +11,6 @@ def get_artifact_id(pom):
 
 
 if __name__ == '__main__':
-    import doctest
-
-    doctest.testmod()
-
     artifact_id = get_artifact_id('./pom.xml')
 
     if name == 'posix':

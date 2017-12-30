@@ -22,8 +22,5 @@ if __name__ == '__main__':
     if len(argv) < 2:
         print('Usage: {} artifactory_repository [pom_dirs]'.format(basename(__file__)))
     else:
-        artifactory_repository = argv[1]
-        pom_dirs = argv[2:] if len(argv) > 2 else ['.']
-        for response in delete_maven_artifact(artifactory_repository, pom_dirs):
+        for response in delete_maven_artifact(argv[1], argv[2:] if len(argv) > 2 else ['.']):
             print(response)
-            # print(json.dumps(json.loads(str(response).replace("'", '"')), indent=2))

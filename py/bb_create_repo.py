@@ -2,6 +2,7 @@
 
 from os import name, system
 from os.path import basename
+
 from sys import argv
 
 from bb_api import call
@@ -18,15 +19,15 @@ def create_repo(project, repo):
 
 
 if __name__ == '__main__':
-    dirs = ['.']
-
     if len(argv) != 3:
         print('Usage: {} project repo [clone_dirs]'.format(basename(__file__)))
+        exit(1)
     else:
         project = argv[1]
         repo = argv[2]
         response = create_repo(project, repo)
-        commands = '    git remote add origin {}\n    git push -u origin develop'.format(response['links']['clone'][0]['href'])
+        commands = '    git remote add origin {}\n' \
+                   '    git push -u origin develop'.format(response['links']['clone'][0]['href'])
 
         print('If you already have code ready to be pushed to this repository then run this in your terminal.')
         print(commands)

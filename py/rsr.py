@@ -51,6 +51,7 @@ def rsr(old, new, dirs, repl):
 if __name__ == '__main__':
     if len(argv) < 3:
         print('usage: rsr [-r] old_value new_value')
+        exit(1)
     else:
         if len(argv) > 3 and argv[1] == '-r':
             rsr(argv[2], argv[3], ['.'] if len(argv) == 4 else argv[4:], _replace(True))

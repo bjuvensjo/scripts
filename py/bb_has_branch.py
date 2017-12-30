@@ -12,18 +12,11 @@ def has_branch(repo_specs, branch):
 
 
 if __name__ == '__main__':
-    dirs = ['.']
-    branch = None
-
     if len(argv) == 1:
         print('branch is mandatory')
-    elif len(argv) == 2:
-        branch = argv[1]
-    elif len(argv) > 2:
-        branch = argv[1]
-        dirs = argv[2:]
+        exit(1)
 
-    specs = [get_project_and_repo(get_clone_url(dir)) for dir in dirs]
+    specs = [get_project_and_repo(get_clone_url(dir)) for dir in (argv[2:] if len(argv) > 2 else ['.'])]
 
-    for spec, has in has_branch(specs, branch):
-        print('{}/{}: {}'.format(spec[0], spec[1], has))
+    for spec, has in has_branch(specs, argv[1]):
+        print('{}/{}, {}: {}'.format(spec[0], spec[1], argv[1], has))

@@ -12,7 +12,7 @@ POM_TEMPLATE = """<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="
    <version>###version###</version>
    <name>${project.groupId}:${project.artifactId}</name>
    <description>${project.artifactId}</description>
-   <packaging>jar</packaging>
+   <packaging>###packaging###</packaging>
    <properties>
        <maven.compiler.source>1.8</maven.compiler.source>
        <maven.compiler.target>1.8</maven.compiler.target>
@@ -35,27 +35,32 @@ POM_TEMPLATE = """<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="
 """
 
 
-def get_pom(group_id, artifact_id, version):
+def get_pom(group_id, artifact_id, version, packaging):
     """ Returns pom content. """
     return POM_TEMPLATE \
         .replace('###group_id###', group_id) \
         .replace('###artifact_id###', artifact_id) \
-        .replace('###version###', version)
+        .replace('###version###', version) \
+        .replace('###packaging###', packaging)
 
 
-def make_dirs(output_dir, group_id, artifact_id):
+def make_dirs(output_dir, group_id, artifact_id, packaging):
     """ Make standard dirs of Maven project. """
-    package_path = '/'.join(group_id.split('.') + artifact_id.split('.'))
-    makedirs('{}/src/main/java/{}'.format(output_dir, package_path))
-    makedirs('{}/src/main/resources/{}'.format(output_dir, package_path))
-    makedirs('{}/src/test/java/{}'.format(output_dir, package_path))
-    makedirs('{}/src/test/resources/{}'.format(output_dir, package_path))
+    makedirs(output_dir)
+    if packaging in ['jar', 'war']:
+        package_path = '/'.join(group_id.split('.') + artifact_id.split('.'))
+        makedirs('{}/src/main/java/{}'.format(output_dir, package_path))
+        makedirs('{}/src/main/resources/{}'.format(output_dir, package_path))
+        makedirs('{}/src/test/java/{}'.format(output_dir, package_path))
+        makedirs('{}/src/test/resources/{}'.format(output_dir, package_path))
+        if packaging in ['war']:
+            makedirs('{}/src/main/webapp'.format(output_dir))
 
 
-def make_project(output_dir, group_id, artifact_id, version):
+def make_project(output_dir, group_id, artifact_id, version, packaging):
     """ Makes Maven project. """
-    make_dirs(output_dir, group_id, artifact_id)
-    pom = get_pom(group_id, artifact_id, version)
+    make_dirs(output_dir, group_id, artifact_id, packaging)
+    pom = get_pom(group_id, artifact_id, version, packaging)
     with open('{}/pom.xml'.format(output_dir), 'wt', encoding='utf-8') as pom_file:
         pom_file.write(pom)
 
@@ -64,6 +69,7 @@ if __name__ == '__main__':
     group_id = str(input('groupId (default mygroup): ') or 'mygroup')
     artifact_id = str(input('artifactId (default slask): ') or 'slask')
     version = str(input('version (default 1.0.0-SNAPSHOT): ') or '1.0.0-SNAPSHOT')
+    packaging = str(input('packaging (default jar): ') or 'jar')
     output_dir = '/'.join(artifact_id.split('.'))
 
-    make_project(output_dir, group_id, artifact_id, version)
+    make_project(output_dir, group_id, artifact_id, version, packaging)
