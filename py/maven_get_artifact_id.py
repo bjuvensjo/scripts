@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 
-import xml.etree.ElementTree as ET
-
 from os import name, system
 
+from maven_pom import get_pom_info
 
-def get_artifact_id(pom):
-    root = ET.parse(pom).getroot()
-    return next(child for child in root if child.tag.split('}')[-1] == 'artifactId').text
+
+def get_artifact_id(pom_path):
+    return get_pom_info(pom_path)['artifact_id']
 
 
 if __name__ == '__main__':
