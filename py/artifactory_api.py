@@ -25,7 +25,7 @@ def call(uri, extra_headers=None, request_data=None, method='GET'):
     url = '{}{}'.format(environ['ARTIFACTORY_REST_API_URL'], uri)
     headers = {
         'Authorization': basic_auth_header,
-        'Content-Type': "application/json"
+        'Content-Type': 'application/json'
     }
     if extra_headers:
         headers.update(extra_headers)

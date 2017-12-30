@@ -8,7 +8,7 @@ def get_pom_path(pom_dir):
     if exists(pom_path):
         return pom_path
 
-    pom_paths = glob("{}/*.pom".format(pom_dir), recursive=True)
+    pom_paths = glob('{}/*.pom'.format(pom_dir), recursive=True)
     if not pom_paths:
         raise ValueError('No pom in {}'.format(pom_dir))
     if len(pom_paths) == 1:

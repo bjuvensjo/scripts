@@ -15,7 +15,7 @@ def _get_uri(project):
 def create_repo(project, repo):
     uri = _get_uri(project)
     request_data = '{{"name":"{}","scmId":"git","forkable":true}}'.format(repo)
-    return call(uri, request_data, "POST")
+    return call(uri, request_data, 'POST')
 
 
 if __name__ == '__main__':
@@ -34,4 +34,4 @@ if __name__ == '__main__':
 
         if name == 'posix':
             system(f"echo '{commands}\c' | pbcopy")
-            print("(The commands are copied to the clipboard)")
+            print('(The commands are copied to the clipboard)')

@@ -15,7 +15,7 @@ def enable_web_hook(repo_specs):
     for spec in repo_specs:
         uri = _get_uri(spec[0], spec[1])
         request_data = '{"hook-url-0":"http://10.46.64.31:8002/cgi-bin/webhook/"}'
-        yield spec, call(uri, request_data, "PUT")
+        yield spec, call(uri, request_data, 'PUT')
 
 
 if __name__ == '__main__':
