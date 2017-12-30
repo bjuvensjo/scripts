@@ -15,7 +15,6 @@ def delete_maven_artifact(artifactory_repository, pom_dirs):
                                                pom_info['group_id'],
                                                pom_info['artifact_id'],
                                                pom_info['version'])
-        # yield base_uri
         yield api.call(base_uri, method='DELETE')
 
 
