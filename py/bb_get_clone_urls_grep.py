@@ -8,7 +8,7 @@ from bb_get_projects import get_all_projects
 
 
 def get_clone_urls_grep(pattern):
-    return get_all_clone_urls([p['key'] for p in get_all_projects() if re.match(pattern, p['key'])])
+    return get_all_clone_urls([p['key'] for p in get_all_projects() if re.match(r'{}'.format(pattern), p['key'])])
 
 
 if __name__ == '__main__':
