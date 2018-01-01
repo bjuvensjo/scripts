@@ -8,8 +8,6 @@ from bb_utils import get_clone_url, get_project_and_repo
 
 def has_tag(repo_specs, tag):
     for spec, response in get_tags(repo_specs, tag):
-        print(spec)
-        print([value['displayId'] for value in response['values']])
         yield spec, tag in [value['displayId'] for value in response['values']]
 
 

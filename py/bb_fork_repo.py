@@ -36,7 +36,7 @@ if __name__ == '__main__':
         fork_project = argv[1]
         specs = [[argv[2], argv[3]]]
     else:
-        print('Usage: {} for_project [-d dirs] | [project repo]'.format(basename(__file__)))
+        print('Usage: {} fork_project [-d dirs] | [project repo]'.format(basename(__file__)))
         exit(1)
 
     for spec, response in fork_repo(specs, fork_project):
