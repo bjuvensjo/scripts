@@ -9,7 +9,7 @@ from urllib.request import Request, urlopen
 def call(uri, request_data=None, method='GET'):
     """Makes a REST call to Bitbucket rest api 1.0.
     Depends on three environment variables:
-    * BB_REST_API_URL, e.g. http://myorg.com/stash
+    * BITBUCKET_REST_URL, e.g. http://myorg.com/stash
     * U, the bitbucket username
     * P, the bitbucket password
 
@@ -23,7 +23,7 @@ def call(uri, request_data=None, method='GET'):
     """
     auth = '{}:{}'.format(environ['U'], environ['P'])
     basic_auth_header = 'Basic {}'.format(encodebytes(auth.encode()).decode('UTF-8').strip())
-    url = '{}{}'.format(environ['BB_REST_API_URL'], uri)
+    url = '{}{}'.format(environ['BITBUCKET_REST_URL'], uri)
 
     request = Request(url,
                       request_data.encode("UTF-8") if request_data else None,
