@@ -9,8 +9,8 @@ def call(uri, extra_headers=None, request_data=None, method='GET'):
     """Makes a REST call to Artifactory.
     Depends on three environment variables:
     * ARTIFACTORY_REST_API_URL, e.g. http://myorg.com/artifactory
-    * U, the bitbucket username
-    * P, the bitbucket password
+    * U, the artifactory username
+    * P, the artifactory password
 
     Args: 
         uri (str): e.g. "/{artifactory_repository/{'/'.join(group_id.split('.'))}/{artifact_id}/{version}""

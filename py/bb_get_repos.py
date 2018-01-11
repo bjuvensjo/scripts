@@ -25,5 +25,12 @@ def get_all_repos(keys):
 
 
 if __name__ == '__main__':
-    for repo in get_all_repos(argv[1:]):
-        print(repo)
+    """ Prints repos of specified project keys. 
+    Use the -n flag to print repo names only. """
+    flags = [f for f in argv[1:] if f[0] == '-']
+    keys = [f for f in argv[1:] if f[0] != '-']
+    for repo in get_all_repos(keys):
+        if '-n' in flags:
+            print(repo['slug'])
+        else:
+            print(repo)
