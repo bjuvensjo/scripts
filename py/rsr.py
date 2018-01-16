@@ -3,7 +3,6 @@
 from os import remove, rename, replace, walk
 from os.path import join, sep
 from re import fullmatch, sub
-from sys import argv
 
 
 def _replace(regexp):
@@ -48,12 +47,18 @@ def rsr(old, new, dirs, repl):
         _rsr(d, ['.git', '.gitignore', 'target'], old, new, repl)
 
 
+def main(old, new, dirs, regexp):
+    rsr(old, new, dirs, _replace(regexp))
+
+
 if __name__ == '__main__':
-    if len(argv) < 3:
-        print('usage: rsr [-r] old_value new_value')
-        exit(1)
-    else:
-        if len(argv) > 3 and argv[1] == '-r':
-            rsr(argv[2], argv[3], ['.'] if len(argv) == 4 else argv[4:], _replace(True))
-        else:
-            rsr(argv[1], argv[2], ['.'] if len(argv) == 3 else argv[3:], _replace(False))
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Recursive search and replace of directories, files and file contents')
+    parser.add_argument('old', help='Old value')
+    parser.add_argument('new', help='New value')
+    parser.add_argument('-d', '--dirs', nargs='*', default=['.'])
+    parser.add_argument('-r', '--regexp', action='store_true')
+    args = parser.parse_args()
+
+    main(args.old, args.new, args.dirs, args.regexp)

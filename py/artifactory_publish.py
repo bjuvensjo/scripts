@@ -2,9 +2,6 @@
 import hashlib
 import json
 from glob import glob
-from os.path import basename
-
-from sys import argv
 
 import artifactory_api as api
 import artifactory_utils as utils
@@ -62,9 +59,18 @@ def publish_maven_artifact(artifactory_repository, pom_dirs):
         yield [api.call(pd['uri'], pd['checksum_headers'], pd['content'], 'PUT') for pd in publish_data]
 
 
+def main(artifactory_repository_url, dirs):
+    for response in publish_maven_artifact(artifactory_repository_url, dirs):
+        print(json.dumps(json.loads(str(response).replace("'", '"')), indent=2))
+
+
 if __name__ == '__main__':
-    if len(argv) < 2:
-        print('Usage: {} artifactory_repository [pom_dirs]'.format(basename(__file__)))
-    else:
-        for response in publish_maven_artifact(argv[1], argv[2:] if len(argv) > 2 else ['.']):
-            print(json.dumps(json.loads(str(response).replace("'", '"')), indent=2))
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Delete maven artifact from Artifactory')
+    parser.add_argument('artifactory_repository_url', help='Artifactory repository url')
+    parser.add_argument('-d', '--dirs', nargs='*', default=['.'],
+                        help='Maven pom directories to extract artifact information from')
+    args = parser.parse_args()
+
+    main(args.artifactory_repository_url, args.dirs)

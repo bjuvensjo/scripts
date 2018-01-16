@@ -63,11 +63,14 @@ def make_project(output_dir, group_id, artifact_id, version, packaging):
         pom_file.write(pom)
 
 
-if __name__ == '__main__':
+def main():
     group_id = str(input('groupId (default mygroup): ') or 'mygroup')
     artifact_id = str(input('artifactId (default slask): ') or 'slask')
     version = str(input('version (default 1.0.0-SNAPSHOT): ') or '1.0.0-SNAPSHOT')
     packaging = str(input('packaging (default jar): ') or 'jar')
     output_dir = '/'.join(artifact_id.split('.'))
-
     make_project(output_dir, group_id, artifact_id, version, packaging)
+
+
+if __name__ == '__main__':
+    main()

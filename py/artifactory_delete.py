@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-from os.path import basename
-
-from sys import argv
 
 import artifactory_api as api
 import artifactory_utils as utils
@@ -18,9 +15,18 @@ def delete_maven_artifact(artifactory_repository, pom_dirs):
         yield api.call(base_uri, method='DELETE')
 
 
+def main(artifactory_repository, pom_dirs):
+    for response in delete_maven_artifact(artifactory_repository, pom_dirs):
+        print(response)
+
+
 if __name__ == '__main__':
-    if len(argv) < 2:
-        print('Usage: {} artifactory_repository [pom_dirs]'.format(basename(__file__)))
-    else:
-        for response in delete_maven_artifact(argv[1], argv[2:] if len(argv) > 2 else ['.']):
-            print(response)
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Delete maven artifact from Artifactory')
+    parser.add_argument('artifactory_repository_url', help='Artifactory repository url')
+    parser.add_argument('-d', '--dirs', nargs='*', default=['.'],
+                        help='Maven pom directories to extract artifact information from')
+    args = parser.parse_args()
+
+    main(args.artifactory_repository_url, args.dirs)

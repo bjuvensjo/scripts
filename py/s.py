@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from re import compile
-from sys import argv
 
 
 def get_cases(s):
@@ -25,6 +24,16 @@ def get_zipped_cases(strings):
     return zip(*[get_cases(s) for s in strings])
 
 
-if __name__ == '__main__':
-    for items in get_zipped_cases(argv[1:]):
+def main(strings):
+    for items in get_zipped_cases(strings):
         print(' '.join(items))
+
+
+if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Prints various string representation of provided camel case strings')
+    parser.add_argument('strings', nargs='+')
+    args = parser.parse_args()
+
+    main(args.strings)

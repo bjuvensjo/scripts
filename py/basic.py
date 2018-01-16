@@ -2,10 +2,9 @@
 
 from base64 import encodebytes
 from os import environ, name, system
-from sys import argv
 
 
-def get_basic_auth(username=environ['U'], password=environ['P']):
+def get_basic_auth(username, password):
     """Returns basic authentication.
 
     Args: 
@@ -23,16 +22,22 @@ def get_basic_auth(username=environ['U'], password=environ['P']):
     return f"Basic {encodebytes(auth.encode()).decode('UTF-8').strip()}"
 
 
-if __name__ == '__main__':
-    import doctest
-
-    doctest.testmod()
-
-    basic_auth = get_basic_auth(argv[1], argv[2]) if len(argv) == 3 else get_basic_auth()
+def main(username, password):
+    basic_auth = get_basic_auth(username, password)
     basic_auth_header = f"Authorization: {basic_auth}"
-
     if name == 'posix':
         system(f"echo '{basic_auth_header}\c' | pbcopy")
         print(f"'{basic_auth_header}' copied to clipboard")
     else:
         print(basic_auth_header)
+
+
+if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Prints and place in clipboard basic authentication header')
+    parser.add_argument('-u', '--username', help='Username', default=environ['U'])
+    parser.add_argument('-p', '--password', help='Psssword', default=environ['P'])
+    args = parser.parse_args()
+
+    main(args.username, args.password)

@@ -17,12 +17,21 @@ def enable_web_hook(url, repo_specs):
         yield spec, call(uri, request_data, 'PUT')
 
 
+def main(url, dirs=['.'], repos=None):
+    if args.repos:
+        specs = (repo.split('/') for repo in repos)
+    else:
+        specs = (get_project_and_repo(get_clone_url(dir)) for dir in dirs)
+    for spec, response in enable_web_hook(url, specs):
+        print('{}/{}: {}'.format(spec[0], spec[1], 'enabled' if response['enabled'] else ' not enabled'))
+
+
 if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description='Enables Bitbucket webhook.')
     parser.add_argument('-u', '--url',
-                        help='The url which to send repo info to, e.g. http://10.20.30.40:8002/cgi-bin/webhook/',
+                        help='The url which to send repo info to, e.g. http://10.20.30.40:8002/wildcat/webhook/',
                         required=True)
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-d', '--dirs', nargs='*', default=['.'],
@@ -31,10 +40,4 @@ if __name__ == '__main__':
                        help='Repos, e.g. key1/repo1 key2/repo2')
     args = parser.parse_args()
 
-    if args.repos:
-        specs = (repo.split('/') for repo in args.repos)
-    else:
-        specs = (get_project_and_repo(get_clone_url(dir)) for dir in args.dirs)
-
-    for spec, response in enable_web_hook(args.url, specs):
-        print('{}/{}: {}'.format(spec[0], spec[1], 'enabled' if response['enabled'] else ' not enabled'))
+    main(args.url, args.dirs, args.repos)

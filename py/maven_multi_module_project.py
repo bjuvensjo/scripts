@@ -41,11 +41,14 @@ def make_project(output_dir, group_id, artifact_id, version, source_dir):
         pom_file.write(pom)
 
 
-if __name__ == '__main__':
+def main():
     group_id = str(input('groupId (default mygroup): ') or 'mygroup')
     artifact_id = str(input('artifactId (default ws): ') or 'ws')
     version = str(input('version (default 1.0.0-SNAPSHOT): ') or '1.0.0-SNAPSHOT')
     source_dir = str(input('sourceDir: (default .)') or '.')
     output_dir = str(input('outputDir: (default ./ws)') or './ws')
-
     make_project(output_dir, group_id, artifact_id, version, source_dir)
+
+
+if __name__ == '__main__':
+    main()

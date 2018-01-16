@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-from os.path import basename
-from sys import argv
 
 from bb_api import call
 from bb_utils import get_project_and_repo, get_clone_url
@@ -16,15 +14,24 @@ def delete_repo(repo_specs):
         yield spec, call(uri, method="DELETE")
 
 
-if __name__ == '__main__':
-    if '-d' in argv and len(argv) > 1:
-        dirs = ['.'] if len(argv) == 2 else [arg for arg in argv[1:] if arg != '-d']        
-        specs = [get_project_and_repo(get_clone_url(dir)) for dir in dirs]
-    elif len(argv) == 3:
-        specs = [[argv[1], argv[2]]]
+def main(dirs=['.'], repos=None):
+    if repos:
+        specs = (repo.split('/') for repo in repos)
     else:
-        print('Usage: {} [-d dirs] | [project repo]'.format(basename(__file__)))
-        exit(1)
-
+        specs = (get_project_and_repo(get_clone_url(dir)) for dir in dirs)
     for spec, response in delete_repo(specs):
         print('{}/{}: {}'.format(spec[0], spec[1], response))
+
+
+if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Delete Bitbucket repos')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-d', '--dirs', nargs='*', default=['.'],
+                       help='Git directories to extract repo information from')
+    group.add_argument('-r', '--repos', nargs='*',
+                       help='Repos, e.g. key1/repo1 key2/repo2')
+    args = parser.parse_args()
+
+    main(args.dirs, args.repos)

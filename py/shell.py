@@ -4,13 +4,9 @@ import logging
 from shlex import split
 from subprocess import Popen, PIPE, STDOUT
 
+from util import chunks
+
 log = logging.getLogger(__name__)
-
-
-def chunks(l, n):
-    """ Yield successive n-sized chunks from l. """
-    for i in range(0, len(l), n):
-        yield l[i:i + n]
 
 
 def call(script, args):
@@ -63,6 +59,5 @@ def run_commands(commands, max_processes=10, cwd=None):
         for chunk in chunks(commands, max_processes):
             yield from run_commands(chunk, max_processes=max_processes, cwd=cwd)
     else:
-        for process in [Popen(split(command), stdout=PIPE, stderr=STDOUT, cwd=cwd) for command in commands]:
-            process.wait()
+        for process in [Popen(command, stdout=PIPE, stderr=STDOUT, shell=True, cwd=cwd) for command in commands]:
             yield process
