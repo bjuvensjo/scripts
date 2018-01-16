@@ -21,15 +21,21 @@ def get_projects():
                 yield value
 
 
-def main():
+def main(key):
     for project in get_projects():
-        print('{}: {}'.format(project['key'], project['name']))
+        if key:
+            print(project['key'])
+        else:
+            print('{}: {}'.format(project['key'], project['name']))
 
 
 if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description='Get projects from Bitbucket')
+    parser.add_argument('-k', '--key',
+                        help='Print only project key',
+                        action='store_true')
     args = parser.parse_args()
 
-    main()
+    main(args.key)
