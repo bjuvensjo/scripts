@@ -24,7 +24,7 @@ def get_repos(key):
                 yield value
 
 
-def get_all_repos(keys, max_processes=4):
+def get_all_repos(keys, max_processes=10):
     with Pool(processes=max_processes) as pool:
         return itertools.chain.from_iterable(pool.map(get_repos, keys))
 

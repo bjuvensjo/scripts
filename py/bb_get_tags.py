@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
+from multiprocessing.dummy import Pool
+
+from itertools import chain, product
 
 from bb_api import call
 from bb_utils import get_clone_url, get_project_and_repo
 
 
-def _get_uri(project, repo, tag):
-    return '/rest/api/1.0/projects/{}/repos/{}/tags?filterText={}'.format(project, repo, tag)
+def get_repo_tags(spec, tag=''):
+    return spec, call('/rest/api/1.0/projects/{}/repos/{}/tags?filterText={}'.format(spec[0], spec[1], tag))
 
 
-def get_tags(repo_specs, tag=''):
-    for spec in repo_specs:
-        uri = _get_uri(spec[0], spec[1], tag)
-        yield spec, call(uri)
+def get_tags(repo_specs, tag='', max_processes=10):
+    with Pool(processes=max_processes) as pool:
+        return chain(pool.starmap(get_repo_tags, product(repo_specs, [tag])))
 
 
 def main(tag='', dirs=['.'], repos=None):

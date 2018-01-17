@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
+from multiprocessing.dummy import Pool
+
+from itertools import chain
 
 from bb_api import call
 from bb_utils import get_project_and_repo, get_clone_url
 
 
-def _get_uri(project, repo):
-    return '/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}'.format(projectKey=project, repositorySlug=repo)
+def delete_repo(spec):
+    return spec, call('/rest/api/1.0/projects/{}/repos/{}'.format(spec[0], spec[1]), method="DELETE")
 
 
-def delete_repo(repo_specs):
-    for spec in repo_specs:
-        uri = _get_uri(spec[0], spec[1])
-        yield spec, call(uri, method="DELETE")
+def delete_repos(repo_specs, max_processes=10):
+    with Pool(processes=max_processes) as pool:
+        return chain(pool.map(delete_repo, repo_specs))
 
 
 def main(dirs=['.'], repos=None):
@@ -19,7 +21,7 @@ def main(dirs=['.'], repos=None):
         specs = (repo.split('/') for repo in repos)
     else:
         specs = (get_project_and_repo(get_clone_url(dir)) for dir in dirs)
-    for spec, response in delete_repo(specs):
+    for spec, response in delete_repos(specs):
         print('{}/{}: {}'.format(spec[0], spec[1], response))
 
 

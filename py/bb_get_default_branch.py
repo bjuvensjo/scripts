@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
+from multiprocessing.dummy import Pool
+
+from itertools import chain
 
 from bb_api import call
 from bb_utils import get_clone_url, get_project_and_repo
 
 
-def _get_uri(project, repo):
-    return '/rest/api/1.0/projects/{}/repos/{}/branches/default'.format(project, repo)
+def get_repo_default_branch(spec):
+    return spec, call('/rest/api/1.0/projects/{}/repos/{}/branches/default'.format(spec[0], spec[1]))
 
 
-def get_default_branch(repo_specs):
-    for spec in repo_specs:
-        uri = _get_uri(spec[0], spec[1])
-        yield spec, call(uri)
+def get_default_branch(repo_specs, max_processes=10):
+    with Pool(processes=max_processes) as pool:
+        return chain(pool.map(get_repo_default_branch, repo_specs))
 
 
 def main(dirs=['.'], repos=None):
