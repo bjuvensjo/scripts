@@ -24,9 +24,9 @@ if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description='Delete maven artifact from Artifactory')
-    parser.add_argument('artifactory_repository_url', help='Artifactory repository url')
+    parser.add_argument('artifactory_repository', help='Artifactory repository, e.g. z-release')
     parser.add_argument('-d', '--dirs', nargs='*', default=['.'],
                         help='Maven pom directories to extract artifact information from')
     args = parser.parse_args()
 
-    main(args.artifactory_repository_url, args.dirs)
+    main(args.artifactory_repository, args.dirs)
