@@ -4,8 +4,6 @@ import logging
 from shlex import split
 from subprocess import Popen, PIPE, STDOUT
 
-from util import chunks
-
 log = logging.getLogger(__name__)
 
 
@@ -47,7 +45,7 @@ def run_command(command, return_output=False, cwd=None):
     return (rc, ''.join(the_output)) if return_output else rc
 
 
-def run_commands(commands, max_processes=10, cwd=None):
+def run_commands(commands, cwd=None, max_processes=10, timeout=None):
     """
     Runs commands in parallel processes.
     :param commands: The commands
@@ -55,9 +53,24 @@ def run_commands(commands, max_processes=10, cwd=None):
     :param cwd: The directory to tun in
     :return: process (yielded)
     """
-    if len(commands) > max_processes:
-        for chunk in chunks(commands, max_processes):
-            yield from run_commands(chunk, max_processes=max_processes, cwd=cwd)
-    else:
-        for process in [Popen(command, stdout=PIPE, stderr=STDOUT, shell=True, cwd=cwd) for command in commands]:
-            yield process
+
+    # TODO Handle timeout
+    n = min(len(commands), max_processes)
+    processes = [Popen(command, stdout=PIPE, stderr=STDOUT, shell=True, cwd=cwd) for command in commands[:n]]
+    while processes:
+        for rp in list(processes):
+            if rp.poll() is not None:
+                if n < len(commands):
+                    processes.append(Popen(commands[n], stdout=PIPE, stderr=STDOUT, shell=True, cwd=cwd))
+                    n += 1
+                processes.remove(rp)
+                yield rp
+
+    # Below is an alternative implementation that is somewhat simpler but somewhat slower.
+    # if len(commands) > max_processes:
+    #     for chunk in chunks(commands, max_processes):
+    #         yield from run_commands(chunk, cwd=cwd, max_processes=max_processes, timeout=timeout)
+    # else:
+    #     for process in [Popen(command, stdout=PIPE, stderr=STDOUT, shell=True, cwd=cwd) for command in commands]:
+    #         process.wait(timeout)
+    #         yield process
