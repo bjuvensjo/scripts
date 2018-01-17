@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from os.path import sep, normpath
 
 from bb_get_repos import get_all_repos
 
@@ -10,7 +11,7 @@ def get_clone_urls(keys):
 
 def main(projects, command):
     for project, repo, clone_url, in get_clone_urls(projects):
-        clone_dir = '{}/{}'.format(project, repo.replace('.', '/'))
+        clone_dir = normpath('{}/{}'.format(project, repo.replace('.', '/')))
         print('git clone {} {}'.format(clone_url, clone_dir) if command else clone_url)
 
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from glob import glob
-from os.path import realpath
+from os.path import realpath, normpath
 from pathlib import Path
 
 from itertools import product
@@ -9,7 +9,7 @@ from shell import run_commands
 
 
 def execute(root, commands):
-    cwds = [Path(realpath(p)).parent for p in glob("{}/**/.git/".format(root), recursive=True)]
+    cwds = [Path(realpath(p)).parent for p in glob(normpath('{}/**/.git/'.format(root)), recursive=True)]
     command = [' && '.join(commands)]
     commands_and_cwds = tuple(product(command, cwds))
 

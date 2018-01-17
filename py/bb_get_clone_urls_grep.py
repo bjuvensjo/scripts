@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import re
+from os.path import sep, normpath
 
 from bb_get_clone_urls import get_clone_urls
 from bb_get_projects import get_projects
@@ -12,7 +13,7 @@ def get_clone_urls_grep(patterns):
 
 def main(patterns, command):
     for project, repo, clone_url, in get_clone_urls_grep(patterns):
-        clone_dir = '{}/{}'.format(project, repo.replace('.', '/'))
+        clone_dir = normpath('{}/{}'.format(project, repo.replace('.', '/')))
         print('git clone {} {}'.format(clone_url, clone_dir) if command else clone_url)
 
 

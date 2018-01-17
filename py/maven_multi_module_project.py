@@ -3,7 +3,7 @@
 """ Makes Maven multi module project. """
 
 from os import makedirs
-from os.path import realpath, relpath, dirname
+from os.path import realpath, relpath, dirname, normpath
 
 import maven_pom
 
@@ -37,7 +37,7 @@ def make_project(output_dir, group_id, artifact_id, version, source_dir):
     pom_info = [maven_pom.get_pom_info(pom_path) for pom_path in maven_pom.get_pom_paths(source_dir)]
     pom = get_pom(pom_info, output_dir, group_id, artifact_id, version)
     makedirs(output_dir)
-    with open('{}/pom.xml'.format(output_dir), 'wt', encoding='utf-8') as pom_file:
+    with open(normpath('{}/pom.xml'.format(output_dir)), 'wt', encoding='utf-8') as pom_file:
         pom_file.write(pom)
 
 
@@ -45,8 +45,8 @@ def main():
     group_id = str(input('groupId (default mygroup): ') or 'mygroup')
     artifact_id = str(input('artifactId (default ws): ') or 'ws')
     version = str(input('version (default 1.0.0-SNAPSHOT): ') or '1.0.0-SNAPSHOT')
-    source_dir = str(input('sourceDir: (default .)') or '.')
-    output_dir = str(input('outputDir: (default ./ws)') or './ws')
+    source_dir = normpath(str(input('sourceDir: (default .)') or '.'))
+    output_dir = normpath(str(input('outputDir: (default ./ws)') or './ws'))
     make_project(output_dir, group_id, artifact_id, version, source_dir)
 
 

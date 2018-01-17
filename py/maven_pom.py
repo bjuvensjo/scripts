@@ -3,7 +3,7 @@
 """ Maven pom utilities. """
 
 from glob import glob
-from os.path import realpath
+from os.path import realpath, normpath
 from xml.etree.ElementTree import parse
 
 NAME_SPACES = {'ns': 'http://maven.apache.org/POM/4.0.0'}
@@ -16,7 +16,7 @@ def get_pom_paths(root):
 
 def get_pom_info(pom_path):
     """ Returns a dictionary with pom_path, artifact_id, group_id, version and packaging. """
-    e = parse(pom_path)
+    e = parse(normpath(pom_path))
     info = {
         'pom_path': pom_path,
         'artifact_id': e.findtext('ns:artifactId', namespaces=NAME_SPACES),
