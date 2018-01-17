@@ -2,29 +2,23 @@
 from glob import glob
 from os.path import realpath
 from pathlib import Path
-from subprocess import Popen, PIPE, STDOUT
 
-from util import chunks
+from itertools import product
 
-
-def execute(dirs, commands, max_processes=10):
-    if len(dirs) > max_processes:
-        for chunk in chunks(dirs, max_processes):
-            yield from execute(chunk, commands, max_processes=max_processes)
-    else:
-        joined_commands = ' && '.join(commands)
-        for dir in dirs:
-            process = Popen(joined_commands, stdout=PIPE, stderr=STDOUT, shell=True, cwd=dir)
-            yield process.stdout.read().decode().strip()
+from shell import run_commands
 
 
-def execute_recursively(root, commands):
-    return execute([Path(realpath(p)).parent for p in glob("{}/**/.git/".format(root), recursive=True)], commands)
+def execute(root, commands):
+    cwds = [Path(realpath(p)).parent for p in glob("{}/**/.git/".format(root), recursive=True)]
+    command = [' && '.join(commands)]
+    commands_and_cwds = tuple(product(command, cwds))
+
+    yield from run_commands(commands_and_cwds, max_processes=25)
 
 
 def main(root, commands):
-    for response in execute_recursively(root, commands):
-        print(response)
+    for process in execute(root, commands):
+        print(process.stdout.read().decode().strip())
 
 
 if __name__ == '__main__':

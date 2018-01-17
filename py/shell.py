@@ -45,23 +45,24 @@ def run_command(command, return_output=False, cwd=None):
     return (rc, ''.join(the_output)) if return_output else rc
 
 
-def run_commands(commands, cwd=None, max_processes=10, timeout=None):
+def run_commands(commands_and_cwds, max_processes=10, timeout=None):
     """
     Runs commands in parallel processes.
-    :param commands: The commands
+    :param commands_ands_cwds: Pairs of command and working directory for the command
     :param max_processes: The max number of parallel processes
-    :param cwd: The directory to tun in
+    :param timeout: The timeout of each process
     :return: process (yielded)
     """
 
     # TODO Handle timeout
-    n = min(len(commands), max_processes)
-    processes = [Popen(command, stdout=PIPE, stderr=STDOUT, shell=True, cwd=cwd) for command in commands[:n]]
+    n = min(len(commands_and_cwds), max_processes)
+    processes = [Popen(cc[0], stdout=PIPE, stderr=STDOUT, shell=True, cwd=cc[1]) for cc in commands_and_cwds[:n]]
     while processes:
         for rp in list(processes):
             if rp.poll() is not None:
-                if n < len(commands):
-                    processes.append(Popen(commands[n], stdout=PIPE, stderr=STDOUT, shell=True, cwd=cwd))
+                if n < len(commands_and_cwds):
+                    cc = commands_and_cwds[n]
+                    processes.append(Popen(cc[0], stdout=PIPE, stderr=STDOUT, shell=True, cwd=cc[1]))
                     n += 1
                 processes.remove(rp)
                 yield rp
