@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from multiprocessing.dummy import Pool
 
-from itertools import chain, product
+from itertools import product
 
 from bb_api import call
 from bb_utils import get_clone_url, get_project_and_repo
@@ -13,7 +13,7 @@ def get_repo_tags(spec, tag=''):
 
 def get_tags(repo_specs, tag='', max_processes=10):
     with Pool(processes=max_processes) as pool:
-        return chain(pool.starmap(get_repo_tags, product(repo_specs, [tag])))
+        return pool.starmap(get_repo_tags, product(repo_specs, [tag]))
 
 
 def main(tag='', dirs=['.'], repos=None):

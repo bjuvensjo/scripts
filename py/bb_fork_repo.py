@@ -3,7 +3,7 @@
 from json import dumps
 from multiprocessing.dummy import Pool
 
-from itertools import chain, product
+from itertools import product
 
 from bb_api import call
 from bb_utils import get_clone_url, get_project_and_repo
@@ -24,7 +24,7 @@ def fork_repo(spec, fork_project):
 
 def fork_repos(repo_specs, fork_project, max_processes=10):
     with Pool(processes=max_processes) as pool:
-        return chain(pool.starmap(fork_repo, product(repo_specs, [fork_project])))
+        return pool.starmap(fork_repo, product(repo_specs, [fork_project]))
 
 
 def main(dirs=['.'], repos=None):

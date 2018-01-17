@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 from multiprocessing.dummy import Pool
 
-from itertools import chain
-
 from bb_api import call
 from bb_utils import get_project_and_repo, get_clone_url
 
@@ -13,7 +11,7 @@ def delete_repo(spec):
 
 def delete_repos(repo_specs, max_processes=10):
     with Pool(processes=max_processes) as pool:
-        return chain(pool.map(delete_repo, repo_specs))
+        return pool.map(delete_repo, repo_specs)
 
 
 def main(dirs=['.'], repos=None):

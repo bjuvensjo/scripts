@@ -2,7 +2,7 @@
 from json import dumps
 from multiprocessing.dummy import Pool
 
-from itertools import chain, product
+from itertools import product
 
 from bb_api import call
 from bb_utils import get_clone_url, get_project_and_repo
@@ -17,7 +17,7 @@ def enable_repo_web_hook(spec, url):
 
 def enable_web_hook(repo_specs, url, max_processes=10):
     with Pool(processes=max_processes) as pool:
-        return chain(pool.starmap(enable_repo_web_hook, product(repo_specs, [url])))
+        return pool.starmap(enable_repo_web_hook, product(repo_specs, [url]))
 
 
 def main(url, dirs=['.'], repos=None):

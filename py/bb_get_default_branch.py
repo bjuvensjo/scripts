@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 from multiprocessing.dummy import Pool
 
-from itertools import chain
-
 from bb_api import call
 from bb_utils import get_clone_url, get_project_and_repo
 
@@ -13,7 +11,7 @@ def get_repo_default_branch(spec):
 
 def get_default_branch(repo_specs, max_processes=10):
     with Pool(processes=max_processes) as pool:
-        return chain(pool.map(get_repo_default_branch, repo_specs))
+        return pool.map(get_repo_default_branch, repo_specs)
 
 
 def main(dirs=['.'], repos=None):

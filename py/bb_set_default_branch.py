@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from multiprocessing.dummy import Pool
 
-from itertools import product, chain
+from itertools import product
 
 from bb_api import call
 from bb_utils import get_clone_url, get_project_and_repo
@@ -9,14 +9,14 @@ from bb_utils import get_clone_url, get_project_and_repo
 
 def set_repo_default_branch(spec, branch):
     request_data = '{{"id":"refs/heads/{}"}}'.format(branch)
-    return spec, call('/rest/api/1.0/projects/{}/repos/{}/branches/default'.format(spec[0], spec[1]), 
+    return spec, call('/rest/api/1.0/projects/{}/repos/{}/branches/default'.format(spec[0], spec[1]),
                       request_data,
                       'PUT')
 
 
 def set_default_branch(repo_specs, branch, max_processes=10):
     with Pool(processes=max_processes) as pool:
-        return chain(pool.starmap(set_repo_default_branch, product(repo_specs, [branch])))
+        return pool.starmap(set_repo_default_branch, product(repo_specs, [branch]))
 
 
 def main(branch, dirs, repos):
