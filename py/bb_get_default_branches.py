@@ -14,7 +14,7 @@ def get_default_branch(repo_specs, max_processes=10):
         return pool.map(get_repo_default_branch, repo_specs)
 
 
-def main(dirs=['.'], repos=None, projects=None):
+def main(dirs, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
     for spec, response in get_default_branch(specs):
         print('{}/{}: {}'.format(spec[0], spec[1], response['displayId']))
@@ -23,7 +23,7 @@ def main(dirs=['.'], repos=None, projects=None):
 if __name__ == '__main__':
     import argparse
 
-    parser = argparse.ArgumentParser(description='Get repository branches from Bitbucket')
+    parser = argparse.ArgumentParser(description='Get default repository branches from Bitbucket')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-d', '--dirs', nargs='*', default=['.'],
                        help='Git directories to extract repo information from')

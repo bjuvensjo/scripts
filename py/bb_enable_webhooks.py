@@ -20,7 +20,7 @@ def enable_web_hook(repo_specs, url, max_processes=10):
         return pool.starmap(enable_repo_web_hook, product(repo_specs, [url]))
 
 
-def main(url, dirs=['.'], repos=None, projects=None):
+def main(url, dirs, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
     for spec, response in enable_web_hook(specs, url):
         print('{}/{}: {}'.format(spec[0], spec[1], 'enabled' if response['enabled'] else ' not enabled'))
@@ -29,7 +29,7 @@ def main(url, dirs=['.'], repos=None, projects=None):
 if __name__ == '__main__':
     import argparse
 
-    parser = argparse.ArgumentParser(description='Enables Bitbucket webhook.')
+    parser = argparse.ArgumentParser(description='Enables Bitbucket webhooks.')
     parser.add_argument('url',
                         help='The url which to send repo info to, e.g. http://10.20.30.40:8002/wildcat/webhook/')
     group = parser.add_mutually_exclusive_group()

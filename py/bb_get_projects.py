@@ -21,9 +21,9 @@ def get_projects():
                 yield value
 
 
-def main(key):
+def main(only_key=False):
     for project in get_projects():
-        if key:
+        if only_key:
             print(project['key'])
         else:
             print('{}: {}'.format(project['key'], project['name']))

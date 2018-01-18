@@ -25,8 +25,9 @@ def get_clone_url(git_dir):
     return completed_process.stdout.strip()
 
 
-def get_project_and_repo(clone_url):
-    return clone_url.split('/')[-2].upper(), '.'.join(clone_url.split('/')[-1].split('.')[:-1])
+def get_project_and_repo(git_dir):
+    project, repo = get_clone_url(git_dir)[:-4].split('/')[-2:]
+    return project.upper(), repo
 
 
 def get_repo_specs(dirs, repos=None, projects=None):
@@ -35,4 +36,4 @@ def get_repo_specs(dirs, repos=None, projects=None):
     elif repos:
         return (repo.split('/') for repo in repos)
     else:
-        return (get_project_and_repo(get_clone_url(dir)) for dir in dirs)
+        return (get_project_and_repo(dir) for dir in dirs)

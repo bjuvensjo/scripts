@@ -16,7 +16,7 @@ def get_tags(repo_specs, tag='', max_processes=10):
         return pool.starmap(get_repo_tags, product(repo_specs, [tag]))
 
 
-def main(tag='', dirs=['.'], repos=None, projects=None):
+def main(tag='', dirs=None, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
     for spec, response in get_tags(specs, tag):
         print('{}/{}: {}'.format(spec[0], spec[1], [value['displayId'] for value in response['values']]))

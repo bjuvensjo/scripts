@@ -8,7 +8,7 @@ def has_tag(repo_specs, tag):
         yield spec, tag in [value['displayId'] for value in response['values']]
 
 
-def main(tag, dirs=['.'], repos=None, projects=None):
+def main(tag, dirs=None, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
     for spec, has in has_tag(specs, tag):
         print('{}/{}, {}: {}'.format(spec[0], spec[1], tag, has))

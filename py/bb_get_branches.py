@@ -16,7 +16,7 @@ def get_branches(repo_specs, branch='', max_processes=10):
         return pool.starmap(get_repo_branches, product(repo_specs, [branch]))
 
 
-def main(branch='', dirs=['.'], repos=None, projects=None):
+def main(branch='', dirs=None, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
     for spec, response in get_branches(specs, branch):
         print('{}/{}: {}'.format(spec[0], spec[1], [value['displayId'] for value in response['values']]))

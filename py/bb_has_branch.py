@@ -9,7 +9,7 @@ def has_branch(repo_specs, branch):
         yield spec, branch in [value['displayId'] for value in response['values']]
 
 
-def main(branch, dirs=['.'], repos=None, projects=None):
+def main(branch, dirs=None, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
     for spec, has in has_branch(specs, branch):
         print('{}/{}, {}: {}'.format(spec[0], spec[1], branch, has))

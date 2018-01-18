@@ -67,7 +67,7 @@ def main(artifactory_repository, dirs):
 if __name__ == '__main__':
     import argparse
 
-    parser = argparse.ArgumentParser(description='Delete maven artifact from Artifactory')
+    parser = argparse.ArgumentParser(description='Publish maven artifact to Artifactory')
     parser.add_argument('artifactory_repository', help='Artifactory repository, e.g. z-release')
     parser.add_argument('-d', '--dirs', nargs='*', default=['.'],
                         help='Maven pom directories to extract artifact information from')

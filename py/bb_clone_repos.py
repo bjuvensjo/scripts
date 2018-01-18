@@ -9,17 +9,14 @@ from shell import run_commands
 
 
 def has_match(s, regexps):
-    """ Returns True if s matches a regexp in regexps. """
     return any((match(regexp, s) for regexp in regexps))
 
 
 def is_excluded(repo_name, excludes):
-    """ Returns True if repo_name matches a regexp in regexps. """
     return has_match(repo_name, excludes)
 
 
 def is_included(repo_name, includes):
-    """ Returns True if repo_name matches a regexp in regexps. """
     return not includes or has_match(repo_name, includes)
 
 
@@ -34,26 +31,23 @@ def clone(commands, root_dir):
 
 
 def get_projects_commands(projects):
-    return [command for project, repo, command in get_clone_urls(projects, True)]
+    return (command for project, repo, command in get_clone_urls(projects, True))
 
 
 def get_repos_commands(repos):
     projects = {repo.split('/')[0] for repo in repos}
-    return [command for project, repo, command in get_clone_urls(projects, True)
+    return (command for project, repo, command in get_clone_urls(projects, True)
             for repo_spec in repos
-            if repo_spec == '{}/{}'.format(project, repo)]
+            if repo_spec == '{}/{}'.format(project, repo))
 
 
-def get_config_commands(config_file):
-    with open(config_file, 'rt', encoding='utf-8') as cfg:
-        config = load(cfg)
-
+def get_config_commands(config):
     clone_url_specs = tuple(get_clone_urls(config['projects'], True, config['branch']))
     has_branch_specs = has_branch([(p, r) for p, r, c in clone_url_specs], config['branch'])
     has_branch_map = {repo_spec: has for repo_spec, has in has_branch_specs}
 
-    return [command for project, repo, command in clone_url_specs
-            if should_be_cloned(project, repo, config['projects'][project], has_branch_map)]
+    return (command for project, repo, command in clone_url_specs
+            if should_be_cloned(project, repo, config['projects'][project], has_branch_map))
 
 
 def main(projects, repos, config, root_dir):
@@ -63,7 +57,8 @@ def main(projects, repos, config, root_dir):
     elif repos:
         commands = get_repos_commands(repos)
     else:
-        commands = get_config_commands(config)
+        with open(config, 'rt', encoding='utf-8') as cfg:
+            commands = get_config_commands(load(cfg))
 
     for process in clone(commands, root_dir):
         try:

@@ -19,7 +19,7 @@ def set_default_branch(repo_specs, branch, max_processes=10):
         return pool.starmap(set_repo_default_branch, product(repo_specs, [branch]))
 
 
-def main(branch, dirs, repos=None, projects=None):
+def main(branch, dirs=None, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
     for spec, response in set_default_branch(specs, branch):
         print('{}/{}: {}'.format(spec[0], spec[1], response))
@@ -28,7 +28,7 @@ def main(branch, dirs, repos=None, projects=None):
 if __name__ == '__main__':
     import argparse
 
-    parser = argparse.ArgumentParser(description='Set default branch for repositories in Bitbucket')
+    parser = argparse.ArgumentParser(description='Set default branches for repositories in Bitbucket')
     parser.add_argument('branch', help='The branch to set')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-d', '--dirs', nargs='*', default=['.'],

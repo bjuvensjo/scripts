@@ -45,7 +45,7 @@ def main(projects, name, repo_specs):
 if __name__ == '__main__':
     import argparse
 
-    parser = argparse.ArgumentParser(description='Prints repos of specified project keys')
+    parser = argparse.ArgumentParser(description='Get repos from Bitbucket')
     parser.add_argument('projects', nargs='+', help='Project keys')
     parser.add_argument('-n', '--name',
                         help='Print only repo name',

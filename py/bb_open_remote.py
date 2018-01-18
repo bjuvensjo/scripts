@@ -16,7 +16,7 @@ def open_remote(git_dir, repo=None, project=None):
     else:
         url = '{}/projects/{}/repos/{}/commits?until=refs%2Fheads%2F{}&merges=include'.format(
             base_url,
-            *get_project_and_repo(get_clone_url(git_dir)),
+            *get_project_and_repo(git_dir),
             get_branch(git_dir))
     subprocess.run(shlex.split('open {}'.format(url)))
 
@@ -28,7 +28,7 @@ def main(repo_dir, repo=None, project=None):
 if __name__ == '__main__':
     import argparse
 
-    parser = argparse.ArgumentParser(description='Open url in browser')
+    parser = argparse.ArgumentParser(description='Open Bitbucket url in browser')
     parser.add_argument('-d', '--dir', default='.', help='Git directory to extract repo information from')
     parser.add_argument('-r', '--repo', help='Repo, e.g. key1/repo1')
     parser.add_argument('-p', '--project', help='Project, e.g. key1')

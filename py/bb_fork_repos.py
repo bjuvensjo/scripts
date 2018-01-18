@@ -27,7 +27,7 @@ def fork_repos(repo_specs, fork_project, max_processes=10):
         return pool.starmap(fork_repo, product(repo_specs, [fork_project]))
 
 
-def main(dirs=['.'], repos=None, projects=None):
+def main(dirs, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
     for spec, response in fork_repos(specs, args.fork_project):
         print('{}/{}: {}'.format(spec[0], spec[1], response))
