@@ -5,6 +5,7 @@ Miscellaneous scripts
 ## Suggested usage ##
 
 1. Clone this repository
+2. Add required environment variables, see artifactory_api.py and bb_api.py
 2. Create a directory, e.g. ~/bin, and add it to your path.
 3. Create symbolic links (see example below). If on windows, create cmd-files that calls the scripts. 
 
