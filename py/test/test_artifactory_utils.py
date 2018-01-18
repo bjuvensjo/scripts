@@ -1,6 +1,8 @@
 import unittest
 from unittest.mock import patch
+
 from artifactory_utils import *
+
 
 class ArtifactoryUtils(unittest.TestCase):
 

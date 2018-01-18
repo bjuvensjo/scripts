@@ -5,7 +5,7 @@ from multiprocessing.dummy import Pool
 from itertools import product
 
 from bb_api import call
-from bb_utils import get_clone_url, get_project_and_repo
+from bb_utils import get_repo_specs
 
 
 def enable_repo_web_hook(spec, url):
@@ -20,11 +20,8 @@ def enable_web_hook(repo_specs, url, max_processes=10):
         return pool.starmap(enable_repo_web_hook, product(repo_specs, [url]))
 
 
-def main(url, dirs=['.'], repos=None):
-    if args.repos:
-        specs = (repo.split('/') for repo in repos)
-    else:
-        specs = (get_project_and_repo(get_clone_url(dir)) for dir in dirs)
+def main(url, dirs=['.'], repos=None, projects=None):
+    specs = get_repo_specs(dirs, repos, projects)
     for spec, response in enable_web_hook(specs, url):
         print('{}/{}: {}'.format(spec[0], spec[1], 'enabled' if response['enabled'] else ' not enabled'))
 
@@ -40,6 +37,8 @@ if __name__ == '__main__':
                        help='Git directories to extract repo information from.')
     group.add_argument('-r', '--repos', nargs='*',
                        help='Repos, e.g. key1/repo1 key2/repo2')
+    group.add_argument('-p', '--projects', nargs='*',
+                       help='Projects, e.g. key1 key2')
     args = parser.parse_args()
 
-    main(args.url, args.dirs, args.repos)
+    main(args.url, args.dirs, args.repos, args.projects)

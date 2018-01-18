@@ -6,35 +6,38 @@ import itertools
 from bb_api import call
 
 
-def get_repos_page(key, limit, start):
-    response = call('/rest/api/1.0/projects/{}/repos?limit={}&start={}'.format(key, limit, start))
+def get_repos_page(project, limit, start):
+    response = call('/rest/api/1.0/projects/{}/repos?limit={}&start={}'.format(project, limit, start))
     return response['size'], response['values'], response['isLastPage'], response.get('nextPageStart', -1)
 
 
-def get_repos(key):
+def get_repos(project, only_name=False, only_spec=False):
     limit = 25
     start = 0
     is_last_page = False
 
     while not is_last_page:
-        size, values, is_last_page, start = get_repos_page(key, limit, start)
+        size, values, is_last_page, start = get_repos_page(project, limit, start)
 
         if size:
             for value in values:
-                yield value
+                if only_name:
+                    yield value['slug']
+                elif only_spec:
+                    yield (value['project']['key'], value['slug'])
+                else:
+                    yield value
 
 
-def get_all_repos(keys, max_processes=10):
+def get_all_repos(projects, max_processes=10, only_name=False, only_spec=False):
     with Pool(processes=max_processes) as pool:
-        return itertools.chain.from_iterable(pool.map(get_repos, keys))
+        return itertools.chain.from_iterable(pool.map(lambda p: get_repos(p, only_name, only_spec), projects))
 
 
-def main(keys, name, project):
-    for repo in get_all_repos(keys):
-        if name:
-            print(repo['slug'])
-        elif project:
-            print('{}/{}'.format(repo['project']['key'], repo['slug']))
+def main(projects, name, repo_specs):
+    for repo in get_all_repos(projects, only_name=name, only_spec=repo_specs):
+        if repo_specs:
+            print('{}/{}'.format(repo[0], repo[1]))
         else:
             print(repo)
 
@@ -43,13 +46,13 @@ if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description='Prints repos of specified project keys')
-    parser.add_argument('keys', nargs='+', help='Project keys')
+    parser.add_argument('projects', nargs='+', help='Project keys')
     parser.add_argument('-n', '--name',
                         help='Print only repo name',
                         action='store_true')
-    parser.add_argument('-p', '--project',
+    parser.add_argument('-r', '--repo_specs',
                         help='Print only project_key/name',
                         action='store_true')
     args = parser.parse_args()
 
-    main(args.keys, args.name, args.project)
+    main(args.projects, args.name, args.repo_specs)

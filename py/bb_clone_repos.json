@@ -1,0 +1,18 @@
+{
+  "branch": "develop",
+  "projects": {
+    "BOSSEBU": {
+      "includes": [
+      ],
+      "excludes": [
+        "wildcat"
+      ]
+    },
+    "ZESAP": {
+      "includes": [
+      ],
+      "excludes": [
+      ]
+    }
+  }
+}

@@ -2,7 +2,7 @@
 from multiprocessing.dummy import Pool
 
 from bb_api import call
-from bb_utils import get_project_and_repo, get_clone_url
+from bb_utils import get_repo_specs
 
 
 def delete_repo(spec):
@@ -14,11 +14,8 @@ def delete_repos(repo_specs, max_processes=10):
         return pool.map(delete_repo, repo_specs)
 
 
-def main(dirs=['.'], repos=None):
-    if repos:
-        specs = (repo.split('/') for repo in repos)
-    else:
-        specs = (get_project_and_repo(get_clone_url(dir)) for dir in dirs)
+def main(dirs=['.'], repos=None, projects=None):
+    specs = get_repo_specs(dirs, repos, projects)
     for spec, response in delete_repos(specs):
         print('{}/{}: {}'.format(spec[0], spec[1], response))
 
@@ -32,6 +29,8 @@ if __name__ == '__main__':
                        help='Git directories to extract repo information from')
     group.add_argument('-r', '--repos', nargs='*',
                        help='Repos, e.g. key1/repo1 key2/repo2')
+    group.add_argument('-p', '--projects', nargs='*',
+                       help='Projects, e.g. key1 key2')
     args = parser.parse_args()
 
-    main(args.dirs, args.repos)
+    main(args.dirs, args.repos, args.projects)
