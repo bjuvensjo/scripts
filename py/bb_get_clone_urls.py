@@ -10,15 +10,16 @@ def get_clone_urls(keys, command=False, branch=False):
         if command:
             clone_dir = normpath('{}/{}'.format(project, repo.replace('.', '/')))
             if branch:
-                yield project, repo, 'git clone -b {} {} {}'.format(branch, clone_url, clone_dir)
+                clone_command = 'git clone -b {} {} {}'.format(branch, clone_url, clone_dir)
             else:
-                yield project, repo, 'git clone {} {}'.format(clone_url, clone_dir)
+                clone_command = 'git clone {} {}'.format(clone_url, clone_dir)
+            yield clone_dir, project, repo, clone_command
         else:
-            yield project, repo, clone_url
+            yield None, project, repo, clone_url
 
 
 def main(projects, command, branch):
-    for project, repo, clone_url in get_clone_urls(projects, command, branch):
+    for clone_dir, project, repo, clone_url in get_clone_urls(projects, command, branch):
         print(clone_url)
 
 

@@ -43,7 +43,7 @@ def run_command(command, return_output=False, cwd=None):
     rc = process.poll()
     if rc:
         print_exc(file=sys.stdout)
-        raise SystemError(command, '\n'.join(the_output))
+        # raise SystemError(command, '\n'.join(the_output))
 
     return (rc, '\n'.join(the_output)) if return_output else rc
 
