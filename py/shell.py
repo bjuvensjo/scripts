@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
 import logging
+import sys
 from shlex import split
 from subprocess import Popen, PIPE, STDOUT
+from traceback import print_exc
 
 log = logging.getLogger(__name__)
 
@@ -27,7 +29,7 @@ def run_command(command, return_output=False, cwd=None):
     :return: return code and output (if return_output) as tuple
     """
 
-    log.info('Running: %s', command)
+    print('Running: ', command)
     process = Popen(split(command), stdout=PIPE, stderr=STDOUT, cwd=cwd)
     the_output = []
     while True:
@@ -37,12 +39,13 @@ def run_command(command, return_output=False, cwd=None):
         if output:
             if return_output:
                 the_output.append(output.replace('\n', ''))
-            log.info(output.replace('\n', ''))
+            print(output.replace('\n', ''))
     rc = process.poll()
     if rc:
-        raise SystemError(command)
+        print_exc(file=sys.stdout)
+        raise SystemError(command, '\n'.join(the_output))
 
-    return (rc, ''.join(the_output)) if return_output else rc
+    return (rc, '\n'.join(the_output)) if return_output else rc
 
 
 def run_commands(commands_and_cwds, max_processes=10, timeout=None):
@@ -66,12 +69,3 @@ def run_commands(commands_and_cwds, max_processes=10, timeout=None):
                     n += 1
                 processes.remove(rp)
                 yield rp
-
-    # Below is an alternative implementation that is somewhat simpler but somewhat slower.
-    # if len(commands) > max_processes:
-    #     for chunk in chunks(commands, max_processes):
-    #         yield from run_commands(chunk, cwd=cwd, max_processes=max_processes, timeout=timeout)
-    # else:
-    #     for process in [Popen(command, stdout=PIPE, stderr=STDOUT, shell=True, cwd=cwd) for command in commands]:
-    #         process.wait(timeout)
-    #         yield process

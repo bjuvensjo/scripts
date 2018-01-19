@@ -32,10 +32,9 @@ def get_pom(pom_infos, output_dir, group_id, artifact_id, version):
         .replace('###modules###', modules)
 
 
-def make_project(output_dir, group_id, artifact_id, version, source_dir):
+def make_project(output_dir, group_id, artifact_id, version, pom_infos):
     """ Makes a Maven multi module project. """
-    pom_info = [maven_pom.get_pom_info(pom_path) for pom_path in maven_pom.get_pom_paths(source_dir)]
-    pom = get_pom(pom_info, output_dir, group_id, artifact_id, version)
+    pom = get_pom(pom_infos, output_dir, group_id, artifact_id, version)
     makedirs(output_dir)
     with open(normpath('{}/pom.xml'.format(output_dir)), 'wt', encoding='utf-8') as pom_file:
         pom_file.write(pom)
@@ -47,7 +46,9 @@ def main():
     version = str(input('version (default 1.0.0-SNAPSHOT): ') or '1.0.0-SNAPSHOT')
     source_dir = normpath(str(input('sourceDir: (default .)') or '.'))
     output_dir = normpath(str(input('outputDir: (default ./ws)') or './ws'))
-    make_project(output_dir, group_id, artifact_id, version, source_dir)
+
+    pom_infos = [maven_pom.get_pom_info(pom_path) for pom_path in maven_pom.get_pom_paths(source_dir)]
+    make_project(output_dir, group_id, artifact_id, version, pom_infos)
 
 
 if __name__ == '__main__':

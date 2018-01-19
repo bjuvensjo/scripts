@@ -3,6 +3,8 @@ import traceback
 from json import load
 from re import match
 
+from os import makedirs
+
 from bb_get_clone_urls import get_clone_urls
 from bb_has_branch import has_branch
 from shell import run_commands
@@ -27,6 +29,7 @@ def should_be_cloned(project, repo, project_config, has_branch_map):
 
 
 def clone(commands, root_dir):
+    makedirs(root_dir, exist_ok=True)
     yield from run_commands([(cmd, root_dir) for cmd in commands], max_processes=25, timeout=20)
 
 
