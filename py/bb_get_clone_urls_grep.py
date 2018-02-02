@@ -11,7 +11,7 @@ def get_clone_urls_grep(patterns, command=False):
 
 
 def main(patterns, command):
-    for project, repo, clone_url in get_clone_urls_grep(patterns, command):
+    for clone_dir, project, repo, clone_url in get_clone_urls_grep(patterns, command):
         print(clone_url)
 
 
