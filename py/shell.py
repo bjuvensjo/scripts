@@ -29,7 +29,8 @@ def run_command(command, return_output=False, cwd=None):
     :return: return code and output (if return_output) as tuple
     """
 
-    print('Running: ', command)
+    if not return_output:
+        print('Running: ', command)
     process = Popen(split(command), stdout=PIPE, stderr=STDOUT, cwd=cwd)
     the_output = []
     while True:
@@ -39,7 +40,8 @@ def run_command(command, return_output=False, cwd=None):
         if output:
             if return_output:
                 the_output.append(output.replace('\n', ''))
-            print(output.replace('\n', ''))
+            else:
+                print(output.replace('\n', ''))
     rc = process.poll()
     if rc:
         print_exc(file=sys.stdout)

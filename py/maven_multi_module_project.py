@@ -32,7 +32,7 @@ def get_pom(pom_infos, output_dir, group_id, artifact_id, version):
         .replace('###modules###', modules)
 
 
-def make_project(output_dir, group_id, artifact_id, version, pom_infos):
+def make_project(pom_infos, output_dir, group_id, artifact_id, version, **kwargs):
     """ Makes a Maven multi module project. """
     pom = get_pom(pom_infos, output_dir, group_id, artifact_id, version)
     makedirs(output_dir)
@@ -40,15 +40,44 @@ def make_project(output_dir, group_id, artifact_id, version, pom_infos):
         pom_file.write(pom)
 
 
-def main():
-    group_id = str(input('groupId (default mygroup): ') or 'mygroup')
-    artifact_id = str(input('artifactId (default ws): ') or 'ws')
-    version = str(input('version (default 1.0.0-SNAPSHOT): ') or '1.0.0-SNAPSHOT')
-    source_dir = normpath(str(input('sourceDir: (default .)') or '.'))
-    output_dir = normpath(str(input('outputDir: (default ./ws)') or './ws'))
+def get_pom_infos(source_dir):
+    pom_infos = []
+    for pom_path in maven_pom.get_pom_paths(source_dir):
+        try:
+            pom_info = maven_pom.get_pom_info(pom_path)
+            pom_infos.append(pom_info)
+        except Exception as e:
+            print('Can not add {}'.format(pom_path))
+            print(e)
+    return pom_infos
 
-    pom_infos = [maven_pom.get_pom_info(pom_path) for pom_path in maven_pom.get_pom_paths(source_dir)]
-    make_project(output_dir, group_id, artifact_id, version, pom_infos)
+
+def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Create Maven multi module project')
+    parser.add_argument('-d', '--defaults', action='store_true', help='Create with default values.')
+    args = parser.parse_args()
+
+    defaults = {
+        'group_id': 'mygroup',
+        'artifact_id': 'ws',
+        'version': '1.0.0-SNAPSHOT',
+        'source_dir': '.',
+        'output_dir': './ws'
+    }
+    if args.defaults:
+        pom_infos = get_pom_infos(defaults['source_dir'])
+        make_project(pom_infos, **defaults)
+    else:
+        group_id = str(input('groupId (default mygroup): ') or defaults['group_id'])
+        artifact_id = str(input('artifactId (default ws): ') or defaults['artifact_id'])
+        version = str(input('version (default 1.0.0-SNAPSHOT): ') or defaults['version'])
+        source_dir = normpath(str(input('sourceDir: (default .)') or defaults['source_dir']))
+        output_dir = normpath(str(input('outputDir: (default ./ws)') or defaults['output_dir']))
+
+        pom_infos = get_pom_infos(source_dir)
+        make_project(pom_infos, output_dir, group_id, artifact_id, version)
 
 
 if __name__ == '__main__':
