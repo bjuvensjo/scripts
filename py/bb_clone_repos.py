@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 import traceback
 from json import load
-from re import match
-
 from os import makedirs
+from re import match
 
 from bb_get_clone_urls import get_clone_urls
 from bb_has_branch import has_branch
@@ -40,10 +39,17 @@ def get_projects_commands(projects, branch=None):
 
 def get_repos_commands(repos, branch=None):
     projects = {repo.split('/')[0] for repo in repos}
-    return ((clone_dir, project, repo, command)
-            for clone_dir, project, repo, command in get_clone_urls(projects, True, branch)
-            for repo_spec in repos
-            if repo_spec == '{}/{}'.format(project, repo))
+
+    commands = []
+    clone_urls_map = {'{}/{}'.format(project, repo): (clone_dir, project, repo, command) for
+                      clone_dir, project, repo, command in get_clone_urls(projects, True, branch)}
+    for repo_spec in repos:
+        if repo_spec in clone_urls_map:
+            commands.append(clone_urls_map[repo_spec])
+        else:
+            print('Warning! Non existing repo: {}'.format(repo_spec))
+
+    return commands
 
 
 def get_config_commands(config, branch=None):
