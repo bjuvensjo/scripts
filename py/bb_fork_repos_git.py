@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
+import sys
 from functools import partial
 from multiprocessing.dummy import Pool
+from traceback import print_exc
 
 import bb_clone_repos
 import bb_create_repo
@@ -11,33 +13,30 @@ from shell import run_command
 
 
 def fork_repo(fork_project, branches, git_dir):
-    for b in reversed(branches):
-        run_command('git checkout {}'.format(b), return_output=True, cwd=git_dir)
-    rc, original_origin = run_command('git remote get-url origin', return_output=True, cwd=git_dir)
-    repo = original_origin.split('/')[-1][:-4]
-    bb_create_repo.create_repo(fork_project, repo)
-    new_origin = '/'.join(original_origin.split('/')[:-2]) + '/' + fork_project.lower() + '/' + repo + '.git'
-    run_command('git remote set-url origin {}'.format(new_origin), return_output=True, cwd=git_dir)
-    run_command('git remote prune origin', return_output=True, cwd=git_dir)
-    for b in branches:
-        run_command('git push -u origin {}'.format(b), return_output=True, cwd=git_dir)
-    bb_set_default_branches.set_repo_default_branch((fork_project, repo), branches[0])
+    try:
+        for b in reversed(branches):
+            run_command('git checkout {}'.format(b), return_output=True, cwd=git_dir)
+        rc, original_origin = run_command('git remote get-url origin', return_output=True, cwd=git_dir)
+        repo = original_origin.split('/')[-1][:-4]
+        bb_create_repo.create_repo(fork_project, repo)
+        new_origin = '/'.join(original_origin.split('/')[:-2]) + '/' + fork_project.lower() + '/' + repo + '.git'
+        run_command('git remote set-url origin {}'.format(new_origin), return_output=True, cwd=git_dir)
+        run_command('git remote prune origin', return_output=True, cwd=git_dir)
+        for b in branches:
+            run_command('git push -u origin {}'.format(b), return_output=True, cwd=git_dir)
+        bb_set_default_branches.set_repo_default_branch((fork_project, repo), branches[0])
 
-    return (fork_project, repo), new_origin
-
-
-def fork_callback(result):
-    print('{}/{}: {}'.format(*result[0], result[1]))
+        print('{}/{}: {}'.format(fork_project, repo, new_origin))
+        return (fork_project, repo), new_origin
+    except:
+        print_exc(file=sys.out)
 
 
 def fork_repos(fork_project, branches, work_dir='.', repos=None, projects=None, max_processes=10):
     bb_clone_repos.main(work_dir, projects, repos, branches[0])
     git_dirs = command_all.get_work_dirs('.git/', work_dir)
     with Pool(processes=max_processes) as pool:
-        p = partial(fork_repo, fork_project, branches)
-        results = [pool.apply_async(p, (gd,), callback=fork_callback) for gd in git_dirs]
-        for res in results:
-            res.get()
+        pool.map(partial(fork_repo, fork_project, branches), git_dirs)
 
 
 def main(fork_project, branches, work_dir='.', repos=None, projects=None):
@@ -55,7 +54,7 @@ if __name__ == '__main__':
     ''')
     parser.add_argument('fork_project', help='Fork project (must exist)')
     parser.add_argument('-b', '--branches', nargs='*',
-                        help='e.g. develop master. The first will be set as default branch')
+                        help='The branches to fork, e.g. develop master. The first will be set as default branch')
     parser.add_argument('-d', '--dir', default='.', help='The directory to clone into')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-r', '--repos', nargs='*',
