@@ -29,7 +29,7 @@ def fork_repo(fork_project, branches, git_dir):
         print('{}/{}: {}'.format(fork_project, repo, new_origin))
         return (fork_project, repo), new_origin
     except:
-        print_exc(file=sys.out)
+        print_exc(file=sys.stdout)
 
 
 def fork_repos(fork_project, branches, work_dir='.', repos=None, projects=None, max_processes=10):
