@@ -3,15 +3,11 @@
 from bb_get_branches import get_branches
 from bb_utils import get_repo_specs
 
+
 def has_branch(repo_specs, branch):
     for spec in repo_specs:
         branches = [b['displayId'] for spec, b in get_branches((spec,), branch)]
         yield spec, branch in branches
-
-#
-# def has_branch(repo_specs, branch):
-#     for spec, response in get_branches(repo_specs, branch):
-#         yield spec, branch in [value['displayId'] for value in response['values']]
 
 
 def main(branch, only_has=True, only_not_has=False, dirs=None, repos=None, projects=None):
