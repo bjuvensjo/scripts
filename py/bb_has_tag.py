@@ -4,8 +4,9 @@ from bb_utils import get_repo_specs
 
 
 def has_tag(repo_specs, tag):
-    for spec, response in get_tags(repo_specs, tag):
-        yield spec, tag in [value['displayId'] for value in response['values']]
+    for spec in repo_specs:
+        tags = [t['displayId'] for spec, t in get_tags((spec,), tag)]
+        yield spec, tag in tags
 
 
 def main(tag, dirs=None, repos=None, projects=None):
