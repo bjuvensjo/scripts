@@ -10,3 +10,5 @@ docs.txt
 __pycache__
 **/slask*
 README.html
+**/.pytest_cache
+**/.cache
