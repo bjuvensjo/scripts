@@ -1,0 +1,17 @@
+{
+  "dirs": [
+    {
+      "path": "/Users/me/.m2/repository/release/com/foo/bar",
+      "flatten": true,
+      "includes": [
+        "business*/**/*.jar",
+        "war.es/1.0.1-SNAPSHOT/war.es-1.0.1-SNAPSHOT.war"
+      ],
+      "excludes": [
+        "**/*javadoc*",
+        "**/*sources*"
+      ]
+    }
+  ],
+  "output_file": "./releases/release-#timestamp#.zip"
+}

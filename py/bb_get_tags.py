@@ -6,10 +6,10 @@ from bb_api import call
 from bb_utils import get_repo_specs
 
 
-def get_tags_page(spec, tag, limit, start):
+def get_tags_page(spec, tag, limit, start, order_by='MODIFICATION'):
     response = call(
-        '/rest/api/1.0/projects/{}/repos/{}/tags?filterText={}&limit={}&start={}'.format(spec[0], spec[1], tag, limit,
-                                                                                         start))
+        '/rest/api/1.0/projects/{}/repos/{}/tags?filterText={}&limit={}&start={}&orderBy'.format(spec[0], spec[1], tag, limit,
+                                                                                         start, order_by))
     return response['size'], response['values'], response['isLastPage'], response.get('nextPageStart', -1)
 
 
