@@ -169,7 +169,7 @@ def test_parse_args():
         dir='dir',
         src_project='src_project',
         src_repo='src_repo',
-        webhook=True) == parse_args([
+        webhook='webhook') == parse_args([
             'src_project', 'src_repo', 'dest_project', 'dest_repo', '-b',
-            'branch', '-d', 'dir', '-w'
+            'branch', '-d', 'dir', '-w', 'webhook'
         ])

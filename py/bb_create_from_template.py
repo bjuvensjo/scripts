@@ -101,7 +101,7 @@ def parse_args(args):
     parser.add_argument(
         '-w',
         '--webhook',
-        action='store_true',
+        default=False,
         help='Webhook url to add to the new repo')
     return parser.parse_args(args)
 
