@@ -15,10 +15,12 @@ def main(project, repository):
     response = create_repo(project, repository)
     commands = '    git remote add origin {}\n' \
                '    git push -u origin develop'.format(response['links']['clone'][0]['href'])
-    print('If you already have code ready to be pushed to this repository then run this in your terminal.')
+    print(
+        'If you already have code ready to be pushed to this repository then run this in your terminal.'
+    )
     print(commands)
     if name == 'posix':
-        system(f"echo '{commands}\c' | pbcopy")
+        system('echo "{}\c" | pbcopy'.format(commands))
         print('(The commands are copied to the clipboard)')
 
 

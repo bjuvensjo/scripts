@@ -1,7 +1,8 @@
-import unittest
 from unittest.mock import patch
+from pytest import raises
 
-from artifactory_utils import *
+from artifactory_utils import get_artifact_base_uri
+from artifactory_utils import get_pom_path
 
 
 @patch('artifactory_utils.glob')
@@ -22,8 +23,9 @@ def test_get_pom_path(mock_exists, mock_glob):
     assert '/signing.updatesigning/1.0.0-SNAPSHOT/signing.updatesigning-1.0.0-SNAPSHOT.pom' == get_pom_path(
         '/signing.updatesigning/1.0.0-SNAPSHOT')
 
-    # mock_glob.return_value = []
-    # self.assertRaises(ValueError, get_pom_path, '/foo/bar')
+    mock_glob.return_value = []
+    with raises(ValueError):
+        get_pom_path('/foo/bar')
 
 
 def test_get_artifact_base_uri():

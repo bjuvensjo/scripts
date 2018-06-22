@@ -13,7 +13,7 @@ def call(uri, request_data=None, method='GET'):
     * U, the bitbucket username
     * P, the bitbucket password
 
-    Args: 
+    Args:
         uri (str): e.g. "/rest/api/1.0/projects/{project}/repos/{repo}/branches?filterText={branch}"
         request_data (str): the JSON request
         method: http method
@@ -22,17 +22,19 @@ def call(uri, request_data=None, method='GET'):
           the JSON response
     """
     auth = '{}:{}'.format(environ['U'], environ['P'])
-    basic_auth_header = 'Basic {}'.format(encodebytes(auth.encode()).decode('UTF-8').strip())
+    basic_auth_header = 'Basic {}'.format(
+        encodebytes(auth.encode()).decode('UTF-8').strip())
     url = '{}{}'.format(environ['BITBUCKET_REST_URL'], uri)
 
-    request = Request(url,
-                      request_data.encode("UTF-8") if request_data else None,
-                      {
-                          'Authorization': basic_auth_header,
-                          'Content-Type': "application/json"
-                      },
-                      method=method)
+    request = Request(
+        url,
+        request_data.encode("UTF-8") if request_data else None, {
+            'Authorization': basic_auth_header,
+            'Content-Type': "application/json"
+        },
+        method=method)
 
     response = urlopen(request)
     response_data = response.read()
-    return loads(response_data.decode('UTF-8')) if response_data else response.getcode()
+    return loads(
+        response_data.decode('UTF-8')) if response_data else response.getcode()

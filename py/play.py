@@ -9,7 +9,6 @@ from sys import argv
 import sys
 import termios
 
-
 def get_char_keyboard():
     fd = sys.stdin.fileno()
 
@@ -33,13 +32,13 @@ def execute(command, cwd=None):
     return Popen(split(command), stdout=PIPE, stderr=STDOUT, cwd=cwd)
 
 
+def get_audio_files(path):
+    return glob('{}/**/*.wav'.format(path), recursive=True)
+
+
 def play(audio_file):
     print('Playing {}'.format(audio_file))
     return execute('afplay "{}"'.format(audio_file))
-
-
-def get_audio_files(path):
-    return glob('{}/**/*.wav'.format(path), recursive=True)
 
 
 def play_list(playlist):
@@ -65,6 +64,8 @@ def play_list(playlist):
                     print(c)
                     in_list = False
                     c = None
+                if c == 'c' and not in_list:
+                    print('Playing', sorted_playlist[i])
                 if c == 'b' and not in_list:
                     do_play = False
                     process.kill()
