@@ -1,0 +1,269 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for myorg:config.env:jar:1.0.0-SNAPSHOT
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-resources-plugin is missing. @ line 54, column 21
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] myorg:app.admin                                                [jar]
+[INFO] config-apache-proxy                                                [jar]
+[INFO] 
+[INFO] ------------------------< myorg:app.admin >-------------------------
+[INFO] Building myorg:app.admin 0.0.1-SNAPSHOT                        [1/2]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.6.1:clean (default-clean) @ app.admin ---
+[INFO] Deleting /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ app.admin ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1 resource
+[INFO] Copying 0 resource
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ app.admin ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 1 source file to /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ app.admin ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ app.admin ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 1 source file to /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.18.1:test (default-test) @ app.admin ---
+[INFO] Surefire report directory: /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/surefire-reports
+[WARNING] file.encoding cannot be set as system property, use <argLine>-Dfile.encoding=...<argLine> instead
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running myorg.admin.admin.AdminApplicationTests
+2018-06-26 16:54:43.414  WARN 50145 --- [           main] o.s.b.l.logback.LogbackLoggingSystem     : Ignoring 'logback.configurationFile' system property. Please use 'logging.config' instead.
+2018-06-26 16:54:43.616  INFO 50145 --- [           main] s.c.a.AnnotationConfigApplicationContext : Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@31ea9581: startup date [Tue Jun 26 16:54:43 CEST 2018]; root of context hierarchy
+2018-06-26 16:54:44.011  INFO 50145 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'configurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$cf99cf1e] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2018-06-26 16:54:44.354  WARN 50145 --- [           main] o.s.b.l.logback.LogbackLoggingSystem     : Ignoring 'logback.configurationFile' system property. Please use 'logging.config' instead.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::       (v1.5.13.RELEASE)
+
+2018-06-26 16:54:44.372  INFO 50145 --- [           main] s.l.c.admin.admin.AdminApplicationTests  : No active profile set, falling back to default profiles: default
+2018-06-26 16:54:44.379  INFO 50145 --- [           main] o.s.w.c.s.GenericWebApplicationContext   : Refreshing org.springframework.web.context.support.GenericWebApplicationContext@192d74fb: startup date [Tue Jun 26 16:54:44 CEST 2018]; parent: org.springframework.context.annotation.AnnotationConfigApplicationContext@31ea9581
+2018-06-26 16:54:44.935  INFO 50145 --- [           main] o.s.b.f.s.DefaultListableBeanFactory     : Overriding bean definition for bean 'counterFactory' with a different definition: replacing [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.cloud.netflix.zuul.ZuulServerAutoConfiguration$ZuulMetricsConfiguration; factoryMethodName=counterFactory; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/cloud/netflix/zuul/ZuulServerAutoConfiguration$ZuulMetricsConfiguration.class]] with [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.cloud.netflix.zuul.ZuulServerAutoConfiguration$ZuulCounterFactoryConfiguration; factoryMethodName=counterFactory; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/cloud/netflix/zuul/ZuulServerAutoConfiguration$ZuulCounterFactoryConfiguration.class]]
+2018-06-26 16:54:44.978  INFO 50145 --- [           main] o.s.b.f.s.DefaultListableBeanFactory     : Overriding bean definition for bean 'zuulRefreshRoutesListener' with a different definition: replacing [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.cloud.netflix.zuul.ZuulServerAutoConfiguration; factoryMethodName=zuulRefreshRoutesListener; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/cloud/netflix/zuul/ZuulServerAutoConfiguration.class]] with [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=de.codecentric.boot.admin.config.RevereseZuulProxyConfiguration; factoryMethodName=zuulRefreshRoutesListener; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [de/codecentric/boot/admin/config/RevereseZuulProxyConfiguration.class]]
+2018-06-26 16:54:45.193  INFO 50145 --- [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=f7d352a7-637d-38eb-980f-b6d7acdae1a0
+2018-06-26 16:54:45.353  INFO 50145 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.netflix.metrics.MetricsInterceptorConfiguration$MetricsRestTemplateConfiguration' of type [org.springframework.cloud.netflix.metrics.MetricsInterceptorConfiguration$MetricsRestTemplateConfiguration$$EnhancerBySpringCGLIB$$e5ac7262] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2018-06-26 16:54:45.365  INFO 50145 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$cf99cf1e] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2018-06-26 16:54:45.752  WARN 50145 --- [           main] o.s.c.n.a.ArchaiusAutoConfiguration      : No spring.application.name found, defaulting to 'application'
+2018-06-26 16:54:45.757  WARN 50145 --- [           main] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2018-06-26 16:54:45.757  INFO 50145 --- [           main] c.n.c.sources.URLConfigurationSource     : To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2018-06-26 16:54:45.776  WARN 50145 --- [           main] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2018-06-26 16:54:45.776  INFO 50145 --- [           main] c.n.c.sources.URLConfigurationSource     : To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2018-06-26 16:54:46.085  INFO 50145 --- [           main] s.w.s.m.m.a.RequestMappingHandlerAdapter : Looking for @ControllerAdvice: org.springframework.web.context.support.GenericWebApplicationContext@192d74fb: startup date [Tue Jun 26 16:54:44 CEST 2018]; parent: org.springframework.context.annotation.AnnotationConfigApplicationContext@31ea9581
+2018-06-26 16:54:46.246  INFO 50145 --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+2018-06-26 16:54:46.248  INFO 50145 --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+2018-06-26 16:54:46.255  INFO 50145 --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/applications/{id}],methods=[GET]}" onto public org.springframework.http.ResponseEntity<?> de.codecentric.boot.admin.registry.web.RegistryController.get(java.lang.String)
+2018-06-26 16:54:46.256  INFO 50145 --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/applications],methods=[POST]}" onto public org.springframework.http.ResponseEntity<?> de.codecentric.boot.admin.registry.web.RegistryController.register(de.codecentric.boot.admin.model.Application,org.springframework.web.util.UriComponentsBuilder)
+2018-06-26 16:54:46.257  INFO 50145 --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/applications/{id}],methods=[DELETE]}" onto public org.springframework.http.ResponseEntity<?> de.codecentric.boot.admin.registry.web.RegistryController.unregister(java.lang.String)
+2018-06-26 16:54:46.258  INFO 50145 --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/applications],methods=[GET]}" onto public java.util.Collection<de.codecentric.boot.admin.model.Application> de.codecentric.boot.admin.registry.web.RegistryController.applications(java.lang.String)
+2018-06-26 16:54:46.262  INFO 50145 --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/journal],produces=[application/json]}" onto public java.util.Collection<de.codecentric.boot.admin.event.ClientApplicationEvent> de.codecentric.boot.admin.journal.web.JournalController.getJournal()
+2018-06-26 16:54:46.262  INFO 50145 --- [           main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/api/journal],produces=[text/event-stream]}" onto public org.springframework.web.servlet.mvc.method.annotation.SseEmitter de.codecentric.boot.admin.journal.web.JournalController.getJournalEvents()
+2018-06-26 16:54:46.280  INFO 50145 --- [           main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Root mapping to handler of type [class org.springframework.web.servlet.mvc.ParameterizableViewController]
+2018-06-26 16:54:46.304  WARN 50145 --- [           main] o.s.w.s.r.ResourceHttpRequestHandler     : Locations list is empty. No resources will be served unless a custom ResourceResolver is configured as an alternative to PathResourceResolver.
+2018-06-26 16:54:46.304  WARN 50145 --- [           main] o.s.w.s.r.ResourceHttpRequestHandler     : Locations list is empty. No resources will be served unless a custom ResourceResolver is configured as an alternative to PathResourceResolver.
+2018-06-26 16:54:46.306  INFO 50145 --- [           main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-06-26 16:54:46.306  INFO 50145 --- [           main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-06-26 16:54:46.306  INFO 50145 --- [           main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/all-modules.css] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-06-26 16:54:46.306  INFO 50145 --- [           main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/all-modules.js] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-06-26 16:54:46.377  INFO 50145 --- [           main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-06-26 16:54:46.884  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/routes || /routes.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-06-26 16:54:46.885  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/auditevents || /auditevents.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public org.springframework.http.ResponseEntity<?> org.springframework.boot.actuate.endpoint.mvc.AuditEventsMvcEndpoint.findByPrincipalAndAfterAndType(java.lang.String,java.util.Date,java.lang.String)
+2018-06-26 16:54:46.886  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/refresh || /refresh.json],methods=[POST]}" onto public java.lang.Object org.springframework.cloud.endpoint.GenericPostableMvcEndpoint.invoke()
+2018-06-26 16:54:46.886  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/mappings || /mappings.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-06-26 16:54:46.887  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/trace || /trace.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-06-26 16:54:46.889  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/dump || /dump.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-06-26 16:54:46.890  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-06-26 16:54:46.891  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/info || /info.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-06-26 16:54:46.892  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/archaius || /archaius.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-06-26 16:54:46.893  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/heapdump || /heapdump.json],methods=[GET],produces=[application/octet-stream]}" onto public void org.springframework.boot.actuate.endpoint.mvc.HeapdumpMvcEndpoint.invoke(boolean,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse) throws java.io.IOException,javax.servlet.ServletException
+2018-06-26 16:54:46.895  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/loggers/{name:.*}],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.LoggersMvcEndpoint.get(java.lang.String)
+2018-06-26 16:54:46.896  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/loggers/{name:.*}],methods=[POST],consumes=[application/vnd.spring-boot.actuator.v1+json || application/json],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.LoggersMvcEndpoint.set(java.lang.String,java.util.Map<java.lang.String, java.lang.String>)
+2018-06-26 16:54:46.896  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/loggers || /loggers.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-06-26 16:54:46.897  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/env/{name:.*}],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EnvironmentMvcEndpoint.value(java.lang.String)
+2018-06-26 16:54:46.898  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/env || /env.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-06-26 16:54:46.899  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/features || /features.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-06-26 16:54:46.900  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/beans || /beans.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-06-26 16:54:46.901  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/metrics/{name:.*}],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.MetricsMvcEndpoint.value(java.lang.String)
+2018-06-26 16:54:46.903  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/metrics || /metrics.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-06-26 16:54:46.904  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/env],methods=[POST]}" onto public java.lang.Object org.springframework.cloud.context.environment.EnvironmentManagerMvcEndpoint.value(java.util.Map<java.lang.String, java.lang.String>)
+2018-06-26 16:54:46.905  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/env/reset],methods=[POST]}" onto public java.util.Map<java.lang.String, java.lang.Object> org.springframework.cloud.context.environment.EnvironmentManagerMvcEndpoint.reset()
+2018-06-26 16:54:46.906  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/configprops || /configprops.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-06-26 16:54:46.907  INFO 50145 --- [           main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/health || /health.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.HealthMvcEndpoint.invoke(javax.servlet.http.HttpServletRequest,java.security.Principal)
+2018-06-26 16:54:47.398  INFO 50145 --- [           main] o.s.c.n.zuul.ZuulFilterInitializer       : Starting filter initializer
+2018-06-26 16:54:47.526  INFO 50145 --- [           main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService  'updateTaskScheduler'
+2018-06-26 16:54:47.555  INFO 50145 --- [           main] d.c.boot.admin.web.PrefixHandlerMapping  : Mapped "{[/api/applications/{id}],methods=[GET]}" onto public org.springframework.http.ResponseEntity<?> de.codecentric.boot.admin.registry.web.RegistryController.get(java.lang.String)
+2018-06-26 16:54:47.555  INFO 50145 --- [           main] d.c.boot.admin.web.PrefixHandlerMapping  : Mapped "{[/api/applications],methods=[POST]}" onto public org.springframework.http.ResponseEntity<?> de.codecentric.boot.admin.registry.web.RegistryController.register(de.codecentric.boot.admin.model.Application,org.springframework.web.util.UriComponentsBuilder)
+2018-06-26 16:54:47.555  INFO 50145 --- [           main] d.c.boot.admin.web.PrefixHandlerMapping  : Mapped "{[/api/applications/{id}],methods=[DELETE]}" onto public org.springframework.http.ResponseEntity<?> de.codecentric.boot.admin.registry.web.RegistryController.unregister(java.lang.String)
+2018-06-26 16:54:47.556  INFO 50145 --- [           main] d.c.boot.admin.web.PrefixHandlerMapping  : Mapped "{[/api/applications],methods=[GET]}" onto public java.util.Collection<de.codecentric.boot.admin.model.Application> de.codecentric.boot.admin.registry.web.RegistryController.applications(java.lang.String)
+2018-06-26 16:54:47.557  INFO 50145 --- [           main] d.c.boot.admin.web.PrefixHandlerMapping  : Mapped "{[/api/journal],produces=[application/json]}" onto public java.util.Collection<de.codecentric.boot.admin.event.ClientApplicationEvent> de.codecentric.boot.admin.journal.web.JournalController.getJournal()
+2018-06-26 16:54:47.557  INFO 50145 --- [           main] d.c.boot.admin.web.PrefixHandlerMapping  : Mapped "{[/api/journal],produces=[text/event-stream]}" onto public org.springframework.web.servlet.mvc.method.annotation.SseEmitter de.codecentric.boot.admin.journal.web.JournalController.getJournalEvents()
+2018-06-26 16:54:47.698  INFO 50145 --- [           main] s.l.c.admin.admin.AdminApplicationTests  : Started AdminApplicationTests in 4.623 seconds (JVM running for 5.415)
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.863 sec - in myorg.admin.admin.AdminApplicationTests
+2018-06-26 16:54:47.854  INFO 50145 --- [       Thread-6] o.s.w.c.s.GenericWebApplicationContext   : Closing org.springframework.web.context.support.GenericWebApplicationContext@192d74fb: startup date [Tue Jun 26 16:54:44 CEST 2018]; parent: org.springframework.context.annotation.AnnotationConfigApplicationContext@31ea9581
+2018-06-26 16:54:47.857  INFO 50145 --- [       Thread-6] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService 'updateTaskScheduler'
+2018-06-26 16:54:47.858  INFO 50145 --- [       Thread-6] o.s.c.n.zuul.ZuulFilterInitializer       : Stopping filter initializer
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- maven-jar-plugin:2.6:jar (default-jar) @ app.admin ---
+[INFO] Building jar: /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/app.admin-0.0.1-SNAPSHOT.jar
+[INFO] 
+[INFO] --- spring-boot-maven-plugin:1.5.13.RELEASE:repackage (default) @ app.admin ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ app.admin ---
+[INFO] Installing /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/app.admin-0.0.1-SNAPSHOT.jar to /Users/ei4577/slask/wildcat2/repository/develop/myorg/app.admin/0.0.1-SNAPSHOT/app.admin-0.0.1-SNAPSHOT.jar
+[INFO] Installing /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/pom.xml to /Users/ei4577/slask/wildcat2/repository/develop/myorg/app.admin/0.0.1-SNAPSHOT/app.admin-0.0.1-SNAPSHOT.pom
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.10.4:jar (default-cli) @ app.admin ---
+[INFO] 
+Loading source files for package myorg.admin.admin...
+Constructing Javadoc information...
+Standard Doclet version 1.8.0_131
+Building tree for all the packages and classes...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/apidocs/myorg/admin/admin/AdminApplication.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/apidocs/myorg/admin/admin/package-frame.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/apidocs/myorg/admin/admin/package-summary.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/apidocs/myorg/admin/admin/package-tree.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/apidocs/constant-values.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/apidocs/myorg/admin/admin/class-use/AdminApplication.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/apidocs/myorg/admin/admin/package-use.html...
+Building index for all the packages and classes...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/apidocs/overview-tree.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/apidocs/index-all.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/apidocs/deprecated-list.html...
+Building index for all classes...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/apidocs/allclasses-frame.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/apidocs/allclasses-noframe.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/apidocs/index.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/apidocs/help-doc.html...
+[INFO] Building jar: /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/app.admin-0.0.1-SNAPSHOT-javadoc.jar
+[INFO] 
+[INFO] >>> maven-source-plugin:2.4:jar (default-cli) > generate-sources @ app.admin >>>
+[INFO] 
+[INFO] <<< maven-source-plugin:2.4:jar (default-cli) < generate-sources @ app.admin <<<
+[INFO] 
+[INFO] 
+[INFO] --- maven-source-plugin:2.4:jar (default-cli) @ app.admin ---
+[INFO] Building jar: /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/admin/target/app.admin-0.0.1-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] -------------------< myorg:config-apache-proxy >--------------------
+[INFO] Building config-apache-proxy 1.0.0-SNAPSHOT                        [2/2]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] Downloading from snapshot-plugin: http://10.46.64.31:7777/wildcat/repository?refs=develop&resource=/org/codehaus/mojo/maven-metadata.xml
+[INFO] Downloading from snapshot-plugin: http://10.46.64.31:7777/wildcat/repository?refs=develop&resource=/org/apache/maven/plugins/maven-metadata.xml
+[INFO] Downloading from snapshot-plugin: http://10.46.64.31:7777/wildcat/repository?refs=develop&resource=/org/apache/maven/plugins/maven-javadoc-plugin/maven-metadata.xml
+[INFO] Downloading from snapshot-plugin: http://10.46.64.31:7777/wildcat/repository?refs=develop&resource=/org/apache/maven/plugins/maven-source-plugin/maven-metadata.xml
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ config-apache-proxy ---
+[INFO] Deleting /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ config-apache-proxy ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/src/main/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ config-apache-proxy ---
+[INFO] Changes detected - recompiling the module!
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 2 source files to /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ config-apache-proxy ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ config-apache-proxy ---
+[INFO] Changes detected - recompiling the module!
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 3 source files to /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ config-apache-proxy ---
+[INFO] Surefire report directory: /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running myorg.config.apacheproxy.ApacheProxyConfigGeneratorTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.452 sec
+Running myorg.config.apacheproxy.RequestMappingProviderTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 sec
+
+Results :
+
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] 
+[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ config-apache-proxy ---
+[INFO] Building jar: /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/config-apache-proxy-1.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-install-plugin:2.4:install (default-install) @ config-apache-proxy ---
+[INFO] Installing /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/config-apache-proxy-1.0.0-SNAPSHOT.jar to /Users/ei4577/slask/wildcat2/repository/develop/myorg/config-apache-proxy/1.0.0-SNAPSHOT/config-apache-proxy-1.0.0-SNAPSHOT.jar
+[INFO] Installing /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/pom.xml to /Users/ei4577/slask/wildcat2/repository/develop/myorg/config-apache-proxy/1.0.0-SNAPSHOT/config-apache-proxy-1.0.0-SNAPSHOT.pom
+[INFO] 
+[INFO] --- maven-javadoc-plugin:3.0.1:jar (default-cli) @ config-apache-proxy ---
+[WARNING] Source files encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] 
+Loading source files for package myorg.config.apacheproxy...
+Constructing Javadoc information...
+Standard Doclet version 1.8.0_131
+Building tree for all the packages and classes...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/apidocs/myorg/config/apacheproxy/ApacheProxyConfigGenerator.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/apidocs/myorg/config/apacheproxy/RequestMappingProvider.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/apidocs/myorg/config/apacheproxy/package-frame.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/apidocs/myorg/config/apacheproxy/package-summary.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/apidocs/myorg/config/apacheproxy/package-tree.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/apidocs/constant-values.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/apidocs/myorg/config/apacheproxy/class-use/RequestMappingProvider.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/apidocs/myorg/config/apacheproxy/class-use/ApacheProxyConfigGenerator.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/apidocs/myorg/config/apacheproxy/package-use.html...
+Building index for all the packages and classes...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/apidocs/overview-tree.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/apidocs/index-all.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/apidocs/deprecated-list.html...
+Building index for all classes...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/apidocs/allclasses-frame.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/apidocs/allclasses-noframe.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/apidocs/index.html...
+Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/apidocs/help-doc.html...
+[INFO] Building jar: /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/config-apache-proxy-1.0.0-SNAPSHOT-javadoc.jar
+[INFO] 
+[INFO] >>> maven-source-plugin:3.0.1:jar (default-cli) > generate-sources @ config-apache-proxy >>>
+[INFO] 
+[INFO] <<< maven-source-plugin:3.0.1:jar (default-cli) < generate-sources @ config-apache-proxy <<<
+[INFO] 
+[INFO] 
+[INFO] --- maven-source-plugin:3.0.1:jar (default-cli) @ config-apache-proxy ---
+[INFO] Building jar: /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-proxy/target/config-apache-proxy-1.0.0-SNAPSHOT-sources.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] myorg:app.admin 0.0.1-SNAPSHOT ................. SUCCESS [ 11.095 s]
+[INFO] config-apache-proxy 1.0.0-SNAPSHOT ................. SUCCESS [  4.300 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 16.833 s
+[INFO] Finished at: 2018-06-26T16:54:55+02:00
+[INFO] ------------------------------------------------------------------------

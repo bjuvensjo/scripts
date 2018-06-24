@@ -1,0 +1,19 @@
+{
+  "branch": "develop",
+  "projects": {
+    "PCS1806": {
+      "includes": [
+      ],
+      "excludes": [
+        "admin"
+      ]
+    },
+    "ZESAP": {
+      "includes": [
+        ".*account.*"
+      ],
+      "excludes": [
+      ]
+    }
+  }
+}

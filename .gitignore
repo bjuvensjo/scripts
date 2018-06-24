@@ -12,3 +12,6 @@ __pycache__
 README.html
 **/.pytest_cache
 **/.cache
+/build
+/dist
+**/*egg-info
