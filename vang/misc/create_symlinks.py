@@ -55,8 +55,7 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-# if __name__ == '__main__':
-#     args = parse_args(argv[1:])
-#     create_symlinks(args.source, args.target)
+if __name__ == '__main__':
+    args = parse_args(argv[1:])
+    create_symlinks(args.source, args.target)
 
-create_symlinks('/Users/ei4577/git/scripts', '/Users/ei4577/slask/foo')
