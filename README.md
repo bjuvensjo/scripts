@@ -5,15 +5,15 @@ Miscellaneous scripts
 ## Suggested usage ##
 
 1. Clone this repository
-2. Add required environment variables, see artifactory_api.py and bb_api.py
+2. Add required environment variables, see vang/artifactory/api.py and vang/bitbucket/api.py
 2. Create a directory, e.g. ~/bin, and add it to your path
 3. Create symbolic links (see example below). If on windows, create cmd-files that calls the scripts
 4. All python scripts has help, e.g 
 
-        ~/bin bb-clone-repos -h
-        usage: bb-clone-repos [-h]
-                              (-p PROJECTS [PROJECTS ...] | -r REPOS [REPOS ...] | -c CONFIG)
-                              [-b BRANCH] [-d DIR]
+        ~/bin clone-repos -h
+        usage: clone-repos [-h]
+                           (-p PROJECTS [PROJECTS ...] | -r REPOS [REPOS ...] | -c CONFIG)
+                           [-b BRANCH] [-d DIR]
         
         Clone Bitbucket repos
         
@@ -34,36 +34,32 @@ Miscellaneous scripts
       
 ## Symbolic links example ##
 
-    ~/bin
-    lrwxr-xr-x    artifactory-delete -> /Users/bjuvensjo/git/scripts/py/artifactory_delete.py
-    lrwxr-xr-x    artifactory-publish -> /Users/bjuvensjo/git/scripts/py/artifactory_publish.py
-    lrwxr-xr-x    basic -> /Users/bjuvensjo/git/scripts/py/basic.py
-    lrwxr-xr-x    bb-api -> /Users/bjuvensjo/git/scripts/py/bb_api.py
-    lrwxr-xr-x    bb-clone-repos -> /Users/bjuvensjo/git/scripts/py/bb_clone_repos.py
-    lrwxr-xr-x    bb-create-repo -> /Users/bjuvensjo/git/scripts/py/bb_create_repo.py
-    lrwxr-xr-x    bb-delete-repos -> /Users/bjuvensjo/git/scripts/py/bb_delete_repos.py
-    lrwxr-xr-x    bb-enable-webhooks -> /Users/bjuvensjo/git/scripts/py/bb_enable_webhooks.py
-    lrwxr-xr-x    bb-fork-repos -> /Users/bjuvensjo/git/scripts/py/bb_fork_repos.py
-    lrwxr-xr-x    bb-get-branches -> /Users/bjuvensjo/git/scripts/py/bb_get_branches.py
-    lrwxr-xr-x    bb-get-clone-urls -> /Users/bjuvensjo/git/scripts/py/bb_get_clone_urls.py
-    lrwxr-xr-x    bb-get-clone-urls-grep -> /Users/bjuvensjo/git/scripts/py/bb_get_clone_urls_grep.py
-    lrwxr-xr-x    bb-get-default-branches -> /Users/bjuvensjo/git/scripts/py/bb_get_default_branches.py
-    lrwxr-xr-x    bb-get-projects -> /Users/bjuvensjo/git/scripts/py/bb_get_projects.py
-    lrwxr-xr-x    bb-get-repos -> /Users/bjuvensjo/git/scripts/py/bb_get_repos.py
-    lrwxr-xr-x    bb-get-tags -> /Users/bjuvensjo/git/scripts/py/bb_get_tags.py
-    lrwxr-xr-x    bb-has-branch -> /Users/bjuvensjo/git/scripts/py/bb_has_branch.py
-    lrwxr-xr-x    bb-has-tag -> /Users/bjuvensjo/git/scripts/py/bb_has_tag.py
-    lrwxr-xr-x    bb-open-remote -> /Users/bjuvensjo/git/scripts/py/bb_open_remote.py
-    lrwxr-xr-x    bb-set-default-branches -> /Users/bjuvensjo/git/scripts/py/bb_set_default_branches.py
-    lrwxr-xr-x    bb-utils -> /Users/bjuvensjo/git/scripts/py/bb_utils.py
-    lrwxr-xr-x    command-all -> /Users/bjuvensjo/git/scripts/py/command_all.py
-    lrwxr-xr-x    git-open-remote -> /Users/bjuvensjo/git/scripts/sh/git-open-remote.sh
-    lrwxr-xr-x    maven-reactor-summary -> /Users/bjuvensjo/git/scripts/py/maven_reactor_summary.py
-    lrwxr-xr-x    maven-switch-settings -> /Users/bjuvensjo/git/scripts/py/maven_switch_settings.py
-    lrwxr-xr-x    mmp -> /Users/bjuvensjo/git/scripts/py/maven_multi_module_project.py
-    lrwxr-xr-x    mp -> /Users/bjuvensjo/git/scripts/py/maven_project.py
-    lrwxr-xr-x    rsr -> /Users/bjuvensjo/git/scripts/py/rsr.py
-    lrwxr-xr-x    s -> /Users/bjuvensjo/git/scripts/py/s.py
-    lrwxr-xr-x    toHtmlAndPdf -> /Users/bjuvensjo/git/scripts/sh/toHtmlAndPdf.sh
-
-
+    ln -s ~/git/scripts/vang/artifactory/delete.py ~/bin/artifactory-delete
+    ln -s ~/git/scripts/vang/artifactory/publish.py ~/bin/artifactory-publish
+    ln -s ~/git/scripts/vang/bitbucket/clone_repos.py ~/bin/clone-repos
+    ln -s ~/git/scripts/vang/bitbucket/clone_repos_with_commits_since.py ~/bin/clone-repos-with-commits-since
+    ln -s ~/git/scripts/vang/bitbucket/create_from_template.py ~/bin/create-from-template
+    ln -s ~/git/scripts/vang/bitbucket/create_repo.py ~/bin/create-repo
+    ln -s ~/git/scripts/vang/bitbucket/delete_repos.py ~/bin/delete-repos
+    ln -s ~/git/scripts/vang/bitbucket/enable_webhooks.py ~/bin/enable-webhooks
+    ln -s ~/git/scripts/vang/bitbucket/fork_repos.py ~/bin/fork-repos
+    ln -s ~/git/scripts/vang/bitbucket/fork_repos_git.py ~/bin/fork-repos-git
+    ln -s ~/git/scripts/vang/bitbucket/get_branches.py ~/bin/get-branches
+    ln -s ~/git/scripts/vang/bitbucket/get_clone_urls.py ~/bin/get-clone-urls
+    ln -s ~/git/scripts/vang/bitbucket/get_clone_urls_grep.py ~/bin/get-clone-urls-grep
+    ln -s ~/git/scripts/vang/bitbucket/get_default_branches.py ~/bin/get-default-branches
+    ln -s ~/git/scripts/vang/bitbucket/get_projects.py ~/bin/get-projects
+    ln -s ~/git/scripts/vang/bitbucket/get_repos.py ~/bin/get-repos
+    ln -s ~/git/scripts/vang/bitbucket/get_tags.py ~/bin/get-tags
+    ln -s ~/git/scripts/vang/bitbucket/has_branch.py ~/bin/has-branch
+    ln -s ~/git/scripts/vang/bitbucket/has_tag.py ~/bin/has-tag
+    ln -s ~/git/scripts/vang/bitbucket/open_remote.py ~/bin/open-remote
+    ln -s ~/git/scripts/vang/bitbucket/set_default_branches.py ~/bin/set-default-branches
+    ln -s ~/git/scripts/vang/maven/get_artifact_id.py ~/bin/get-artifact-id
+    ln -s ~/git/scripts/vang/maven/multi_module_project.py ~/bin/mmp
+    ln -s ~/git/scripts/vang/maven/project.py ~/bin/mp
+    ln -s ~/git/scripts/vang/maven/switch_settings.py ~/bin/switch-settings
+    ln -s ~/git/scripts/vang/misc/basic.py ~/bin/basic
+    ln -s ~/git/scripts/vang/misc/s.py ~/bin/s
+    ln -s ~/git/scripts/vang/pio/command_all.py ~/bin/command-all
+    ln -s ~/git/scripts/vang/pio/rsr.py ~/bin/pio-rsr
