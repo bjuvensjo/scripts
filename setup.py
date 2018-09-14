@@ -22,6 +22,6 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Topic :: Utilities",
-        "License :: MIT License",
+        "License :: OSI Approved :: MIT License",
     ],
 )
