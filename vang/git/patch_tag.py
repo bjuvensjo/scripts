@@ -103,11 +103,18 @@ def parse_args(args):
 #     '/Users/ei4577/slask/slask/PCS1806/lf-document',
 # )
 # rm -rf xml/ws/patch; rm -rf lf-xml/ws; md lf-xml/ws; cd lf-xml/ws; git init
+# main(
+#     '/Users/ei4577/slask/slask/PCS1806/xml/ws',
+#     'release.*',
+#     '/Users/ei4577/slask/slask/PCS1806/xml/ws/patch',
+#     '/Users/ei4577/slask/slask/PCS1806/lf-xml/ws',
+# )
+# rm -rf spring/bundle-support/patch; rm -rf lf-spring/bundle-support; md lf-spring/bundle-support; cd lf-spring/bundle-support; git init
 main(
-    '/Users/ei4577/slask/slask/PCS1806/xml/ws',
+    '/Users/ei4577/slask/slask/PCS1806/spring/bundle-support',
     'release.*',
-    '/Users/ei4577/slask/slask/PCS1806/xml/ws/patch',
-    '/Users/ei4577/slask/slask/PCS1806/lf-xml/ws',
+    '/Users/ei4577/slask/slask/PCS1806/spring/bundle-support/patch',
+    '/Users/ei4577/slask/slask/PCS1806/lf-spring/bundle-support',
 )
 
 # if __name__ == '__main__':
