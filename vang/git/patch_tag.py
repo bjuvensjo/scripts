@@ -12,11 +12,13 @@ def create_patch(repo, since_tag, tag, output):
     makedirs(patch_dir)
     cmd = ' '.join([
         'git log -p --reverse --pretty=email --full-index --binary',
-        '--stat -m --first-parent',
+        '--stat',
+        '-m',
+        '--first-parent'
         f'{since_tag + ".." if since_tag else ""}{tag}',
         f'> {patch_dir}/tag.patch'
     ])
-
+    print(cmd)
     rc, out = run_command(cmd, True, repo)
     return tag, patch_dir, out
 
@@ -95,27 +97,6 @@ def parse_args(args):
 #     '/Users/ei4577/slask/slask/PCS1806/sign/patch',
 #     '/Users/ei4577/slask/slask/PCS1806/lf-sign',
 # )
-# rm -rf document/patch; rm -rf lf-document; md lf-document; cd lf-document; git init
-# main(
-#     '/Users/ei4577/slask/slask/PCS1806/document',
-#     'release.*',
-#     '/Users/ei4577/slask/slask/PCS1806/document/patch',
-#     '/Users/ei4577/slask/slask/PCS1806/lf-document',
-# )
-# rm -rf xml/ws/patch; rm -rf lf-xml/ws; md lf-xml/ws; cd lf-xml/ws; git init
-# main(
-#     '/Users/ei4577/slask/slask/PCS1806/xml/ws',
-#     'release.*',
-#     '/Users/ei4577/slask/slask/PCS1806/xml/ws/patch',
-#     '/Users/ei4577/slask/slask/PCS1806/lf-xml/ws',
-# )
-# rm -rf spring/bundle-support/patch; rm -rf lf-spring/bundle-support; md lf-spring/bundle-support; cd lf-spring/bundle-support; git init
-main(
-    '/Users/ei4577/slask/slask/PCS1806/spring/bundle-support',
-    'release.*',
-    '/Users/ei4577/slask/slask/PCS1806/spring/bundle-support/patch',
-    '/Users/ei4577/slask/slask/PCS1806/lf-spring/bundle-support',
-)
 
 # if __name__ == '__main__':
 #     args = parse_args(argv[1:])
