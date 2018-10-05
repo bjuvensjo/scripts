@@ -6,7 +6,7 @@ from sys import argv
 from vang.jenkins.api import call
 
 
-def delete_builds(job_names):
+def delete_jobs(job_names):
     return [(job_name, call(
         f'/job/{job_name}/doDelete',
         method='POST',
@@ -26,5 +26,5 @@ def parse_args(args):
 
 if __name__ == '__main__':
     args = parse_args(argv[1:])
-    for job_name, response_code in delete_builds(args.job_names):
+    for job_name, response_code in delete_jobs(args.job_names):
         print(job_name, response_code)

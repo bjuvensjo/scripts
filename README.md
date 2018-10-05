@@ -55,7 +55,7 @@ Miscellaneous scripts
     ln -s ~/git/scripts/vang/bitbucket/has_tag.py ~/bin/has-tag
     ln -s ~/git/scripts/vang/bitbucket/open_remote.py ~/bin/open-remote
     ln -s ~/git/scripts/vang/bitbucket/set_default_branches.py ~/bin/set-default-branches
-    ln -s ~/git/scripts/vang/jenkins/delete_builds.py ~/bin/delete-builds
+    ln -s ~/git/scripts/vang/jenkins/delete_jobs.py ~/bin/delete-jobs
     ln -s ~/git/scripts/vang/jenkins/get_jobs.py ~/bin/get-jobs
     ln -s ~/git/scripts/vang/jenkins/trigger_builds.py ~/bin/trigger-builds
     ln -s ~/git/scripts/vang/maven/get_artifact_id.py ~/bin/get-artifact-id
