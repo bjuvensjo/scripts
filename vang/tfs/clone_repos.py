@@ -25,10 +25,13 @@ def get_commands(clone_specs, branch, flat):
     ]
 
 
-def get_clone_specs(projects):
-    return [(repo['remoteUrl'], f'{organisation}/{project}/{repo["name"]}')
-            for organisation, project in [p.split('/') for p in projects]
-            for repo in get_repos(organisation, project)]
+def get_clone_specs(projects, flat):
+    return [
+        (repo['remoteUrl'],
+         repo['name'] if flat else f'{organisation}/{project}/{repo["name"]}')
+        for organisation, project in [p.split('/') for p in projects]
+        for repo in get_repos(organisation, project)
+    ]
 
 
 def clone_repos(root_dir,
@@ -41,11 +44,11 @@ def clone_repos(root_dir,
         print('Not yet supported')
         return []
     if projects:
-        clone_specs = get_clone_specs(projects)
+        clone_specs = get_clone_specs(projects, flat)
     if repos:
         clone_specs = [
             spec for spec in get_clone_specs(
-                set(['/'.join(r.split('/')[:2]) for r in repos]))
+                set(['/'.join(r.split('/')[:2]) for r in repos]), flat)
             if spec[1] in repos
         ]
 
@@ -56,7 +59,7 @@ def clone_repos(root_dir,
         except OSError:
             print(traceback.format_exc())
 
-    return commands
+    return [f'{root_dir}/{spec[1]}' for spec in clone_specs]
 
 
 def parse_args(args):
@@ -88,5 +91,12 @@ def parse_args(args):
 if __name__ == '__main__':
     args = parse_args(argv[1:])
 
-    clone_repos(args.dir, args.organisations, args.projects, args.repos,
-                args.branch, args.flat)
+    for repo in clone_repos(
+            args.dir,
+            args.organisations,
+            args.projects,
+            args.repos,
+            args.branch,
+            args.flat,
+    ):
+        print(repo)
