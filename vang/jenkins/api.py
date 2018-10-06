@@ -19,11 +19,11 @@ def call(
     """Makes a REST call to Jenkins rest api.
     May use three environment variables:
     * JENKINS_REST_URL, e.g. http://myorg.com/stash
-    * JENKINS_USERNAME, the bitbucket username
-    * JENKINS_PASSWORD, the bitbucket password
+    * JENKINS_USERNAME, the jenkins username
+    * JENKINS_PASSWORD, the jenkins password
 
     Args:
-        uri (str): e.g. "/rest/api/1.0/projects/{project}/repos/{repo}/branches?filterText={branch}"
+        uri (str): e.g. "/api/json"
         request_data (str): the JSON request
         method: http method
 
