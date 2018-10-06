@@ -65,7 +65,9 @@ Miscellaneous scripts
     ln -s ~/git/scripts/vang/misc/basic.py ~/bin/basic
     ln -s ~/git/scripts/vang/misc/s.py ~/bin/s
     ln -s ~/git/scripts/vang/pio/command_all.py ~/bin/command-all
-    ln -s ~/git/scripts/vang/pio/rsr.py ~/bin/pio-rsr
+    ln -s ~/git/scripts/vang/pio/rsr.py ~/bin/rsr
+    ln -s ~/git/scripts/vang/tfs/clone_repos.py ~/bin/clone-tfs-repos
+    ln -s ~/git/scripts/vang/tfs/get_repos.py ~/bin/get-tfs-repos
 
 
 ## Work on it
