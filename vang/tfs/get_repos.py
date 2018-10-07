@@ -7,7 +7,7 @@ from vang.tfs.api import call
 
 
 def get_repos(organisation, project, names=False, repo_specs=False, urls=False):
-    repos = call(f'/{organisation}/{project}/_apis/git/repositories')['value']
+    repos = call(f'/{organisation}/{project}/_apis/git/repositories?api-version=3.2')['value']
     if names:
         return [repo['name'] for repo in repos]
     if repo_specs:
