@@ -7,6 +7,7 @@ from os import makedirs
 from sys import argv
 
 from vang.pio.shell import run_commands
+from vang.tfs.get_projects import get_projects
 from vang.tfs.get_repos import get_repos
 
 
@@ -26,12 +27,9 @@ def get_commands(clone_specs, branch, flat):
 
 
 def get_clone_specs(projects, flat):
-    return [
-        (repo['remoteUrl'],
-         repo['name'] if flat else f'{organisation}/{project}/{repo["name"]}')
-        for organisation, project in [p.split('/') for p in projects]
-        for repo in get_repos(organisation, project)
-    ]
+    return [(repo[1]['remoteUrl'],
+             repo[1]['name'] if flat else f'{repo[0]}/{repo[1]["name"]}')
+            for repo in get_repos(projects)]
 
 
 def clone_repos(root_dir,
@@ -41,17 +39,20 @@ def clone_repos(root_dir,
                 branch=None,
                 flat=False):
     if organisations:
-        print('Not yet supported')
-        return []
-    if projects:
-        clone_specs = get_clone_specs(projects, flat)
+        projects = get_projects(organisations, project_specs=True)
+    elif repos:
+        projects = set(['/'.join(r.split('/')[:2]) for r in repos])
+
+    clone_specs = get_clone_specs(projects, flat)
+
     if repos:
-        repo_dirs = [r.split('/')[2] if flat else r for r in repos]
+        clone_dirs = [r.split('/')[2] if flat else r for r in repos]
         clone_specs = [
-            spec for spec in get_clone_specs(
-                set(['/'.join(r.split('/')[:2]) for r in repos]), flat)
-            if spec[1] in repo_dirs
+            (url, clone_dir)
+            for url, clone_dir in clone_specs
+            if clone_dir in clone_dirs
         ]
+
     commands = get_commands(clone_specs, branch, flat)
     for n, process in zip(count(1), clone(commands, root_dir)):
         try:
@@ -79,7 +80,7 @@ def parse_args(args):
         '-r',
         '--repos',
         nargs='+',
-        help='Repos, e.g. organisation/project/repo1')
+        help='Repos, e.g. organisation/project/repo')
     parser.add_argument('-b', '--branch', help='The clone branch')
     parser.add_argument(
         '-d', '--dir', default='.', help='The directory to clone into')
