@@ -68,6 +68,7 @@ Miscellaneous scripts
     ln -s ~/git/scripts/vang/pio/rsr.py ~/bin/rsr
     ln -s ~/git/scripts/vang/tfs/clone_repos.py ~/bin/clone-tfs-repos
     ln -s ~/git/scripts/vang/tfs/create_repo.py ~/bin/create-tfs-repo
+    ln -s ~/git/scripts/vang/tfs/create_from_template.py ~/bin/create-tfs-from-template
     ln -s ~/git/scripts/vang/tfs/get_repos.py ~/bin/get-tfs-repos
 
 
