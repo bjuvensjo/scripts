@@ -66,10 +66,11 @@ Miscellaneous scripts
     ln -s ~/git/scripts/vang/misc/s.py ~/bin/s
     ln -s ~/git/scripts/vang/pio/command_all.py ~/bin/command-all
     ln -s ~/git/scripts/vang/pio/rsr.py ~/bin/rsr
-    ln -s ~/git/scripts/vang/tfs/clone_repos.py ~/bin/clone-tfs-repos
-    ln -s ~/git/scripts/vang/tfs/create_repo.py ~/bin/create-tfs-repo
-    ln -s ~/git/scripts/vang/tfs/create_from_template.py ~/bin/create-tfs-from-template
-    ln -s ~/git/scripts/vang/tfs/get_repos.py ~/bin/get-tfs-repos
+    ln -s ~/git/scripts/vang/tfs/clone_repos.py ~/bin/tfs-clone-repos
+    ln -s ~/git/scripts/vang/tfs/create_repo.py ~/bin/tfs-create-repo
+    ln -s ~/git/scripts/vang/tfs/create_from_template.py ~/bin/tfs-create-from-template
+    ln -s ~/git/scripts/vang/tfs/get_projects.py ~/bin/tfs-get-projects
+    ln -s ~/git/scripts/vang/tfs/get_repos.py ~/bin/tfs-get-repos
 
 
 ## Work on it
