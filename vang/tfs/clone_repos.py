@@ -46,12 +46,12 @@ def clone_repos(root_dir,
     if projects:
         clone_specs = get_clone_specs(projects, flat)
     if repos:
+        repo_dirs = [r.split('/')[2] if flat else r for r in repos]
         clone_specs = [
             spec for spec in get_clone_specs(
                 set(['/'.join(r.split('/')[:2]) for r in repos]), flat)
-            if spec[1] in repos
+            if spec[1] in repo_dirs
         ]
-
     commands = get_commands(clone_specs, branch, flat)
     for n, process in zip(count(1), clone(commands, root_dir)):
         try:
@@ -59,7 +59,7 @@ def clone_repos(root_dir,
         except OSError:
             print(traceback.format_exc())
 
-    return [f'{root_dir}/{spec[1]}' for spec in clone_specs]
+    return clone_specs
 
 
 def parse_args(args):
@@ -99,4 +99,4 @@ if __name__ == '__main__':
             args.branch,
             args.flat,
     ):
-        print(repo)
+        print(repo[1])
