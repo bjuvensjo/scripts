@@ -63,6 +63,7 @@ Miscellaneous scripts
     ln -s ~/git/scripts/vang/maven/project.py ~/bin/mp
     ln -s ~/git/scripts/vang/maven/switch_settings.py ~/bin/switch-settings
     ln -s ~/git/scripts/vang/misc/basic.py ~/bin/basic
+    ln -s ~/git/scripts/vang/misc/mac_ip.py ~/bin/ip
     ln -s ~/git/scripts/vang/misc/s.py ~/bin/s
     ln -s ~/git/scripts/vang/pio/command_all.py ~/bin/command-all
     ln -s ~/git/scripts/vang/pio/rsr.py ~/bin/rsr
