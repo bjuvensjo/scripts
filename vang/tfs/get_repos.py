@@ -7,8 +7,8 @@ from vang.tfs.api import call
 from vang.tfs.get_projects import get_projects
 
 
-def get_repos(organisations,
-              projects,
+def get_repos(organisations=None,
+              projects=None,
               names=False,
               repo_specs=False,
               urls=False):

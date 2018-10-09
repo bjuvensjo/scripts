@@ -29,7 +29,7 @@ def get_commands(clone_specs, branch, flat):
 def get_clone_specs(projects, flat):
     return [(repo[1]['remoteUrl'],
              repo[1]['name'] if flat else f'{repo[0]}/{repo[1]["name"]}')
-            for repo in get_repos(projects)]
+            for repo in get_repos(projects=projects)]
 
 
 def clone_repos(root_dir,
