@@ -24,7 +24,7 @@ def clone(commands, root_dir):
     yield from run_commands(
         [(cmd, root_dir) for cmd in commands],
         max_processes=25,
-        timeout=30,
+        timeout=60,
         check=False)
 
 
