@@ -71,6 +71,7 @@ Miscellaneous scripts
     ln -s ~/git/scripts/vang/tfs/create_repo.py ~/bin/tfs-create-repo
     ln -s ~/git/scripts/vang/tfs/create_from_template.py ~/bin/tfs-create-from-template
     ln -s ~/git/scripts/vang/tfs/delete_repo.py ~/bin/tfs-delete-repo
+    ln -s ~/git/scripts/vang/tfs/get_branches.py ~/bin/tfs-get-branches
     ln -s ~/git/scripts/vang/tfs/get_projects.py ~/bin/tfs-get-projects
     ln -s ~/git/scripts/vang/tfs/get_repos.py ~/bin/tfs-get-repos
 
