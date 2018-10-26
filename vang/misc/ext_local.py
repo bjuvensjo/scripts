@@ -25,12 +25,13 @@ def update(backup=None):
 
 def parse_args(args):
     parser = ArgumentParser(
-        description='Update ext.local entry in /etc/hosts to the current ip address.')
+        description='Update ext.local entry in /etc/hosts to the current ip address.'
+                    'Run it with sudo or give yourself write permission to the etc/hosts file and run it without sudo.')
     parser.add_argument(
-        '-b', '--backup', help='Backup etc/hosts in this file', default='/etc/hosts.bak')
+        '-b', '--backup', help='Backup etc/hosts in this file', default=None)
     return parser.parse_args(args)
 
 
 if __name__ == '__main__':
-    args = parse_args(argv[1:])
-    print(update(args.backup))
+    params = parse_args(argv[1:])
+    print(update(params.backup))
