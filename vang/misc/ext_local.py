@@ -9,18 +9,21 @@ etc_hosts_file = '/etc/hosts'
 encoding = 'utf-8'
 
 
-def update(backup=None):
-    if backup:
-        copy2(etc_hosts_file, backup)
+def update(backup_file=None):
+    if backup_file:
+        copy2(etc_hosts_file, backup_file)
 
     with open(etc_hosts_file, 'rt', encoding=encoding) as f:
-        updated_entries = '\n'.join([f'{get_ip_address()}\text.local' if '\text.local' in l else l
-                                     for l in f.read().splitlines()])
+        original_lines = f.readlines()
 
-    with open(etc_hosts_file, 'wt', encoding=encoding) as f:
-        f.write(updated_entries)
+    updated_lines = [f'{get_ip_address()}\text.local\n' if '\text.local' in l else l
+                     for l in original_lines]
 
-    return updated_entries
+    if updated_lines != original_lines:
+        with open(etc_hosts_file, 'wt', encoding=encoding) as f:
+            f.writelines(updated_lines)
+
+    return updated_lines
 
 
 def parse_args(args):
@@ -34,4 +37,4 @@ def parse_args(args):
 
 if __name__ == '__main__':
     params = parse_args(argv[1:])
-    print(update(params.backup))
+    print(''.join(update(params.backup)))
