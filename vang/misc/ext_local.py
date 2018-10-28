@@ -29,7 +29,10 @@ def update(backup_file=None):
 def parse_args(args):
     parser = ArgumentParser(
         description='Update ext.local entry in /etc/hosts to the current ip address.'
-                    'Run it with sudo or give yourself write permission to the etc/hosts file and run it without sudo.')
+                    'Run it with sudo or give yourself write permission to the etc/hosts file and run it without sudo.'
+                    'To run it automatically, modify ext_local.plist and load and start it with: '
+                    'launchctl load ~/Library/LaunchAgents/com.github.bjuvensjo.scripts.vang.misc.ext_local.plist, '
+                    'launchctl start com.github.bjuvensjo.scripts.vang.misc.ext_local')
     parser.add_argument(
         '-b', '--backup', help='Backup etc/hosts in this file', default=None)
     return parser.parse_args(args)
