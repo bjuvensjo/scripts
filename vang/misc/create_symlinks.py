@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 from argparse import ArgumentParser
 from glob import glob
@@ -56,6 +55,6 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    args = parse_args(argv[1:])
-    create_symlinks(args.source, args.target)
+    pargs = parse_args(argv[1:])
+    create_symlinks(pargs.source, pargs.target)
 

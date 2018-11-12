@@ -29,6 +29,6 @@ if __name__ == '__main__':
                        help='Git directories to extract repo information from')
     group.add_argument('-r', '--repos', nargs='*', help='Repos, e.g. key1/repo1 key2/repo2')
     group.add_argument('-p', '--projects', nargs='*', help='Projects, e.g. key1 key2')
-    args = parser.parse_args()
+    pargs = parser.parse_args()
 
-    main(args.dirs, args.repos, args.projects)
+    main(pargs.dirs, pargs.repos, pargs.projects)

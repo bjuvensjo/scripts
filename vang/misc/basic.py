@@ -47,5 +47,5 @@ def main(username, password):
 
 
 if __name__ == '__main__':
-    args = parse_args(argv[1:])
-    main(args.username, args.password)
+    pargs = parse_args(argv[1:])
+    main(pargs.username, pargs.password)

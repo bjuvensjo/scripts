@@ -70,11 +70,11 @@ def main(since, projects, branch, clone_dir):
 
 
 if __name__ == '__main__':
-    since = datetime.datetime(2018, 1, 1)
-    projects = ['ESBU', 'ESBES']
+    the_since = datetime.datetime(2018, 1, 1)
+    the_projects = ['ESBU', 'ESBES']
     # branch = 'develop'
     # clone_dir = '/Users/ei4577/slask/crap/develop'
-    branch = 'feature/bosse'
-    clone_dir = '/Users/ei4577/slask/crap/bosse'
+    a_branch = 'feature/bosse'
+    a_clone_dir = '/Users/ei4577/slask/crap/bosse'
 
-    main(since, projects, branch, clone_dir)
+    main(the_since, the_projects, a_branch, a_clone_dir)

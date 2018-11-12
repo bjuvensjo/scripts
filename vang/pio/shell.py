@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
 import logging
+import sys
 import traceback
 from subprocess import PIPE, STDOUT, run
-
-import sys
 
 from vang.core.core import pmap_unordered
 
@@ -19,8 +18,10 @@ def run_command(command, return_output=False, cwd=None, check=True, timeout=None
 def run_commands(commands_and_cwds, max_processes=10, check=True, timeout=None):
     """
     Runs commands in parallel.
-    :param commands_ands_cwds: Pairs of command and working directory for the command
+
+    :param commands_and_cwds: Pairs of command and working directory for the command
     :param max_processes: The max number of parallel processes
+    :param check: Check for Exception
     :param timeout: The timeout of each process
     :return: CompletedProcess (yielded)
     """

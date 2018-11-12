@@ -75,18 +75,18 @@ def print_summary(successes, failures):
         l = int(length / 2 + len(s) / 2)
         return s.rjust(l, fill).ljust(length, fill)
 
-    def artifact(id, success, fill='.'):
+    def artifact(the_id, success, fill='.'):
         outcome = 'SUCCESS' if success else 'FAILURE'
-        return id + outcome.rjust(length - len(id), fill)
+        return the_id + outcome.rjust(length - len(the_id), fill)
 
-    for text in ('', 'Summary', ''):
-        lines.append(banner(text, '*'))
-    for id in sorted(successes):
-        lines.append(artifact(id, True))
-    for id in sorted(failures):
-        lines.append(artifact(id, False))
-    for text in ('',):
-        lines.append(banner(text, '*'))
+    for a_text in ('', 'Summary', ''):
+        lines.append(banner(a_text, '*'))
+    for an_id in sorted(successes):
+        lines.append(artifact(an_id, True))
+    for an_id in sorted(failures):
+        lines.append(artifact(an_id, False))
+    for a_text in ('',):
+        lines.append(banner(a_text, '*'))
 
     print('\n'.join(lines))
 
@@ -101,8 +101,9 @@ if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description='Prints reactor summary of Maven build log files')
-    parser.add_argument('-d', '--dirs', help='Root directory in which to find Maven log files', nargs='*', default=['.'])
+    parser.add_argument('-d', '--dirs', help='Root directory in which to find Maven log files', nargs='*',
+                        default=['.'])
     parser.add_argument('-l', '--log', help='Name of Maven build log file(s)', default='mvn.log')
-    args = parser.parse_args()
+    pargs = parser.parse_args()
 
-    main(args.dirs, args.log)
+    main(pargs.dirs, pargs.log)

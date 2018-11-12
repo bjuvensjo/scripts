@@ -28,7 +28,7 @@ def fork_repo(fork_project, branches, git_dir):
 
         print('{}/{}: {}'.format(fork_project, repo, new_origin))
         return (fork_project, repo), new_origin
-    except:
+    except OSError:
         print_exc(file=sys.stdout)
 
 
@@ -47,9 +47,9 @@ if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description='''
-       Fork Bitbucket repos by cloning repos, 
-       create new repos in fork project, 
-       set them as origin 
+       Fork Bitbucket repos by cloning repos,
+       create new repos in fork project,
+       set them as origin
        and push branches to new repos
     ''')
     parser.add_argument('fork_project', help='Fork project (must exist)')
@@ -61,6 +61,6 @@ if __name__ == '__main__':
                        help='Repos, e.g. key1/repo1 key2/repo2')
     group.add_argument('-p', '--projects', nargs='*',
                        help='Projects, e.g. key1 key2')
-    args = parser.parse_args()
+    pargs = parser.parse_args()
 
-    main(args.fork_project, args.branches, args.dir, args.repos, args.projects)
+    main(pargs.fork_project, pargs.branches, pargs.dir, pargs.repos, pargs.projects)

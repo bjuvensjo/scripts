@@ -60,7 +60,7 @@ def main():
     args = parser.parse_args()
 
     defaults = {
-        'group_id': 'mygroup',
+        'group_id': 'my.group',
         'artifact_id': 'ws',
         'version': '1.0.0-SNAPSHOT',
         'source_dir': '.',

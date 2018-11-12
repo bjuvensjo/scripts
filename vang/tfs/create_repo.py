@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import argparse
 from json import dumps
-from os import name, system
+from os import name as os_name
+from os import system
 from sys import argv
 
 from vang.tfs.api import call
@@ -25,7 +26,7 @@ def main(repo):
     print('If you already have code ready to be pushed to this repository '
           'then run this in your terminal.')
     print(commands)
-    if name == 'posix':
+    if os_name == 'posix':
         system('echo "{}\c" | pbcopy'.format(commands))
         print('(The commands are copied to the clipboard)')
 
@@ -39,5 +40,5 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    args = parse_args(argv[1:])
-    main(args.repo)
+    pargs = parse_args(argv[1:])
+    main(pargs.repo)

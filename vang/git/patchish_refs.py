@@ -89,12 +89,12 @@ def parse_args(args):
 #     '/Users/ei4577/slask/slask/PCS1806/lf-sign',
 # )
 # rm -rf lf-process.mortgage; md lf-process.mortgage; cd lf-process.mortgage; git init
-applied_patches = main(
+the_applied_patches = main(
     '/Users/ei4577/slask/slask/PCS1806/process.mortgage',
     'release.*',
     '/Users/ei4577/slask/slask/PCS1806/lf-process.mortgage',
 )
-pprint(applied_patches)
+pprint(the_applied_patches)
 
 # if __name__ == '__main__':
 #     args = parse_args(argv[1:])

@@ -47,11 +47,8 @@ def clone_repos(root_dir,
 
     if repos:
         clone_dirs = [r.split('/')[2] if flat else r for r in repos]
-        clone_specs = [
-            (url, clone_dir)
-            for url, clone_dir in clone_specs
-            if clone_dir in clone_dirs
-        ]
+        clone_specs = [(url, clone_dir) for url, clone_dir in clone_specs
+                       if clone_dir in clone_dirs]
 
     commands = get_commands(clone_specs, branch, flat)
     for n, process in zip(count(1), clone(commands, root_dir)):
@@ -90,14 +87,14 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    args = parse_args(argv[1:])
+    pargs = parse_args(argv[1:])
 
-    for repo in clone_repos(
-            args.dir,
-            args.organisations,
-            args.projects,
-            args.repos,
-            args.branch,
-            args.flat,
+    for a_repo in clone_repos(
+            pargs.dir,
+            pargs.organisations,
+            pargs.projects,
+            pargs.repos,
+            pargs.branch,
+            pargs.flat,
     ):
-        print(repo[1])
+        print(a_repo[1])

@@ -15,7 +15,8 @@ def get_repos(organisations=None,
     if organisations:
         projects = get_projects(organisations, project_specs=True)
     repos = [(project, repo) for project in projects for repo in call(
-        f'/{project}/_apis/git/repositories?api-version=3.2')['value']]
+        # f'/{project}/_apis/git/repositories?api-version=3.2')['value']]
+        f'/{project}/_apis/git/repositories')['value']]
     if names:
         return [repo[1]['name'] for repo in repos]
     if repo_specs:
@@ -53,8 +54,8 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    args = parse_args(argv[1:])
+    pargs = parse_args(argv[1:])
 
-    for repo in get_repos(args.organisations, args.projects, args.names,
-                          args.repo_specs, args.urls):
-        print(repo)
+    for a_repo in get_repos(pargs.organisations, pargs.projects, pargs.names,
+                            pargs.repo_specs, pargs.urls):
+        print(a_repo)

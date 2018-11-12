@@ -30,6 +30,6 @@ if __name__ == '__main__':
     parser.add_argument('projects', nargs='+', help='The projects.')
     parser.add_argument('-c', '--command', help='Print as clone commands', action='store_true')
     parser.add_argument('-b', '--branch', help='Add -b <branch> to clone commands')
-    args = parser.parse_args()
+    pargs = parser.parse_args()
 
-    main(args.projects, args.command, args.branch)
+    main(pargs.projects, pargs.command, pargs.branch)

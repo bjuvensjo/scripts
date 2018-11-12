@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 import sys
+import termios
 import threading
 from argparse import ArgumentParser
 from glob import glob
 from itertools import chain, count
-from subprocess import Popen, PIPE, STDOUT
-from time import sleep
-
-import termios
 from os import system
+from subprocess import PIPE, Popen, STDOUT
+from time import sleep
 
 lock = threading.Lock()
 action = None
@@ -75,9 +74,9 @@ def play_all(tracks):
             [s.split('/')[-1] for s in tracks]))
 
     e = threading.Event()
-    threading.Thread(target=get_action, args=(e, ), daemon=True).start()
+    threading.Thread(target=get_action, args=(e,), daemon=True).start()
     index = 0
-    threading.Thread(target=process_monitor, args=(e, ), daemon=True).start()
+    threading.Thread(target=process_monitor, args=(e,), daemon=True).start()
     play(tracks[index])
     while action != 's':
         e.wait()
@@ -100,7 +99,7 @@ def play_all(tracks):
                 print(chr(i), p)
             e.wait()
             e.clear()
-            if action != chr(27): # Escape character
+            if action != chr(27):  # Escape character
                 for i, entry in zip(count(0), keyed_tracks):
                     if chr(entry[0]) == action:
                         index = i
@@ -126,5 +125,5 @@ def main(wav_dir):
 
 
 if __name__ == '__main__':
-    args = parse_args(sys.argv[1:])
-    main(args.dir)
+    pargs = parse_args(sys.argv[1:])
+    main(pargs.dir)

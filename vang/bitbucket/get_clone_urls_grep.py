@@ -21,6 +21,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Get clone urls for project patterns from Bitbucket')
     parser.add_argument('patterns', nargs='+', help='The patterns')
     parser.add_argument('-c', '--command', help='Print as clone commands', action='store_true')
-    args = parser.parse_args()
+    pargs = parser.parse_args()
 
-    main(args.patterns, args.command)
+    main(pargs.patterns, pargs.command)

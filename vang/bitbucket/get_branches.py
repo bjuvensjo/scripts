@@ -69,5 +69,5 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    args = parse_args(argv[1:])
-    main(args.branch, args.name, args.dirs, args.repos, args.projects)
+    pargs = parse_args(argv[1:])
+    main(pargs.branch, pargs.name, pargs.dirs, pargs.repos, pargs.projects)

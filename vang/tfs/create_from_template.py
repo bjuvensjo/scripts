@@ -5,7 +5,7 @@ from sys import argv
 from vang.tfs.clone_repos import clone_repos
 from vang.tfs.create_repo import create_repo
 from vang.misc.s import get_zipped_cases
-from vang.pio.rsr import _replace, rsr
+from vang.pio.rsr import get_replace_function, rsr
 from vang.pio.shell import run_command
 
 
@@ -45,7 +45,7 @@ def update(repo, dest_repo, dest_repo_dir):
             old,
             new,
             [dest_repo_dir],
-            _replace(False),
+            get_replace_function(False),
         )
 
 
@@ -124,10 +124,10 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    args = parse_args(argv[1:])
+    pargs = parse_args(argv[1:])
     main(
-        args.src_repo,
-        args.branch,
-        args.dest_repo,
-        args.dir,
+        pargs.src_repo,
+        pargs.branch,
+        pargs.dest_repo,
+        pargs.dir,
     )

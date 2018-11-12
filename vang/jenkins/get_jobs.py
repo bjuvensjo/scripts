@@ -13,7 +13,7 @@ def map_color(color):
     return SUCCESS if color == 'blue' else FAILURE
 
 
-def get_jobs(statuses=[FAILURE, SUCCESS], only_names=False):
+def get_jobs(statuses=(FAILURE, SUCCESS), only_names=False):
     jobs = call('/api/json')['jobs']
     return [
         job['name'] if only_names else job for job in jobs
@@ -41,13 +41,13 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    args = parse_args(argv[1:])
-    if args.only_failures:
-        statuses = [FAILURE]
-    elif args.only_successes:
-        statuses = [SUCCESS]
+    pargs = parse_args(argv[1:])
+    if pargs.only_failures:
+        job_statuses = [FAILURE]
+    elif pargs.only_successes:
+        job_statuses = [SUCCESS]
     else:
-        statuses = [FAILURE, SUCCESS]
+        job_statuses = [FAILURE, SUCCESS]
 
-    for job in get_jobs(statuses, args.only_names):
-        print(job)
+    for a_job in get_jobs(job_statuses, pargs.only_names):
+        print(a_job)

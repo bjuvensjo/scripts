@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from base64 import encodebytes, b64encode
+from base64 import b64encode
 from json import loads
 from os import environ
 from urllib.error import HTTPError
@@ -24,6 +24,9 @@ def call(
         uri (str): e.g. "/rest/api/1.0/projects/{project}/repos/{repo}/branches?filterText={branch}"
         request_data (str): the JSON request
         method: http method
+        only_response_code: default False
+        rest_url: default environ.get('TFS_REST_URL', None)
+        token: default environ.get('TFS_TOKEN', None),
 
     Return:
           the JSON response

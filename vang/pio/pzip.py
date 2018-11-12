@@ -1,23 +1,23 @@
 #!/usr/bin/env python3
 from datetime import datetime
 from fnmatch import fnmatch
-from json import loads, dumps
+from json import dumps, loads
 from os import makedirs
 from os import walk
 from os.path import dirname, relpath
 from zipfile import ZipFile
 
 
-def zip(entries, output_file):
+def create_zip(the_entries, output_file):
     makedirs(dirname(output_file), exist_ok=True)
 
-    zip_file = output_file.replace('#timestamp#', datetime.now().strftime('%Y%m%dT%H%M%S'))
-    with ZipFile(zip_file, 'w') as z:
-        for base_path, rel_path, flatten in entries:
+    the_zip_file = output_file.replace('#timestamp#', datetime.now().strftime('%Y%m%dT%H%M%S'))
+    with ZipFile(the_zip_file, 'w') as z:
+        for base_path, rel_path, flatten in the_entries:
             file_name = '{}/{}'.format(base_path, rel_path)
             arc_name = rel_path.split('/')[-1] if flatten else rel_path
             z.write(file_name, arc_name)
-    return zip_file
+    return the_zip_file
 
 
 def has_match(name, patterns):
@@ -25,15 +25,15 @@ def has_match(name, patterns):
 
 
 def get_patterns(key, default, **kwargs):
-    if not key in kwargs:
+    if key not in kwargs:
         return default
     return [p.split('->')[0] for p in kwargs[key]]
 
 
-def is_included(dir_path, file_name, path, **kwargs):
+def is_included(dir_path, file_name, path):
     rel_path = relpath('{}/{}'.format(dir_path, file_name), path)
-    return has_match('includes', get_patterns('includes', ['.*'], kwargs)) and \
-           not has_match(rel_path, get_patterns('excludes', [], kwargs))
+    return has_match('includes', get_patterns('includes', ['.*'])) and \
+        not has_match(rel_path, get_patterns('excludes', []))
 
 
 def get_entries(dirs):
@@ -41,7 +41,7 @@ def get_entries(dirs):
             for d in dirs
             for dir_path, dir_names, file_names in walk(d['path'])
             for file_name in file_names
-            if is_included(dir_path, file_name, **d)]
+            if is_included(dir_path, file_name, d['path'])]
 
 
 def load_config(config):
@@ -51,9 +51,9 @@ def load_config(config):
 
 def pzip(config):
     cfg = load_config(config)
-    entries = get_entries(cfg['dirs'])
-    zip_file = zip(entries, cfg['output_file'])
-    return zip_file, entries
+    the_entries = get_entries(cfg['dirs'])
+    the_zip_file = create_zip(the_entries, cfg['output_file'])
+    return the_zip_file, the_entries
 
 
 if __name__ == '__main__':
@@ -77,7 +77,7 @@ if __name__ == '__main__':
         ],
         "output_file": "./releases/release-#timestamp#.zip"
     }))
-    args = parser.parse_args()
+    pargs = parser.parse_args()
 
-    zip_file, entries = pzip(args.config)
+    zip_file, entries = pzip(pargs.config)
     print('Zip file: {}'.format(zip_file))

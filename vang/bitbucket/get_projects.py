@@ -36,6 +36,6 @@ if __name__ == '__main__':
     parser.add_argument('-k', '--key',
                         help='Print only project key',
                         action='store_true')
-    args = parser.parse_args()
+    pargs = parser.parse_args()
 
-    main(args.key)
+    main(pargs.key)

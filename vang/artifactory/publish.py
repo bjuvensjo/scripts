@@ -15,9 +15,9 @@ def read_file(file_path):
         return f.read()
 
 
-def get_checksums(bytes):
-    return hashlib.md5(bytes).hexdigest(), hashlib.sha1(
-        bytes).hexdigest(), hashlib.sha256(bytes).hexdigest()
+def get_checksums(the_bytes):
+    return hashlib.md5(the_bytes).hexdigest(), hashlib.sha1(
+        the_bytes).hexdigest(), hashlib.sha256(the_bytes).hexdigest()
 
 
 def get_checksum_headers(md5, sha1, sha256):
@@ -85,5 +85,5 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    args = parse_args(argv[1:])
-    main(args.repository, args.dirs)
+    pargs = parse_args(argv[1:])
+    main(pargs.repository, pargs.dirs)

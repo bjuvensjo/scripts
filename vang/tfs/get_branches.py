@@ -57,8 +57,13 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    args = parse_args(argv[1:])
+    pargs = parse_args(argv[1:])
 
-    for repo, branches in get_branches(args.organisations, args.projects, args.repos, args.names):
-        for branch in branches:
-            print(f'{repo}: {branch}')
+    for the_repo, the_branches in get_branches(
+            pargs.organisations,
+            pargs.projects,
+            pargs.repos,
+            pargs.names,
+    ):
+        for the_branch in the_branches:
+            print(f'{the_repo}: {the_branch}')

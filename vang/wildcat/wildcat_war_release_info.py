@@ -23,8 +23,8 @@ def print_release_info(release_info, develop_branch, release_branch, release_tag
 
 
 def get_release_info(war, develop_branch, release_branch, release_tag):
+    work_dir = environ['HOME'] + '/tmp_wildcat'
     try:
-        work_dir = environ['HOME'] + '/tmp_wildcat'
         release_info = 'META-INF/release.info'
         release_info_path = '{}/{}'.format(work_dir, release_info)
         makedirs(work_dir)
@@ -39,7 +39,7 @@ def get_release_info(war, develop_branch, release_branch, release_tag):
             if exists(release_info_path):
                 with open(release_info_path, 'rt', encoding='utf-8') as f:
                     print_release_info(f.read(), develop_branch, release_branch, release_tag)
-    except:
+    except OSError:
         print_exc()
     finally:
         rmtree(work_dir, ignore_errors=True)
@@ -57,7 +57,7 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--develop_branch', help='Print clone commands of develop_branch', action='store_true')
     parser.add_argument('-r', '--release_branch', help='Print clone commands of release_branch', action='store_true')
     parser.add_argument('-t', '--release_tag', help='Print clone commands of release_tag', action='store_true')
-    args = parser.parse_args()
+    pargs = parser.parse_args()
 
-    params = [args.develop_branch, args.release_branch, args.release_tag]
-    main(args.war, *params if any(params) else [True, True, True])
+    params = [pargs.develop_branch, pargs.release_branch, pargs.release_tag]
+    main(pargs.war, *params if any(params) else [True, True, True])

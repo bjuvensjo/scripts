@@ -8,7 +8,8 @@ from vang.tfs.api import call
 
 def get_projects(organisations, project_specs=False, names=False):
     projects = [(o, p) for o in organisations
-                for p in call(f'/{o}/_apis/projects?api-version=3.2')['value']]
+                # for p in call(f'/{o}/_apis/projects?api-version=3.2')['value']]
+                for p in call(f'/{o}/_apis/projects')['value']]
 
     if names:
         return [project[1]['name'] for project in projects]
@@ -35,11 +36,11 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    args = parse_args(argv[1:])
+    pargs = parse_args(argv[1:])
 
-    for project in get_projects(
-            args.organisations,
-            args.project_specs,
-            args.names,
+    for a_project in get_projects(
+            pargs.organisations,
+            pargs.project_specs,
+            pargs.names,
     ):
-        print(project)
+        print(a_project)

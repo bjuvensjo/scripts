@@ -7,7 +7,7 @@ from vang.bitbucket.enable_webhooks import enable_repo_web_hook
 from vang.bitbucket.get_clone_urls import get_clone_urls
 from vang.bitbucket.set_default_branches import set_repo_default_branch
 from vang.misc.s import get_zipped_cases
-from vang.pio.rsr import _replace, rsr
+from vang.pio.rsr import get_replace_function, rsr
 from vang.pio.shell import run_command
 
 
@@ -36,7 +36,7 @@ def commit_all(repo_dir):
 
 def update(repo, dest_repo, dest_repo_dir):
     for old, new in get_zipped_cases([repo, dest_repo]):
-        rsr(old, new, [dest_repo_dir], _replace(False))
+        rsr(old, new, [dest_repo_dir], get_replace_function(False))
 
 
 def create_and_push_to_dest_repo(branch,
@@ -107,6 +107,6 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    args = parse_args(argv[1:])
-    main(args.src_project, args.src_repo, args.branch, args.dest_project,
-         args.dest_repo, args.dir, args.webhook)
+    pargs = parse_args(argv[1:])
+    main(pargs.src_project, pargs.src_repo, pargs.branch, pargs.dest_project,
+         pargs.dest_repo, pargs.dir, pargs.webhook)

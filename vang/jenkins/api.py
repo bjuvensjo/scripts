@@ -26,6 +26,10 @@ def call(
         uri (str): e.g. "/api/json"
         request_data (str): the JSON request
         method: http method
+        only_response_code: default False
+        rest_url: default environ.get('JENKINS_REST_URL', None)
+        username: default environ.get('JENKINS_USERNAME', None)
+        password: default environ.get('JENKINS_PASSWORD', None)
 
     Return:
           the JSON response

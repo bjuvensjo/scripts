@@ -23,6 +23,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Switch maven settings in ~/.m2')
     parser.add_argument('ending',
                         help='The ending of the settings file to switch to, e.g. FOO for ~/.m2/settings_FOO.xml')
-    args = parser.parse_args()
+    pargs = parser.parse_args()
 
-    main(args.ending)
+    main(pargs.ending)

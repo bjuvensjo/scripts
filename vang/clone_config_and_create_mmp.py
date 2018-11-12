@@ -45,7 +45,7 @@ def do_clone(root_dir, branch='develop'):
         try:
             print(str(n).zfill(2), process.stdout.read().decode(), end='')
             n += 1
-        except:
+        except OSError:
             print(traceback.format_exc())
 
 
@@ -64,6 +64,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Clones config and creates Maven multi module project')
     parser.add_argument('-r', '--root_dir', default='.', help='The root dir of clones and multi module project')
     parser.add_argument('-b', '--branch', default='develop', help='The branch to clone')
-    args = parser.parse_args()
+    pargs = parser.parse_args()
 
-    main(args.root_dir, args.branch)
+    main(pargs.root_dir, pargs.branch)

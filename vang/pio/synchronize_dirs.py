@@ -3,12 +3,11 @@ import argparse
 from filecmp import cmp
 from os import makedirs, remove, walk
 from os.path import exists
-from pprint import pprint
 from shutil import copyfile, rmtree
 from sys import argv
 
 
-def synchronize_dirs(source_dir, dest_dir, ignore_sub_paths=['/.git']):
+def synchronize_dirs(source_dir, dest_dir, ignore_sub_paths=('/.git',)):
     """
     Makes dest_dir look exactly as as source_dir with exception of ignore_sub_paths
     :param source_dir: path as string
@@ -72,5 +71,5 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    args = parse_args(argv[1:])
-    synchronize_dirs(args.source_dir, args.dest_dir, args.ignore_sub_paths)
+    pargs = parse_args(argv[1:])
+    synchronize_dirs(pargs.source_dir, pargs.dest_dir, pargs.ignore_sub_paths)

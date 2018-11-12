@@ -25,8 +25,8 @@ def zeller(year, month, day):
 
 
 if __name__ == '__main__':
-    year = int(argv[1])
-    month = int(argv[2])
-    day = int(argv[3])
+    a_year = int(argv[1])
+    a_month = int(argv[2])
+    a_day = int(argv[3])
 
-    print(name(zeller(year, month, day)))
+    print(name(zeller(a_year, a_month, a_day)))

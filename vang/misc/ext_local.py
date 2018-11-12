@@ -40,5 +40,5 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    params = parse_args(argv[1:])
-    print(''.join(update(params.backup)))
+    pargs = parse_args(argv[1:])
+    print(''.join(update(pargs.backup)))

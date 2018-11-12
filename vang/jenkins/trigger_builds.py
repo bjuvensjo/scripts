@@ -6,12 +6,12 @@ from sys import argv
 from vang.jenkins.api import call
 
 
-def trigger_builds(job_names):
-    return [(job_name, call(
-        f'/job/{job_name}/build',
+def trigger_builds(names):
+    return [(name, call(
+        f'/job/{name}/build',
         method='POST',
         only_response_code=True,
-    )) for job_name in job_names]
+    )) for name in names]
 
 
 def parse_args(args):
@@ -25,6 +25,6 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    args = parse_args(argv[1:])
-    for job_name, response_code in trigger_builds(args.job_names):
+    pargs = parse_args(argv[1:])
+    for job_name, response_code in trigger_builds(pargs.job_names):
         print(job_name, response_code)

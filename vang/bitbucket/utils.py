@@ -36,4 +36,4 @@ def get_repo_specs(dirs, repos=None, projects=None):
     elif repos:
         return (repo.split('/') for repo in repos)
     else:
-        return (get_project_and_repo(dir) for dir in dirs)
+        return (get_project_and_repo(a_dir) for a_dir in dirs)

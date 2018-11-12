@@ -14,6 +14,7 @@ def call(uri, extra_headers=None, request_data=None, method='GET'):
 
     Args:
         uri (str): e.g. "/{repository/{'/'.join(group_id.split('.'))}/{artifact_id}/{version}""
+        extra_headers: default None
         request_data (bytes): the request payload
         method (str): http method
 

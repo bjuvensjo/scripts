@@ -33,5 +33,5 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--repo', help='Repo, e.g. key1/repo1')
     parser.add_argument('-p', '--project', help='Project, e.g. key1')
 
-    args = parser.parse_args()
-    main(args.dir, args.repo, args.project)
+    pargs = parser.parse_args()
+    main(pargs.dir, pargs.repo, pargs.project)
