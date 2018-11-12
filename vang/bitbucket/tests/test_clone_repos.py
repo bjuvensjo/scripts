@@ -42,7 +42,7 @@ def test_clone(mock_makedirs, mock_run_commands):
             [('commands', 'root_dir')],
             check=False,
             max_processes=25,
-            timeout=30)
+            timeout=60)
     ] == mock_run_commands.mock_calls
 
 

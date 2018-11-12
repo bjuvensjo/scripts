@@ -78,17 +78,17 @@ def test_commit_all(mock_run_command):
 
 @patch('vang.bitbucket.create_from_template.rsr', autospec=True)
 @patch(
-    'vang.bitbucket.create_from_template._replace',
+    'vang.bitbucket.create_from_template.get_replace_function',
     autospec=True,
-    return_value='_replace')
+    return_value='get_replace_function')
 @patch(
     'vang.bitbucket.create_from_template.get_zipped_cases',
     autospec=True,
     return_value=[('repo', 'dest_repo')])
-def test_update(mock_get_zipped_cases, mock__replace, mock_rsr):
+def test_update(mock_get_zipped_cases, mock_get_replace_function, mock_rsr):
     update('repo', 'dest_repo', 'dest_repo_dir')
     assert [call('repo', 'dest_repo', ['dest_repo_dir'],
-                 '_replace')] == mock_rsr.mock_calls
+                 'get_replace_function')] == mock_rsr.mock_calls
 
 
 @patch(
