@@ -80,21 +80,23 @@ def parse_args(args):
         help='Repos, e.g. organisation/project/repo')
     parser.add_argument('-b', '--branch', help='The clone branch')
     parser.add_argument(
-        '-d', '--dir', default='.', help='The directory to clone into')
+        '-d', '--clone_dir', default='.', help='The directory to clone into')
     parser.add_argument(
         '-f', '--flat', help='Clone to flat structure', action='store_true')
     return parser.parse_args(args)
 
 
-if __name__ == '__main__':
-    pargs = parse_args(argv[1:])
-
+def main(clone_dir, organisations, projects, repos, branch, flat):
     for a_repo in clone_repos(
-            pargs.dir,
-            pargs.organisations,
-            pargs.projects,
-            pargs.repos,
-            pargs.branch,
-            pargs.flat,
+            clone_dir,
+            organisations,
+            projects,
+            repos,
+            branch,
+            flat,
     ):
         print(a_repo[1])
+
+
+if __name__ == '__main__':
+    main(**parse_args(argv[1:]).__dict__)

@@ -40,14 +40,17 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-if __name__ == '__main__':
-    pargs = parse_args(argv[1:])
-    if pargs.only_failures:
+def main(only_failures, only_successes, only_names):
+    if only_failures:
         job_statuses = [FAILURE]
-    elif pargs.only_successes:
+    elif only_successes:
         job_statuses = [SUCCESS]
     else:
         job_statuses = [FAILURE, SUCCESS]
 
-    for a_job in get_jobs(job_statuses, pargs.only_names):
+    for a_job in get_jobs(job_statuses, only_names):
         print(a_job)
+
+
+if __name__ == '__main__':
+    main(**parse_args(argv[1:]).__dict__)

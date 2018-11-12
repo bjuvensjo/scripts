@@ -40,5 +40,4 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    pargs = parse_args(argv[1:])
-    main(pargs.repo)
+    main(**parse_args(argv[1:]).__dict__)

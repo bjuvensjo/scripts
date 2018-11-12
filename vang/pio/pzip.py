@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
+import argparse
 from datetime import datetime
 from fnmatch import fnmatch
 from json import dumps, loads
 from os import makedirs
 from os import walk
 from os.path import dirname, relpath
+from sys import argv
 from zipfile import ZipFile
 
 
@@ -33,7 +35,7 @@ def get_patterns(key, default, **kwargs):
 def is_included(dir_path, file_name, path):
     rel_path = relpath('{}/{}'.format(dir_path, file_name), path)
     return has_match('includes', get_patterns('includes', ['.*'])) and \
-        not has_match(rel_path, get_patterns('excludes', []))
+           not has_match(rel_path, get_patterns('excludes', []))
 
 
 def get_entries(dirs):
@@ -56,9 +58,7 @@ def pzip(config):
     return the_zip_file, the_entries
 
 
-if __name__ == '__main__':
-    import argparse
-
+def parse_args(args):
     parser = argparse.ArgumentParser(description='Zip as configured in specified config file.')
     parser.add_argument('config', help=dumps({
         "dirs": [
@@ -77,7 +77,13 @@ if __name__ == '__main__':
         ],
         "output_file": "./releases/release-#timestamp#.zip"
     }))
-    pargs = parser.parse_args()
+    return parser.parse_args(args)
 
-    zip_file, entries = pzip(pargs.config)
+
+def main(config):
+    zip_file, entries = pzip(config)
     print('Zip file: {}'.format(zip_file))
+
+
+if __name__ == '__main__':
+    main(**parse_args(argv[1:]).__dict__)

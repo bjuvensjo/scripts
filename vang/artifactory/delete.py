@@ -31,7 +31,7 @@ def parse_args(args):
         'repository', help='Artifactory repository, e.g. z-release')
     parser.add_argument(
         '-d',
-        '--dirs',
+        '--pom_dirs',
         nargs='*',
         default=['.'],
         help='Maven pom directories to extract artifact information from')
@@ -39,5 +39,4 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    pargs = parse_args(argv[1:])
-    main(pargs.repository, pargs.dirs)
+    main(**parse_args(argv[1:]).__dict__)

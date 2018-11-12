@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-
+import argparse
 from os import remove, rename, replace, walk
 from os.path import join, sep
 from re import fullmatch, sub
+from sys import argv
 
 
 def get_replace_function(regexp=False):
@@ -53,14 +54,14 @@ def main(old, new, dirs, regexp):
     rsr(old, new, dirs, get_replace_function(regexp))
 
 
-if __name__ == '__main__':
-    import argparse
-
+def parse_args(args):
     parser = argparse.ArgumentParser(description='Recursive search and replace of directories, files and file contents')
     parser.add_argument('old', help='Old value')
     parser.add_argument('new', help='New value')
     parser.add_argument('-d', '--dirs', nargs='*', default=['.'])
     parser.add_argument('-r', '--regexp', action='store_true')
-    pargs = parser.parse_args()
+    return parser.parse_args(args)
 
-    main(pargs.old, pargs.new, pargs.dirs, pargs.regexp)
+
+if __name__ == '__main__':
+    main(**parse_args(argv[1:]).__dict__)

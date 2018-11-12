@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import argparse
+from sys import argv
 
 from vang.bitbucket.get_branches import get_branches
 from vang.bitbucket.utils import get_repo_specs
@@ -23,9 +25,7 @@ def main(branch, only_has=True, only_not_has=False, dirs=None, repos=None, proje
             print('{}/{}, {}: {}'.format(spec[0], spec[1], branch, has))
 
 
-if __name__ == '__main__':
-    import argparse
-
+def parse_args(args):
     parser = argparse.ArgumentParser(description='Check repository branches in Bitbucket')
     parser.add_argument('branch', help='The branch to check')
     filter_group = parser.add_mutually_exclusive_group()
@@ -38,6 +38,8 @@ if __name__ == '__main__':
     group.add_argument('-r', '--repos', nargs='*', help='Repos, e.g. key1/repo1 key2/repo2')
     group.add_argument('-p', '--projects', nargs='*',
                        help='Projects, e.g. key1 key2')
-    pargs = parser.parse_args()
+    return parser.parse_args(args)
 
-    main(pargs.branch, pargs.only_has, pargs.only_not_has, pargs.dirs, pargs.repos, pargs.projects)
+
+if __name__ == '__main__':
+    main(**parse_args(argv[1:]).__dict__)

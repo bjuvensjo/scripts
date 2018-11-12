@@ -116,7 +116,7 @@ def get_audio_files(path):
 def parse_args(args):
     parser = ArgumentParser(description='Play wav files on Mac')
     parser.add_argument(
-        '-d', '--dir', help='Directory containing Wav-files', default='.')
+        '-d', '--wav_dir', help='Directory containing Wav-files', default='.')
     return parser.parse_args(args)
 
 
@@ -125,5 +125,4 @@ def main(wav_dir):
 
 
 if __name__ == '__main__':
-    pargs = parse_args(sys.argv[1:])
-    main(pargs.dir)
+    main(**parse_args(sys.argv[1:]).__dict__)

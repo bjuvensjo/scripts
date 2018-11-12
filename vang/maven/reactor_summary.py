@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-
+import argparse
 import re
 from glob import glob
 from itertools import chain
 
 from os.path import realpath
+from sys import argv
 
 
 def get_reactor_summary(mvn_log):
@@ -97,13 +98,13 @@ def main(roots, log_file_name):
     print_summary(successes, failures)
 
 
-if __name__ == '__main__':
-    import argparse
-
+def parse_args(args):
     parser = argparse.ArgumentParser(description='Prints reactor summary of Maven build log files')
-    parser.add_argument('-d', '--dirs', help='Root directory in which to find Maven log files', nargs='*',
+    parser.add_argument('-d', '--roots', help='Root directories in which to find Maven log files', nargs='*',
                         default=['.'])
-    parser.add_argument('-l', '--log', help='Name of Maven build log file(s)', default='mvn.log')
-    pargs = parser.parse_args()
+    parser.add_argument('-l', '--log_file_name', help='Name of Maven build log file(s)', default='mvn.log')
+    return parser.parse_args(args)
 
-    main(pargs.dirs, pargs.log)
+
+if __name__ == '__main__':
+    main(**parse_args(argv[1:]).__dict__)

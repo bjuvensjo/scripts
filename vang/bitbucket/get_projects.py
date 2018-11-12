@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import argparse
+from sys import argv
 
 from vang.bitbucket.api import call
 
@@ -21,21 +23,21 @@ def get_projects():
                 yield value
 
 
-def main(only_key=False):
+def main(key=False):
     for project in get_projects():
-        if only_key:
+        if key:
             print(project['key'])
         else:
             print('{}: {}'.format(project['key'], project['name']))
 
 
-if __name__ == '__main__':
-    import argparse
-
+def parse_args(args):
     parser = argparse.ArgumentParser(description='Get projects from Bitbucket')
     parser.add_argument('-k', '--key',
                         help='Print only project key',
                         action='store_true')
-    pargs = parser.parse_args()
+    return parser.parse_args(args)
 
-    main(pargs.key)
+
+if __name__ == '__main__':
+    main(**parse_args(argv[1:]).__dict__)

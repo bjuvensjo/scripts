@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 from sys import argv
+
 from vang.bitbucket.api import call
 from vang.bitbucket.utils import get_repo_specs
 from vang.core.core import pmap_unordered
@@ -10,7 +11,7 @@ def get_branch_page(spec, branch, limit, start):
     response = call(
         str('/rest/api/1.0/projects/{}/repos/{}'
             '/branches?filterText={}&limit={}&start={}').format(
-                spec[0], spec[1], branch, limit, start))
+            spec[0], spec[1], branch, limit, start))
     return response['size'], response['values'], response[
         'isLastPage'], response.get('nextPageStart', -1)
 
@@ -69,5 +70,4 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    pargs = parse_args(argv[1:])
-    main(pargs.branch, pargs.name, pargs.dirs, pargs.repos, pargs.projects)
+    main(**parse_args(argv[1:]).__dict__)

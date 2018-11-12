@@ -27,5 +27,5 @@ setup(
         "Development Status :: 4 - Beta",
         "Topic :: Utilities",
         "License :: OSI Approved :: MIT License",
-    ],
+    ], install_requires=['pytest']
 )

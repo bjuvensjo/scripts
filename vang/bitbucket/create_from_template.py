@@ -58,24 +58,11 @@ def create_and_push_to_dest_repo(branch,
     return dest_repo_origin
 
 
-def main(project, repo, branch, dest_project, dest_repo, work_dir, webhook):
-    clone_url, dest_repo_dir = setup(project, repo, branch, dest_project,
-                                     dest_repo, work_dir)
-
-    update(repo, dest_repo, dest_repo_dir)
-
-    commit_all(dest_repo_dir)
-
-    dest_repo_origin = create_and_push_to_dest_repo(
-        branch, dest_project, dest_repo, dest_repo_dir, webhook)
-    print('Created', dest_repo_origin)
-
-
 def parse_args(args):
     parser = ArgumentParser(
         description='Create a new repo based on template'
-        ' repo.\nExample: create_from_template.vang PCS1806 foo PCS1806'
-        ' bar -b develop -d . -w http://my-host:7777/wildcat/webhook/')
+                    ' repo.\nExample: create_from_template.vang PCS1806 foo PCS1806'
+                    ' bar -b develop -d . -w http://my-host:7777/wildcat/webhook/')
 
     parser.add_argument(
         'src_project',
@@ -92,10 +79,10 @@ def parse_args(args):
         '--branch',
         default='develop',
         help='The branch to use and create, e.g. develop. '
-        'It will be set as default branch on created repo')
+             'It will be set as default branch on created repo')
     parser.add_argument(
         '-d',
-        '--dir',
+        '--work_dir',
         default='.',
         help='The directory to create local repo in')
     parser.add_argument(
@@ -106,7 +93,18 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main(src_project, src_repo, branch, dest_project, dest_repo, work_dir, webhook):
+    clone_url, dest_repo_dir = setup(src_project, src_repo, branch, dest_project,
+                                     dest_repo, work_dir)
+
+    update(src_repo, dest_repo, dest_repo_dir)
+
+    commit_all(dest_repo_dir)
+
+    dest_repo_origin = create_and_push_to_dest_repo(
+        branch, dest_project, dest_repo, dest_repo_dir, webhook)
+    print('Created', dest_repo_origin)
+
+
 if __name__ == '__main__':
-    pargs = parse_args(argv[1:])
-    main(pargs.src_project, pargs.src_repo, pargs.branch, pargs.dest_project,
-         pargs.dest_repo, pargs.dir, pargs.webhook)
+    main(**parse_args(argv[1:]).__dict__)

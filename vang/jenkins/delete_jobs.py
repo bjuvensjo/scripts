@@ -24,7 +24,10 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-if __name__ == '__main__':
-    pargs = parse_args(argv[1:])
-    for a_job_name, a_response_code in delete_jobs(pargs.job_names):
+def main(job_names):
+    for a_job_name, a_response_code in delete_jobs(job_names):
         print(a_job_name, a_response_code)
+
+
+if __name__ == '__main__':
+    main(**parse_args(argv[1:]).__dict__)

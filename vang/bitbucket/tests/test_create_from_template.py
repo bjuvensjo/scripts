@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-from argparse import Namespace
-from unittest.mock import patch, call
+from unittest.mock import call, patch
+
+from pytest import raises
 
 from vang.bitbucket.create_from_template import commit_all
 from vang.bitbucket.create_from_template import create_and_push_to_dest_repo
@@ -87,16 +88,16 @@ def test_commit_all(mock_run_command):
     return_value=[('repo', 'dest_repo')])
 def test_update(mock_get_zipped_cases, mock_get_replace_function, mock_rsr):
     update('repo', 'dest_repo', 'dest_repo_dir')
-    assert [call('repo', 'dest_repo', ['dest_repo_dir'],
-                 'get_replace_function')] == mock_rsr.mock_calls
+    assert [
+        call('repo', 'dest_repo', ['dest_repo_dir'], 'get_replace_function')
+    ] == mock_rsr.mock_calls
 
 
 @patch(
     'vang.bitbucket.create_from_template.set_repo_default_branch',
     autospec=True)
 @patch(
-    'vang.bitbucket.create_from_template.enable_repo_web_hook',
-    autospec=True)
+    'vang.bitbucket.create_from_template.enable_repo_web_hook', autospec=True)
 @patch('vang.bitbucket.create_from_template.run_command', autospec=True)
 @patch(
     'vang.bitbucket.create_from_template.create_repo',
@@ -162,25 +163,34 @@ def test_main(mock_setup, mock_update, mock_commit_all,
 
 
 def test_parse_args():
-    # defaults
-    assert Namespace(
-        branch='develop',
-        dest_project='dest_project',
-        dest_repo='dest_repo',
-        dir='.',
-        src_project='src_project',
-        src_repo='src_repo',
-        webhook=False) == parse_args(
-            ['src_project', 'src_repo', 'dest_project', 'dest_repo'])
-    # no defaults
-    assert Namespace(
-        branch='branch',
-        dest_project='dest_project',
-        dest_repo='dest_repo',
-        dir='dir',
-        src_project='src_project',
-        src_repo='src_repo',
-        webhook='webhook') == parse_args([
-            'src_project', 'src_repo', 'dest_project', 'dest_repo', '-b',
-            'branch', '-d', 'dir', '-w', 'webhook'
-        ])
+    for args in [None, '', '1', '1 2', '1 2 3', '1, 2, 3, 4, 5']:
+        with raises(SystemExit):
+            parse_args(args.split(' ') if args else args)
+
+    for args, pargs in [
+        [
+            'src_project src_repo dest_project dest_repo',
+            {
+                'branch': 'develop',
+                'dest_project': 'dest_project',
+                'dest_repo': 'dest_repo',
+                'work_dir': '.',
+                'src_project': 'src_project',
+                'src_repo': 'src_repo',
+                'webhook': False
+            }
+        ],
+        [
+            'src_project src_repo dest_project dest_repo -b b -d d -w w',
+            {
+                'branch': 'b',
+                'dest_project': 'dest_project',
+                'dest_repo': 'dest_repo',
+                'work_dir': 'd',
+                'src_project': 'src_project',
+                'src_repo': 'src_repo',
+                'webhook': 'w'
+            }
+        ],
+    ]:
+        assert pargs == parse_args(args.split(' ') if args else []).__dict__

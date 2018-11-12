@@ -1,5 +1,6 @@
-from argparse import Namespace
 from unittest.mock import call, patch
+
+from pytest import raises
 
 from vang.bitbucket.delete_repos import delete_repo
 from vang.bitbucket.delete_repos import delete_repos
@@ -55,28 +56,24 @@ def test_main(mock_get_repo_specs, mock_delete_repos, mock_print):
         ('project', 'repo2'),
     ])] == mock_delete_repos.mock_calls
     assert [
-        call('project/repo1: deleted'),
-        call('project/repo1: deleted'),
-    ] == mock_print.mock_calls
+               call('project/repo1: deleted'),
+               call('project/repo1: deleted'),
+           ] == mock_print.mock_calls
 
 
 def test_parse_args():
-    assert Namespace(dirs=['.'], projects=None, repos=None) == parse_args([])
+    for args in [
+        'foo',
+        '-d d -r r', '-d d -p p', '-r r -p p'
+    ]:
+        with raises(SystemExit):
+            parse_args(args.split(' ') if args else args)
 
-    assert Namespace(
-        dirs=['dir1', 'dir2'],
-        projects=None,
-        repos=None,
-    ) == parse_args(['-d', 'dir1', 'dir2'])
+    for args, pargs in [
+        ['', {'dirs': ['.'], 'projects': None, 'repos': None}],
+        ['-d d', {'dirs': ['d'], 'projects': None, 'repos': None}],
+        ['-r r', {'dirs': ['.'], 'projects': None, 'repos': ['r']}],
+        ['-p p', {'dirs': ['.'], 'projects': ['p'], 'repos': None}],
 
-    assert Namespace(
-        dirs=['.'],
-        projects=['project1', 'project2'],
-        repos=None,
-    ) == parse_args(['-p', 'project1', 'project2'])
-
-    assert Namespace(
-        dirs=['.'],
-        projects=None,
-        repos=['repo1', 'repo2'],
-    ) == parse_args(['-r', 'repo1', 'repo2'])
+    ]:
+        assert pargs == parse_args(args.split(' ') if args else []).__dict__

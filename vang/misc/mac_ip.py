@@ -11,7 +11,11 @@ def get_ip_address():
             [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]
 
 
-if __name__ == '__main__':
+def main():
     ip_address = get_ip_address()
     system(f'echo "{ip_address}\c" | pbcopy')
     print(ip_address)
+
+
+if __name__ == '__main__':
+    main()

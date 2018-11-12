@@ -21,6 +21,8 @@ def get_branches(organisations=None,
         repos = get_repos(organisations=organisations, repo_specs=True)
     if projects:
         repos = get_repos(projects=projects, repo_specs=True)
+    if not repos:
+        return []
 
     branch_specs = [(repo, get_repo_branches(*repo.split('/'))) for repo in repos]
     if names:
@@ -56,14 +58,19 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-if __name__ == '__main__':
-    pargs = parse_args(argv[1:])
-
+def main(organisations,
+         projects,
+         repos,
+         names):
     for the_repo, the_branches in get_branches(
-            pargs.organisations,
-            pargs.projects,
-            pargs.repos,
-            pargs.names,
+            organisations,
+            projects,
+            repos,
+            names,
     ):
         for the_branch in the_branches:
             print(f'{the_repo}: {the_branch}')
+
+
+if __name__ == '__main__':
+    main(**parse_args(argv[1:]).__dict__)

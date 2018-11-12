@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 import argparse
+from itertools import product
 from json import dumps
 from multiprocessing.dummy import Pool
-
-from itertools import product
 from sys import argv
 
 from vang.bitbucket.api import call
@@ -36,7 +35,7 @@ def parse_args(args):
     parser.add_argument(
         'url',
         help='The url which to send repo info to, e.g. '
-        'http://10.20.30.40:8002/wildcat/webhook/')
+             'http://10.20.30.40:8002/wildcat/webhook/')
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
         '-d',
@@ -52,5 +51,4 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    pargs = parse_args(argv[1:])
-    main(pargs.url, pargs.dirs, pargs.repos, pargs.projects)
+    main(**parse_args(argv[1:]).__dict__)

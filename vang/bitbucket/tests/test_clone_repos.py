@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-from argparse import Namespace
-from pytest import raises
 from unittest.mock import MagicMock, call, patch
 
 from more_itertools import take
+from pytest import raises
 
 from vang.bitbucket.clone_repos import clone
 from vang.bitbucket.clone_repos import get_config_commands
@@ -30,19 +29,16 @@ def test_should_be_cloned(mock_is_included):
                  ['includes'])] == mock_is_included.mock_calls
 
 
-@patch(
-    'vang.bitbucket.clone_repos.run_commands',
-    return_value=iter([1, 2, 3]))
+@patch('vang.bitbucket.clone_repos.run_commands', return_value=iter([1, 2, 3]))
 @patch('vang.bitbucket.clone_repos.makedirs')
 def test_clone(mock_makedirs, mock_run_commands):
     assert [1, 2, 3] == take(3, clone(['commands'], 'root_dir'))
     assert [call('root_dir', exist_ok=True)] == mock_makedirs.mock_calls
     assert [
-        call(
-            [('commands', 'root_dir')],
-            check=False,
-            max_processes=25,
-            timeout=60)
+        call([('commands', 'root_dir')],
+             check=False,
+             max_processes=25,
+             timeout=60)
     ] == mock_run_commands.mock_calls
 
 
@@ -193,39 +189,54 @@ def test_main(
 
 
 def test_parse_args():
-    assert Namespace(
-        branch=None,
-        config='config',
-        dir='.',
-        flat=False,
-        projects=None,
-        repos=None,
-    ) == parse_args(['-c', 'config'])
-    assert Namespace(
-        branch=None,
-        config=None,
-        dir='.',
-        flat=False,
-        projects=['p1', 'p2'],
-        repos=None,
-    ) == parse_args(['-p', 'p1', 'p2'])
-    assert Namespace(
-        branch=None,
-        config=None,
-        dir='.',
-        flat=False,
-        projects=None,
-        repos=['p/r1', 'p/r2'],
-    ) == parse_args(['-r', 'p/r1', 'p/r2'])
-    assert Namespace(
-        branch='branch',
-        config=None,
-        dir='dir',
-        flat=False,
-        projects=None,
-        repos=['p/r1', 'p/r2'],
-    ) == parse_args(['-r', 'p/r1', 'p/r2', '-b', 'branch', '-d', 'dir'])
-    with raises(SystemExit):
-        parse_args([])
-    with raises(SystemExit):
-        parse_args(['-c', 'config', '-p', 'project'])
+    for args in [None, '', 'foo', '-p p -r r', '-p p -c c', '-r r -c c']:
+        with raises(SystemExit):
+            parse_args(args.split(' ') if args else args)
+
+    for args, pargs in [
+        [
+            '-p p1 p2',
+            {
+                'branch': None,
+                'config': None,
+                'root_dir': '.',
+                'flat': False,
+                'projects': ['p1', 'p2'],
+                'repos': None
+            }
+        ],
+        [
+            '-r r1 r2',
+            {
+                'branch': None,
+                'config': None,
+                'root_dir': '.',
+                'flat': False,
+                'projects': None,
+                'repos': ['r1', 'r2']
+            }
+        ],
+        [
+            '-c c',
+            {
+                'branch': None,
+                'config': 'c',
+                'root_dir': '.',
+                'flat': False,
+                'projects': None,
+                'repos': None
+            }
+        ],
+        [
+            '-c c -b b -d d -f',
+            {
+                'branch': 'b',
+                'config': 'c',
+                'root_dir': 'd',
+                'flat': True,
+                'projects': None,
+                'repos': None
+            }
+        ],
+    ]:
+        assert pargs == parse_args(args.split(' ') if args else []).__dict__

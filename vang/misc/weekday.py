@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from argparse import ArgumentParser
 from sys import argv
 
 
@@ -24,9 +25,18 @@ def zeller(year, month, day):
     return ((h + 5) % 7) + 1
 
 
-if __name__ == '__main__':
-    a_year = int(argv[1])
-    a_month = int(argv[2])
-    a_day = int(argv[3])
+def parse_args(args):
+    parser = ArgumentParser(
+        description='Prints weekday')
+    parser.add_argument('year', help='Year')
+    parser.add_argument('month', help='Month')
+    parser.add_argument('day', help='Day')
+    return parser.parse_args(args)
 
-    print(name(zeller(a_year, a_month, a_day)))
+
+def main(year, month, day):
+    print(name(zeller(int(year), int(month), int(day))))
+
+
+if __name__ == '__main__':
+    main(**parse_args(argv[1:]).__dict__)

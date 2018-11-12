@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-from argparse import Namespace
 from pathlib import Path
+from unittest.mock import MagicMock, call, patch
+
 from pytest import raises
-from unittest.mock import call, MagicMock, patch
 
 from vang.pio.command_all import execute_in_parallel
 from vang.pio.command_all import execute_in_sequence
@@ -21,9 +21,9 @@ from vang.pio.command_all import parse_args
     ])
 def test_get_work_dirs(mock_glob, mock_realpath):
     assert [
-        Path('root/sub/foo'),
-        Path('root/sub/bar'),
-    ] == get_work_dirs('.git', 'root')
+               Path('root/sub/foo'),
+               Path('root/sub/bar'),
+           ] == get_work_dirs('.git', 'root')
 
 
 def test_get_command():
@@ -39,11 +39,11 @@ def test_execute_in_parallel(mock_get_work_dirs, mock_run_commands):
         execute_in_parallel('root', ['pwd', 'ls'], find='find'))
     assert [call('find', 'root')] == mock_get_work_dirs.mock_calls
     assert [
-        call(
-            (('pwd && ls', 'foo'), ('pwd && ls', 'bar')),
-            check=False,
-            max_processes=25)
-    ] == mock_run_commands.mock_calls
+               call(
+                   (('pwd && ls', 'foo'), ('pwd && ls', 'bar')),
+                   check=False,
+                   max_processes=25)
+           ] == mock_run_commands.mock_calls
 
 
 @patch('vang.pio.command_all.run', side_effect=[1, 2])
@@ -53,23 +53,23 @@ def test_execute_in_sequence(mock_get_work_dirs, mock_run):
         execute_in_sequence('root', ['pwd', 'ls'], find='find', timeout=10))
     assert [call('find', 'root')] == mock_get_work_dirs.mock_calls
     assert [
-        call(
-            'pwd && ls',
-            check=False,
-            cwd='foo',
-            shell=True,
-            stderr=-2,
-            stdout=-1,
-            timeout=10),
-        call(
-            'pwd && ls',
-            check=False,
-            cwd='bar',
-            shell=True,
-            stderr=-2,
-            stdout=-1,
-            timeout=10)
-    ] == mock_run.mock_calls
+               call(
+                   'pwd && ls',
+                   check=False,
+                   cwd='foo',
+                   shell=True,
+                   stderr=-2,
+                   stdout=-1,
+                   timeout=10),
+               call(
+                   'pwd && ls',
+                   check=False,
+                   cwd='bar',
+                   shell=True,
+                   stderr=-2,
+                   stdout=-1,
+                   timeout=10)
+           ] == mock_run.mock_calls
 
 
 @patch('builtins.print')
@@ -89,14 +89,21 @@ def test_main(mock_execute_in_sequence, mock_execute_in_parallel, mock_print):
 
 
 def test_parse_args():
-    with raises(SystemExit):
-        parse_args([])
+    for args in [
+        None, ''
+    ]:
+        with raises(SystemExit):
+            parse_args(args.split(' ') if args else args)
 
-    assert Namespace(
-        commands=['pwd'], find='.git/', root='.',
-        sequence=False) == parse_args(['pwd'])
+    for args, pargs in [
+        ['pwd ls', {'commands': ['pwd', 'ls'],
+                    'find': '.git/',
+                    'root': '.',
+                    'sequence': False}],
+        ['pwd -r root -f find -s', {'commands': ['pwd'],
+                                    'find': 'find',
+                                    'root': 'root',
+                                    'sequence': True}]
 
-    assert Namespace(
-        commands=['pwd', 'ls'], find='find', root='root',
-        sequence=True) == parse_args(
-            ['pwd', 'ls', '-r', 'root', '-f', 'find', '-s'])
+    ]:
+        assert pargs == parse_args(args.split(' ')).__dict__

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
+import argparse
 from multiprocessing.dummy import Pool
 
 from itertools import product
+from sys import argv
 
 from vang.bitbucket.api import call
 from vang.bitbucket.utils import get_repo_specs
@@ -24,10 +26,7 @@ def main(branch, dirs=None, repos=None, projects=None):
     for spec, response in set_default_branch(specs, branch):
         print('{}/{}: {}'.format(spec[0], spec[1], response))
 
-
-if __name__ == '__main__':
-    import argparse
-
+def parse_args(args):
     parser = argparse.ArgumentParser(description='Set default branches for repositories in Bitbucket')
     parser.add_argument('branch', help='The branch to set')
     group = parser.add_mutually_exclusive_group()
@@ -36,6 +35,8 @@ if __name__ == '__main__':
     group.add_argument('-r', '--repos', nargs='*', help='Repos, e.g. key1/repo1 key2/repo2')
     group.add_argument('-p', '--projects', nargs='*', help='Projects, e.g. key1 key2')
 
-    pargs = parser.parse_args()
+    return parser.parse_args(args)
 
-    main(pargs.branch, pargs.dirs, pargs.repos, pargs.projects)
+
+if __name__ == '__main__':
+    main(**parse_args(argv[1:]).__dict__)

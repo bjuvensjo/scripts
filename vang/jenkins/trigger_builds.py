@@ -24,7 +24,10 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-if __name__ == '__main__':
-    pargs = parse_args(argv[1:])
-    for job_name, response_code in trigger_builds(pargs.job_names):
+def main(job_names):
+    for job_name, response_code in trigger_builds(job_names):
         print(job_name, response_code)
+
+
+if __name__ == '__main__':
+    main(**parse_args(argv[1:]).__dict__)

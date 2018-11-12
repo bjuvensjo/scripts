@@ -72,5 +72,4 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    pargs = parse_args(argv[1:])
-    main(pargs.root, pargs.commands, pargs.find, pargs.sequence)
+    main(**parse_args(argv[1:]).__dict__)

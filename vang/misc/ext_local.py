@@ -39,6 +39,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main(backup):
+    print(''.join(update(backup)))
+
+
 if __name__ == '__main__':
-    pargs = parse_args(argv[1:])
-    print(''.join(update(pargs.backup)))
+    main(**parse_args(argv[1:]).__dict__)

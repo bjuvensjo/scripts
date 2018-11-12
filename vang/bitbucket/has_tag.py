@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+import argparse
+from sys import argv
+
 from vang.bitbucket.get_tags import get_tags
 from vang.bitbucket.utils import get_repo_specs
 
@@ -15,9 +18,7 @@ def main(tag, dirs=None, repos=None, projects=None):
         print('{}/{}, {}: {}'.format(spec[0], spec[1], tag, has))
 
 
-if __name__ == '__main__':
-    import argparse
-
+def parse_args(args):
     parser = argparse.ArgumentParser(description='Check repository tags in Bitbucket')
     parser.add_argument('tag', help='The tag to check')
     group = parser.add_mutually_exclusive_group()
@@ -26,6 +27,8 @@ if __name__ == '__main__':
     group.add_argument('-r', '--repos', nargs='*', help='Repos, e.g. key1/repo1 key2/repo2')
     group.add_argument('-p', '--projects', nargs='*',
                        help='Projects, e.g. key1 key2')
-    pargs = parser.parse_args()
+    return parser.parse_args(args)
 
-    main(pargs.tag, pargs.dirs, pargs.repos, pargs.projects)
+
+if __name__ == '__main__':
+    main(**parse_args(argv[1:]).__dict__)

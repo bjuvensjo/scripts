@@ -10,9 +10,22 @@ from vang.core.core import pmap_unordered
 log = logging.getLogger(__name__)
 
 
-def run_command(command, return_output=False, cwd=None, check=True, timeout=None):
-    cp = run(command, cwd=cwd, stdout=PIPE, stderr=STDOUT, check=check, timeout=timeout, shell=True)
-    return (cp.returncode, cp.stdout.decode().strip()) if return_output else cp.returncode
+def run_command(command,
+                return_output=False,
+                cwd=None,
+                check=True,
+                timeout=None):
+    cp = run(
+        command,
+        cwd=cwd,
+        stdout=PIPE,
+        stderr=STDOUT,
+        check=check,
+        timeout=timeout,
+        shell=True,
+    )
+    return (cp.returncode,
+            cp.stdout.decode().strip()) if return_output else cp.returncode
 
 
 def run_commands(commands_and_cwds, max_processes=10, check=True, timeout=None):
@@ -29,9 +42,18 @@ def run_commands(commands_and_cwds, max_processes=10, check=True, timeout=None):
     def f(cc):
         cmd, cwd = cc
         try:
-            return run(cmd, cwd=cwd, stdout=PIPE, stderr=STDOUT, check=check, timeout=timeout, shell=True)
+            return run(
+                cmd,
+                cwd=cwd,
+                stdout=PIPE,
+                stderr=STDOUT,
+                check=check,
+                timeout=timeout,
+                shell=True,
+            )
         except Exception as e:
             traceback.print_exc(file=sys.stdout)
             raise e
 
-    yield from pmap_unordered(f, commands_and_cwds, processes=max_processes, chunksize=1)
+    yield from pmap_unordered(
+        f, commands_and_cwds, processes=max_processes, chunksize=1)

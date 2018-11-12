@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-
+import argparse
+from itertools import product
 from json import dumps
 from multiprocessing.dummy import Pool
-
-from itertools import product
+from sys import argv
 
 from vang.bitbucket.api import call
 from vang.bitbucket.utils import get_repo_specs
@@ -33,9 +33,7 @@ def main(fork_project, dirs, repos=None, projects=None):
         print('{}/{}: {}'.format(spec[0], spec[1], response))
 
 
-if __name__ == '__main__':
-    import argparse
-
+def parse_args(args):
     parser = argparse.ArgumentParser(description='Fork Bitbucket repos')
     parser.add_argument('fork_project', help='Fork project')
     group = parser.add_mutually_exclusive_group()
@@ -45,6 +43,8 @@ if __name__ == '__main__':
                        help='Repos, e.g. key1/repo1 key2/repo2')
     group.add_argument('-p', '--projects', nargs='*',
                        help='Projects, e.g. key1 key2')
-    pargs = parser.parse_args()
+    return parser.parse_args(args)
 
-    main(pargs.fork_project, pargs.dirs, pargs.repos, pargs.projects)
+
+if __name__ == '__main__':
+    main(**parse_args(argv[1:]).__dict__)

@@ -21,17 +21,20 @@ def should_be_cloned(project, repo, project_config, has_branch_map):
 
 def clone(commands, root_dir):
     makedirs(root_dir, exist_ok=True)
-    yield from run_commands(
-        [(cmd, root_dir) for cmd in commands],
-        max_processes=25,
-        timeout=60,
-        check=False)
+    yield from run_commands([(cmd, root_dir) for cmd in commands],
+                            max_processes=25,
+                            timeout=60,
+                            check=False)
 
 
 def get_projects_commands(projects, branch=None, flat=False):
     return ((clone_dir, project, repo, command)
             for clone_dir, project, repo, command in get_clone_urls(
-                projects, True, branch, flat))
+                projects,
+                True,
+                branch,
+                flat,
+            ))
 
 
 def get_repos_commands(repos, branch=None, flat=False):
@@ -41,7 +44,11 @@ def get_repos_commands(repos, branch=None, flat=False):
     clone_urls_map = {
         '{}/{}'.format(project, repo): (clone_dir, project, repo, command)
         for clone_dir, project, repo, command in get_clone_urls(
-            projects, True, branch, flat)
+            projects,
+            True,
+            branch,
+            flat,
+        )
     }
     for repo_spec in repos:
         if repo_spec in clone_urls_map:
@@ -54,8 +61,8 @@ def get_repos_commands(repos, branch=None, flat=False):
 
 def get_config_commands(config, branch=None, flat=False):
     clone_url_specs = tuple(
-        get_clone_urls(config['projects'], True, branch
-                       if branch else config['branch'], flat))
+        get_clone_urls(config['projects'], True,
+                       branch if branch else config['branch'], flat))
     has_branch_specs = has_branch([(p, r) for d, p, r, c in clone_url_specs],
                                   config['branch'])
     has_branch_map = {repo_spec: has for repo_spec, has in has_branch_specs}
@@ -106,13 +113,11 @@ def parse_args(args):
         '--branch',
         help='The clone branch. Overrides branch in configuration file (-c)')
     parser.add_argument(
-        '-d', '--dir', default='.', help='The directory to clone into')
+        '-d', '--root_dir', default='.', help='The directory to clone into')
     parser.add_argument(
         '-f', '--flat', help='Clone to flat structure', action='store_true')
     return parser.parse_args(args)
 
 
 if __name__ == '__main__':
-    pargs = parse_args(argv[1:])
-    main(pargs.dir, pargs.projects, pargs.repos, pargs.config, pargs.branch,
-         pargs.flat)
+    main(**parse_args(argv[1:]).__dict__)

@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
+import argparse
 from glob import glob
-from os import makedirs, remove, environ
-from os.path import realpath, normpath, exists
+from os import environ, makedirs, remove
+from os.path import exists, normpath, realpath
 from shutil import rmtree
+from sys import argv
 from traceback import print_exc
 
 from vang.pio.shell import run_command
@@ -49,15 +51,16 @@ def main(war, develop_branch, release_branch, release_tag):
     get_release_info(war, develop_branch, release_branch, release_tag)
 
 
-if __name__ == '__main__':
-    import argparse
-
+def parse_args(args):
     parser = argparse.ArgumentParser(description='Print release.info of all artifacts in war')
     parser.add_argument('war', help='The war file')
     parser.add_argument('-d', '--develop_branch', help='Print clone commands of develop_branch', action='store_true')
     parser.add_argument('-r', '--release_branch', help='Print clone commands of release_branch', action='store_true')
     parser.add_argument('-t', '--release_tag', help='Print clone commands of release_tag', action='store_true')
-    pargs = parser.parse_args()
+    return parser.parse_args(args)
 
+
+if __name__ == '__main__':
+    pargs = parse_args(argv[1:])
     params = [pargs.develop_branch, pargs.release_branch, pargs.release_tag]
     main(pargs.war, *params if any(params) else [True, True, True])

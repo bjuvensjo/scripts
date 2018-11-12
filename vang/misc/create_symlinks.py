@@ -30,12 +30,12 @@ def map_to_link_name(main_file):
         '_', '-'))
 
 
-def create_symlinks(src, target):
+def create_symlinks(source, target):
     if not exists(target):
         makedirs(target)
 
     for main_file in [
-            f for f in glob('{}/**/*.py'.format(src), recursive=True)
+            f for f in glob('{}/**/*.py'.format(source), recursive=True)
             if has_main(f) and not is_excluded(f)
     ]:
         link_file = '{}/{}'.format(target, map_to_link_name(main_file))
@@ -55,6 +55,5 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    pargs = parse_args(argv[1:])
-    create_symlinks(pargs.source, pargs.target)
+    create_symlinks(**parse_args(argv[1:]).__dict__)
 

@@ -71,5 +71,4 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    pargs = parse_args(argv[1:])
-    synchronize_dirs(pargs.source_dir, pargs.dest_dir, pargs.ignore_sub_paths)
+    synchronize_dirs(**parse_args(argv[1:]).__dict__)

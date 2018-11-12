@@ -45,4 +45,4 @@ def main(strings):
 
 
 if __name__ == '__main__':
-    main(parse_args(argv[1:]).strings)
+    main(**parse_args(argv[1:]).__dict__)

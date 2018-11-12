@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
+import argparse
 import itertools
 from multiprocessing.dummy import Pool
+from sys import argv
 
 from vang.bitbucket.api import call
 from vang.bitbucket.utils import get_repo_specs
@@ -8,8 +10,9 @@ from vang.bitbucket.utils import get_repo_specs
 
 def get_tags_page(spec, tag, limit, start, order_by='MODIFICATION'):
     response = call(
-        '/rest/api/1.0/projects/{}/repos/{}/tags?filterText={}&limit={}&start={}&orderBy'.format(spec[0], spec[1], tag, limit,
-                                                                                         start, order_by))
+        '/rest/api/1.0/projects/{}/repos/{}/tags?filterText={}&limit={}&start={}&orderBy'.format(spec[0], spec[1], tag,
+                                                                                                 limit,
+                                                                                                 start, order_by))
     return response['size'], response['values'], response['isLastPage'], response.get('nextPageStart', -1)
 
 
@@ -40,9 +43,7 @@ def main(tag='', name=False, dirs=None, repos=None, projects=None):
             print('{}/{}: {}'.format(spec[0], spec[1], response['displayId']))
 
 
-if __name__ == '__main__':
-    import argparse
-
+def parse_args(args):
     parser = argparse.ArgumentParser(description='Get repository tags from Bitbucket')
     parser.add_argument('-t', '--tag',
                         help='Tag filter',
@@ -57,6 +58,8 @@ if __name__ == '__main__':
                        help='Repos, e.g. key1/repo1 key2/repo2')
     group.add_argument('-p', '--projects', nargs='*',
                        help='Projects, e.g. key1 key2')
-    pargs = parser.parse_args()
+    return parser.parse_args(args)
 
-    main(pargs.tag, pargs.name, pargs.dirs, pargs.repos, pargs.projects)
+
+if __name__ == '__main__':
+    main(**parse_args(argv[1:]).__dict__)

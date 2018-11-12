@@ -14,6 +14,8 @@ def get_repos(organisations=None,
               urls=False):
     if organisations:
         projects = get_projects(organisations, project_specs=True)
+    if not projects:
+        return []
     repos = [(project, repo) for project in projects for repo in call(
         # f'/{project}/_apis/git/repositories?api-version=3.2')['value']]
         f'/{project}/_apis/git/repositories')['value']]
@@ -24,6 +26,11 @@ def get_repos(organisations=None,
     if urls:
         return [repo[1]['remoteUrl'] for repo in repos]
     return repos
+
+
+def main(organisations, projects, names, repo_specs, urls):
+    for repo in get_repos(organisations, projects, names, repo_specs, urls):
+        print(repo)
 
 
 def parse_args(args):
@@ -43,7 +50,7 @@ def parse_args(args):
     optional_group = parser.add_mutually_exclusive_group(required=False)
     optional_group.add_argument(
         '-n', '--names', action='store_true', help='Get only repo names')
-    parser.add_argument(
+    optional_group.add_argument(
         '-r',
         '--repo_specs',
         help='Print only organisation/project/name',
@@ -54,8 +61,4 @@ def parse_args(args):
 
 
 if __name__ == '__main__':
-    pargs = parse_args(argv[1:])
-
-    for a_repo in get_repos(pargs.organisations, pargs.projects, pargs.names,
-                            pargs.repo_specs, pargs.urls):
-        print(a_repo)
+    main(**parse_args(argv[1:]).__dict__)

@@ -1,5 +1,6 @@
-from argparse import Namespace
-from unittest.mock import patch, call
+from unittest.mock import call, patch
+
+from pytest import raises
 
 from vang.misc.s import get_cases
 from vang.misc.s import get_split
@@ -35,42 +36,50 @@ def test_get_cases():
 
 def test_zipped_cases():
     assert [
-        ('foo', ),
-        ('Foo', ),
-        ('foo', ),
-        ('FOO', ),
-        ('foo', ),
-        ('FOO', ),
-        ('foo', ),
-        ('FOO', ),
-    ] == list(get_zipped_cases(['foo']))
+               ('foo',),
+               ('Foo',),
+               ('foo',),
+               ('FOO',),
+               ('foo',),
+               ('FOO',),
+               ('foo',),
+               ('FOO',),
+           ] == list(get_zipped_cases(['foo']))
     assert [
-        ('foo', 'bar', 'baz'),
-        ('Foo', 'Bar', 'Baz'),
-        ('foo', 'bar', 'baz'),
-        ('FOO', 'BAR', 'BAZ'),
-        ('foo', 'bar', 'baz'),
-        ('FOO', 'BAR', 'BAZ'),
-        ('foo', 'bar', 'baz'),
-        ('FOO', 'BAR', 'BAZ'),
-    ] == list(get_zipped_cases(['foo', 'bar', 'baz']))
+               ('foo', 'bar', 'baz'),
+               ('Foo', 'Bar', 'Baz'),
+               ('foo', 'bar', 'baz'),
+               ('FOO', 'BAR', 'BAZ'),
+               ('foo', 'bar', 'baz'),
+               ('FOO', 'BAR', 'BAZ'),
+               ('foo', 'bar', 'baz'),
+               ('FOO', 'BAR', 'BAZ'),
+           ] == list(get_zipped_cases(['foo', 'bar', 'baz']))
 
 
 def test_parse_args():
-    assert Namespace(strings=['foo', 'bar', 'baz']) == parse_args(
-        ['foo', 'bar', 'baz'])
+    for args in [
+        None, ''
+    ]:
+        with raises(SystemExit):
+            parse_args(args.split(' ') if args else args)
+
+    for args, pargs in [
+        ['foo bar baz', {'strings': ['foo', 'bar', 'baz']}]
+    ]:
+        assert pargs == parse_args(args.split(' ') if args else []).__dict__
 
 
 @patch('builtins.print')
 def test_main(mock_print):
     main(['foo', 'bar'])
     assert [
-        call('foo bar'),
-        call('Foo Bar'),
-        call('foo bar'),
-        call('FOO BAR'),
-        call('foo bar'),
-        call('FOO BAR'),
-        call('foo bar'),
-        call('FOO BAR')
-    ] == mock_print.mock_calls
+               call('foo bar'),
+               call('Foo Bar'),
+               call('foo bar'),
+               call('FOO BAR'),
+               call('foo bar'),
+               call('FOO BAR'),
+               call('foo bar'),
+               call('FOO BAR')
+           ] == mock_print.mock_calls

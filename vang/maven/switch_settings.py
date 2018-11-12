@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from os import name, environ
+from os import environ, name
 
 from vang.pio.shell import run_command
 
@@ -17,12 +17,12 @@ def main(ending):
         print('Platform not supported. PLease implement, and make a pull request.')
 
 
-if __name__ == '__main__':
-    import argparse
-
+def parse_args(args):
     parser = argparse.ArgumentParser(description='Switch maven settings in ~/.m2')
     parser.add_argument('ending',
                         help='The ending of the settings file to switch to, e.g. FOO for ~/.m2/settings_FOO.xml')
-    pargs = parser.parse_args()
+    return parser.parse_args(args)
 
-    main(pargs.ending)
+
+if __name__ == '__main__':
+    main(**parse_args(argv[1:]).__dict__)
