@@ -35,15 +35,7 @@ def call(
     basic_auth_header = f'Basic {b64encode(auth.encode("utf-8")).decode()}'
     url = f'{rest_url}{uri}'
 
-    request = Request(
-        url,
-        request_data.encode("UTF-8") if request_data else None,
-        {
-            'Authorization': basic_auth_header,
-            'Content-Type': "application/json"
-        },
-        method=method,
-    )
+    request = create_request(basic_auth_header, method, request_data, url)
 
     try:
         response = urlopen(request)
@@ -52,7 +44,19 @@ def call(
             return response_code
         response_data = response.read()
         return loads(response_data.decode(
-            'UTF-8')) if response_data else response.getcode()
-    except HTTPError as e:
+            'UTF-8')) if response_data else response_code
+    except HTTPError as e:  # pragma: no cover
         print(f'Can not call {url}, {request_data}, {method}, {e}')
         raise e
+
+
+def create_request(basic_auth_header, method, request_data, url):
+    return Request(
+        url,
+        request_data.encode("UTF-8") if request_data else None,
+        {
+            'Authorization': basic_auth_header,
+            'Content-Type': "application/json"
+        },
+        method=method,
+    )

@@ -5,7 +5,7 @@ from os import system
 
 def get_ip_address():
     """
-    Returns the ip adress.
+    Returns the ip address.
     """
     return [(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close()) for s in
             [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]
@@ -17,5 +17,5 @@ def main():
     print(ip_address)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main()

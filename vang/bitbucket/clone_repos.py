@@ -95,7 +95,7 @@ def main(root_dir,
         try:
             print(str(n).zfill(2), process.stdout.decode(), end='')
             n += 1
-        except OSError:
+        except OSError:  # pragma: no cover
             print(traceback.format_exc())
 
 
@@ -119,5 +119,5 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main(**parse_args(argv[1:]).__dict__)

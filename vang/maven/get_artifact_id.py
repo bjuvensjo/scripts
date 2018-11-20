@@ -18,5 +18,5 @@ def main():
         print(artifact_id)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main()

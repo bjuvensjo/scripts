@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 """ Maven pom utilities. """
 
 from glob import glob
@@ -10,8 +9,8 @@ NAME_SPACES = {'ns': 'http://maven.apache.org/POM/4.0.0'}
 
 
 def get_pom_paths(root):
-    """ Returns the absolute path of the poms that recursively is found in root"""
-    return [realpath(p) for p in glob("{}/**/pom.xml".format(root), recursive=True)]
+    """ Returns the absolute path of poms that recursively are found in root"""
+    return [realpath(p) for p in glob(f"{root}/**/pom.xml", recursive=True)]
 
 
 def get_pom_info(pom_path):
@@ -25,8 +24,10 @@ def get_pom_info(pom_path):
         'packaging': e.findtext('ns:packaging', namespaces=NAME_SPACES)
     }
     if not info['group_id']:
-        info['group_id'] = e.findtext('ns:parent/ns:groupId', namespaces=NAME_SPACES)
+        info['group_id'] = e.findtext(
+            'ns:parent/ns:groupId', namespaces=NAME_SPACES)
     if not info['version']:
-        info['version'] = e.findtext('ns:parent/ns:version', namespaces=NAME_SPACES)
+        info['version'] = e.findtext(
+            'ns:parent/ns:version', namespaces=NAME_SPACES)
 
     return info

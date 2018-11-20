@@ -38,5 +38,5 @@ def main(year, month, day):
     print(name(zeller(int(year), int(month), int(day))))
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main(**parse_args(argv[1:]).__dict__)

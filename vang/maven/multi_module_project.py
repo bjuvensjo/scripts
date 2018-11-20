@@ -80,5 +80,5 @@ def main():
         make_project(pom_infos, output_dir, group_id, artifact_id, version)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main()

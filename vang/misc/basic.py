@@ -46,5 +46,5 @@ def main(username, password):
         print(basic_auth_header)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main(**parse_args(argv[1:]).__dict__)

@@ -29,5 +29,5 @@ def main(job_names):
         print(job_name, response_code)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main(**parse_args(argv[1:]).__dict__)

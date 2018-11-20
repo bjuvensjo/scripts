@@ -69,7 +69,7 @@ def main(since, projects, branch, clone_dir):
     clone_repos(commands, clone_dir)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     the_since = datetime.datetime(2018, 1, 1)
     the_projects = ['ESBU', 'ESBES']
     # branch = 'develop'

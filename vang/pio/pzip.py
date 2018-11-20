@@ -85,5 +85,5 @@ def main(config):
     print('Zip file: {}'.format(zip_file))
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main(**parse_args(argv[1:]).__dict__)

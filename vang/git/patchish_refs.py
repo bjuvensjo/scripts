@@ -96,6 +96,6 @@ the_applied_patches = main(
 )
 pprint(the_applied_patches)
 
-# if __name__ == '__main__':
+# if __name__ == '__main__':  # pragma: no cover
 #     args = parse_args(argv[1:])
 #     main(args.patch_repo, args.ref_pattern, args.output, args.apply_repo)

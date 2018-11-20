@@ -58,7 +58,7 @@ def main(root_dir, branch):
     do_mmp(root_dir)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     import argparse
 
     parser = argparse.ArgumentParser(description='Clones config and creates Maven multi module project')

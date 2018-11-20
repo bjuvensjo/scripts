@@ -51,16 +51,22 @@ def get_successes(reactor_summary):
 
 def get_failures(reactor_summary):
     """ Returns failure projects """
-    return [get_project(l) for l in reactor_summary if not re.search('SUCCESS', l)]
+    return [
+        get_project(l) for l in reactor_summary if not re.search('SUCCESS', l)
+    ]
 
 
-def read_lines(log_file):
+def read_lines(log_file):  # pragma: no cover
     with open(log_file, 'rt', encoding='utf-8') as f:
         return f.readlines()
 
 
 def get_summary(mvn_log_files, do_print=False):
-    summaries = tuple(chain.from_iterable([get_reactor_summary(read_lines(log_file)) for log_file in mvn_log_files]))
+    summaries = tuple(
+        chain.from_iterable([
+            get_reactor_summary(read_lines(log_file))
+            for log_file in mvn_log_files
+        ]))
     result = get_successes(summaries), get_failures(summaries)
     if do_print:
         print_summary(*result)
@@ -86,25 +92,36 @@ def print_summary(successes, failures):
         lines.append(artifact(an_id, True))
     for an_id in sorted(failures):
         lines.append(artifact(an_id, False))
-    for a_text in ('',):
+    for a_text in ('', ):
         lines.append(banner(a_text, '*'))
 
     print('\n'.join(lines))
 
 
 def main(roots, log_file_name):
-    successes, failures = get_summary([realpath(p) for root in roots
-                                       for p in glob("{}/**/{}".format(root, log_file_name), recursive=True)])
+    successes, failures = get_summary([
+        realpath(p) for root in roots
+        for p in glob("{}/**/{}".format(root, log_file_name), recursive=True)
+    ])
     print_summary(successes, failures)
 
 
 def parse_args(args):
-    parser = argparse.ArgumentParser(description='Prints reactor summary of Maven build log files')
-    parser.add_argument('-d', '--roots', help='Root directories in which to find Maven log files', nargs='*',
-                        default=['.'])
-    parser.add_argument('-l', '--log_file_name', help='Name of Maven build log file(s)', default='mvn.log')
+    parser = argparse.ArgumentParser(
+        description='Prints reactor summary of Maven build log files')
+    parser.add_argument(
+        '-d',
+        '--roots',
+        help='Root directories in which to find Maven log files',
+        nargs='*',
+        default=['.'])
+    parser.add_argument(
+        '-l',
+        '--log_file_name',
+        help='Name of Maven build log file(s)',
+        default='mvn.log')
     return parser.parse_args(args)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main(**parse_args(argv[1:]).__dict__)

@@ -9,14 +9,13 @@ from vang.core.core import pmap_unordered
 
 def get_branch_page(spec, branch, limit, start):
     response = call(
-        str('/rest/api/1.0/projects/{}/repos/{}'
-            '/branches?filterText={}&limit={}&start={}').format(
-            spec[0], spec[1], branch, limit, start))
+        f'/rest/api/1.0/projects/{spec[0]}/repos/{spec[1]}'
+        f'/branches?filterText={branch}&limit={limit}&start={start}')
     return response['size'], response['values'], response[
         'isLastPage'], response.get('nextPageStart', -1)
 
 
-def get_all_branches(spec, tag=''):
+def get_all_branches(spec, branch=''):
     limit = 25
     start = 0
     is_last_page = False
@@ -24,11 +23,10 @@ def get_all_branches(spec, tag=''):
     branches = []
     while not is_last_page:
         size, values, is_last_page, start = get_branch_page(
-            spec, tag, limit, start)
+            spec, branch, limit, start)
 
         if size:
             branches += values
-
     return spec, branches
 
 
@@ -46,7 +44,7 @@ def main(branch='', name=False, dirs=None, repos=None, projects=None):
             if name:
                 print(b['displayId'])
             else:
-                print('{}/{}: {}'.format(spec[0], spec[1], b['displayId']))
+                print(f'{spec[0]}/{spec[1]}: {b["displayId"]}')
 
 
 def parse_args(args):
@@ -54,7 +52,7 @@ def parse_args(args):
         description='Get repository branches from Bitbucket')
     parser.add_argument('-b', '--branch', help='Branch filter', default='')
     parser.add_argument(
-        '-n', '--name', help='Print only tag name', action='store_true')
+        '-n', '--name', help='Print only branch name', action='store_true')
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
         '-d',
@@ -69,5 +67,5 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main(**parse_args(argv[1:]).__dict__)

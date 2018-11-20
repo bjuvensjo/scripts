@@ -72,5 +72,5 @@ def main(organisations,
             print(f'{the_repo}: {the_branch}')
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main(**parse_args(argv[1:]).__dict__)

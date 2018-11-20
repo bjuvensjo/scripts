@@ -72,7 +72,7 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     sure = input("Sure? (y/n): ") == 'y'
     if sure:
         main(**parse_args(argv[1:]).__dict__)

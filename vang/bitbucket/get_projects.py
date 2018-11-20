@@ -6,8 +6,9 @@ from vang.bitbucket.api import call
 
 
 def get_projects_page(limit, start):
-    response = call('/rest/api/1.0/projects?limit={}&start={}'.format(limit, start))
-    return response['size'], response['values'], response['isLastPage'], response.get('nextPageStart', -1)
+    response = call(f'/rest/api/1.0/projects?limit={limit}&start={start}')
+    return response['size'], response['values'], response[
+        'isLastPage'], response.get('nextPageStart', -1)
 
 
 def get_projects():
@@ -28,16 +29,15 @@ def main(key=False):
         if key:
             print(project['key'])
         else:
-            print('{}: {}'.format(project['key'], project['name']))
+            print(f'{project["key"]}: {project["name"]}')
 
 
 def parse_args(args):
     parser = argparse.ArgumentParser(description='Get projects from Bitbucket')
-    parser.add_argument('-k', '--key',
-                        help='Print only project key',
-                        action='store_true')
+    parser.add_argument(
+        '-k', '--key', help='Print only project key', action='store_true')
     return parser.parse_args(args)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main(**parse_args(argv[1:]).__dict__)
