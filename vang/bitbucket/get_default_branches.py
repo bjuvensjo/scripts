@@ -8,7 +8,9 @@ from vang.bitbucket.utils import get_repo_specs
 
 
 def get_repo_default_branch(spec):
-    return spec, call('/rest/api/1.0/projects/{}/repos/{}/branches/default'.format(spec[0], spec[1]))
+    return spec, call(
+        '/rest/api/1.0/projects/{}/repos/{}/branches/default'.format(
+            spec[0], spec[1]))
 
 
 def get_default_branch(repo_specs, max_processes=10):
@@ -19,16 +21,23 @@ def get_default_branch(repo_specs, max_processes=10):
 def main(dirs, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
     for spec, response in get_default_branch(specs):
-        print('{}/{}: {}'.format(spec[0], spec[1], response['displayId']))
+        print(f'{spec[0]}/{spec[1]}: {response["displayId"]}')
 
 
 def parse_args(args):
-    parser = argparse.ArgumentParser(description='Get default repository branches from Bitbucket')
+    parser = argparse.ArgumentParser(
+        description='Get default repository branches from Bitbucket')
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('-d', '--dirs', nargs='*', default=['.'],
-                       help='Git directories to extract repo information from')
-    group.add_argument('-r', '--repos', nargs='*', help='Repos, e.g. key1/repo1 key2/repo2')
-    group.add_argument('-p', '--projects', nargs='*', help='Projects, e.g. key1 key2')
+    group.add_argument(
+        '-d',
+        '--dirs',
+        nargs='*',
+        default=['.'],
+        help='Git directories to extract repo information from')
+    group.add_argument(
+        '-r', '--repos', nargs='*', help='Repos, e.g. key1/repo1 key2/repo2')
+    group.add_argument(
+        '-p', '--projects', nargs='*', help='Projects, e.g. key1 key2')
     return parser.parse_args(args)
 
 

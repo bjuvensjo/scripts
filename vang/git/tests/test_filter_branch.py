@@ -122,14 +122,11 @@ def test_main_distinct(mock_get_emails, mock_create_random_name_and_email,
 
     mock_print.has_calls([
         call('Filtering: foo@bar.com -> random@bar.com'),
-        ('Filtering: baz@bar.com -> random@bar.com')
-    ],
-                         any_order=True)
-    [
+        call('Filtering: baz@bar.com -> random@bar.com'),
         call('########################################'
              '########################################'),
         call('emails after filtering:', "{'foo@bar.com', 'baz@bar.com'}")
-    ] == mock_print.mock_calls[2:]
+    ])
 
     mock_filter_branch.assert_has_calls([
         call('clone_dir', 'random', 'random@bar.com', 'baz@bar.com'),

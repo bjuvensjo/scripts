@@ -10,14 +10,31 @@ from vang.jenkins.get_jobs import parse_args
 from vang.jenkins.get_jobs import FAILURE
 from vang.jenkins.get_jobs import SUCCESS
 
+import pytest
+
 
 def test_map_color():
     assert SUCCESS == map_color('blue')
     assert FAILURE == map_color('not_blue')
 
 
+@pytest.mark.parametrize("statuses, only_names, expected", [
+    ([SUCCESS, FAILURE], False, [
+        {
+            'color': 'blue',
+            'name': 'success'
+        },
+        {
+            'color': 'not_blue',
+            'name': 'failure'
+        },
+    ]),
+    ([SUCCESS, FAILURE], True, ['success', 'failure']),
+    ([SUCCESS], True, ['success']),
+    ([FAILURE], True, ['failure']),
+])
 @patch('vang.jenkins.get_jobs.call', autospec=True)
-def test_get_jobs(mock_call):
+def test_get_jobs(mock_call, statuses, only_names, expected):
     mock_call.return_value = {
         'jobs': [{
             'name': 'success',
@@ -28,72 +45,61 @@ def test_get_jobs(mock_call):
         }]
     }
 
-    assert [
-        {
-            'color': 'blue',
-            'name': 'success'
-        },
-        {
-            'color': 'not_blue',
-            'name': 'failure'
-        },
-    ] == get_jobs()
+    assert expected == get_jobs(statuses, only_names)
     assert [call('/api/json')] == mock_call.mock_calls
 
-    assert ['success', 'failure'] == get_jobs(only_names=True)
 
-    assert ['success'] == get_jobs(statuses=[SUCCESS], only_names=True)
-
-    assert ['failure'] == get_jobs(statuses=[FAILURE], only_names=True)
-
-
-def test_parse_args():
-    for args in ['1', '-f f -s s']:
-        with raises(SystemExit):
-            parse_args(args.split(' ') if args else args)
-
-    for args, pargs in [
-        [
-            '',
-            {
-                'only_failures': False,
-                'only_names': False,
-                'only_successes': False,
-            }
-        ],
-        [
-            '-n -f',
-            {
-                'only_failures': True,
-                'only_names': True,
-                'only_successes': False,
-            }
-        ],
-        [
-            '-n -s',
-            {
-                'only_failures': False,
-                'only_names': True,
-                'only_successes': True,
-            }
-        ],
-    ]:
-        assert pargs == parse_args(args.split(' ') if args else '').__dict__
+@pytest.mark.parametrize("args", [
+    '1',
+    '-f f -s s',
+])
+def test_parse_args_raises(args):
+    with raises(SystemExit):
+        parse_args(args.split(' ') if args else args)
 
 
+@pytest.mark.parametrize("args, expected", [
+    [
+        '',
+        {
+            'only_failures': False,
+            'only_names': False,
+            'only_successes': False,
+        }
+    ],
+    [
+        '-n -f',
+        {
+            'only_failures': True,
+            'only_names': True,
+            'only_successes': False,
+        }
+    ],
+    [
+        '-n -s',
+        {
+            'only_failures': False,
+            'only_names': True,
+            'only_successes': True,
+        }
+    ],
+])
+def test_parse_args_valid(args, expected):
+    assert expected == parse_args(args.split(' ') if args else '').__dict__
+
+
+@pytest.mark.parametrize(
+    "only_failures, only_successes, only_names, expected", [
+        (False, False, True, [call(['FAILURE', 'SUCCESS'], True)]),
+        (True, False, True, [call(['FAILURE'], True)]),
+        (False, True, True, [call(['SUCCESS'], True)]),
+    ])
 @patch('vang.jenkins.get_jobs.print')
 @patch('vang.jenkins.get_jobs.get_jobs', autospec=True)
-def test_main(mock_get_jobs, mock_print):
+def test_main(mock_get_jobs, mock_print, only_failures, only_successes,
+              only_names, expected):
     mock_get_jobs.return_value = ['job']
 
-    main(False, False, True)
-    assert [call(['FAILURE', 'SUCCESS'], True)] == mock_get_jobs.mock_calls
+    main(only_failures, only_successes, only_names)
+    assert expected == mock_get_jobs.mock_calls
     assert [call('job')] == mock_print.mock_calls
-
-    mock_get_jobs.reset_mock()
-    main(True, False, True)
-    assert [call(['FAILURE'], True)] == mock_get_jobs.mock_calls
-
-    mock_get_jobs.reset_mock()
-    main(False, True, True)
-    assert [call(['SUCCESS'], True)] == mock_get_jobs.mock_calls

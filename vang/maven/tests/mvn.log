@@ -259,8 +259,8 @@ Generating /Users/ei4577/slask/wildcat2/setup/develop/PCS1806/config.apache-prox
 [INFO] ------------------------------------------------------------------------
 [INFO] Reactor Summary:
 [INFO] 
-[INFO] myorg:app.admin 0.0.1-SNAPSHOT ................. SUCCESS [ 11.095 s]
-[INFO] config-apache-proxy 1.0.0-SNAPSHOT ................. SUCCESS [  4.300 s]
+[INFO] myorg:app 0.0.1-SNAPSHOT ................. SUCCESS [ 1.095 s]
+[INFO] config 1.0.0-SNAPSHOT ................. SUCCESS [  4.300 s]
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------

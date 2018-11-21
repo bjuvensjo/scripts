@@ -10,17 +10,17 @@ from vang.bitbucket.create_from_template import parse_args
 from vang.bitbucket.create_from_template import setup as bitbucket_setup
 from vang.bitbucket.create_from_template import update
 
+import pytest
 
-@patch(
-    'vang.bitbucket.create_from_template.get_clone_urls',
-    autospec=True,
-    return_value=[[
+
+@patch('vang.bitbucket.create_from_template.get_clone_urls', autospec=True)
+def test_setup(mock_get_clone_urls):
+    mock_get_clone_urls.return_value = [[
         '_',
         'project',
         'repo',
         'clone_url',
-    ]])
-def test_setup(mock_get_clone_urls):
+    ]]
     # branch 'branch'
     with patch('vang.bitbucket.create_from_template.run_command'
                ) as mock_run_command:
@@ -79,14 +79,11 @@ def test_commit_all(mock_run_command):
 
 @patch('vang.bitbucket.create_from_template.rsr', autospec=True)
 @patch(
-    'vang.bitbucket.create_from_template.get_replace_function',
-    autospec=True,
-    return_value='get_replace_function')
-@patch(
-    'vang.bitbucket.create_from_template.get_zipped_cases',
-    autospec=True,
-    return_value=[('repo', 'dest_repo')])
+    'vang.bitbucket.create_from_template.get_replace_function', autospec=True)
+@patch('vang.bitbucket.create_from_template.get_zipped_cases', autospec=True)
 def test_update(mock_get_zipped_cases, mock_get_replace_function, mock_rsr):
+    mock_get_zipped_cases.return_value = [('repo', 'dest_repo')]
+    mock_get_replace_function.return_value = 'get_replace_function'
     update('repo', 'dest_repo', 'dest_repo_dir')
     assert [
         call('repo', 'dest_repo', ['dest_repo_dir'], 'get_replace_function')
@@ -162,35 +159,43 @@ def test_main(mock_setup, mock_update, mock_commit_all,
     assert [call('Created', 'dest_repo_origin')] == mock_print.mock_calls
 
 
-def test_parse_args():
-    for args in [None, '', '1', '1 2', '1 2 3', '1, 2, 3, 4, 5']:
-        with raises(SystemExit):
-            parse_args(args.split(' ') if args else args)
+@pytest.mark.parametrize("args", [
+    '',
+    '1',
+    '1 2',
+    '1 2 3',
+    '1, 2, 3, 4, 5',
+])
+def test_parse_args_raises(args):
+    with raises(SystemExit):
+        parse_args(args.split(' ') if args else args)
 
-    for args, pargs in [
-        [
-            'src_project src_repo dest_project dest_repo',
-            {
-                'branch': 'develop',
-                'dest_project': 'dest_project',
-                'dest_repo': 'dest_repo',
-                'work_dir': '.',
-                'src_project': 'src_project',
-                'src_repo': 'src_repo',
-                'webhook': False
-            }
-        ],
-        [
-            'src_project src_repo dest_project dest_repo -b b -d d -w w',
-            {
-                'branch': 'b',
-                'dest_project': 'dest_project',
-                'dest_repo': 'dest_repo',
-                'work_dir': 'd',
-                'src_project': 'src_project',
-                'src_repo': 'src_repo',
-                'webhook': 'w'
-            }
-        ],
-    ]:
-        assert pargs == parse_args(args.split(' ') if args else []).__dict__
+
+@pytest.mark.parametrize("args, expected", [
+    [
+        'src_project src_repo dest_project dest_repo',
+        {
+            'branch': 'develop',
+            'dest_project': 'dest_project',
+            'dest_repo': 'dest_repo',
+            'work_dir': '.',
+            'src_project': 'src_project',
+            'src_repo': 'src_repo',
+            'webhook': False
+        }
+    ],
+    [
+        'src_project src_repo dest_project dest_repo -b b -d d -w w',
+        {
+            'branch': 'b',
+            'dest_project': 'dest_project',
+            'dest_repo': 'dest_repo',
+            'work_dir': 'd',
+            'src_project': 'src_project',
+            'src_repo': 'src_repo',
+            'webhook': 'w'
+        }
+    ],
+])
+def test_parse_args_valid(args, expected):
+    assert expected == parse_args(args.split(' ') if args else '').__dict__

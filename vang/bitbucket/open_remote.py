@@ -1,41 +1,49 @@
 #!/usr/bin/env python3
 import argparse
 import shlex
-import subprocess
 from os import environ
-from os.path import normpath
+from os.path import abspath
+from subprocess import run
 from sys import argv
 
 from vang.bitbucket.utils import get_branch, get_project_and_repo
 
 
-def open_remote(git_dir, repo=None, project=None):
-    base_url = environ['BITBUCKET_REST_URL']
+def open_remote(
+        git_dir,
+        repo=None,
+        project=None,
+        base_url=environ['BITBUCKET_REST_URL'],
+):
     if project:
-        url = '{}/projects/{}'.format(base_url, project)
+        url = f'{base_url}/projects/{project}'
     elif repo:
-        url = '{}/projects/{}/repos/{}/browse'.format(base_url,
-                                                      *repo.split('/'))
+        p, r = repo.split('/')
+        url = f'{base_url}/projects/{p}/repos/{r}/browse'
     else:
-        url = '{}/projects/{}/repos/{}/commits?until=refs%2Fheads%2F{}&merges=include'.format(
-            base_url, *get_project_and_repo(git_dir), get_branch(git_dir))
-    subprocess.run(shlex.split('open {}'.format(url)))
+        p, r = get_project_and_repo(git_dir)
+        url = ''.join([
+            f'{base_url}/projects/{p}/repos/{r}/commits?',
+            f'until=refs%2Fheads%2F{get_branch(git_dir)}&merges=include'
+        ])
+    run(shlex.split(f'open {url}'))
 
 
 def main(repo_dir, repo=None, project=None):
-    open_remote(normpath('{}/.git'.format(repo_dir)), repo, project)
+    open_remote(abspath(f'{repo_dir}/.git'), repo, project)
 
 
 def parse_args(args):
     parser = argparse.ArgumentParser(
         description='Open Bitbucket url in browser')
-    parser.add_argument(
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
         '-d',
         '--repo_dir',
         default='.',
         help='Git directory to extract repo information from')
-    parser.add_argument('-r', '--repo', help='Repo, e.g. key1/repo1')
-    parser.add_argument('-p', '--project', help='Project, e.g. key1')
+    group.add_argument('-r', '--repo', help='Repo, e.g. key1/repo1')
+    group.add_argument('-p', '--project', help='Project, e.g. key1')
 
     return parser.parse_args(args)
 

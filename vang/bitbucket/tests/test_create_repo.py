@@ -8,14 +8,16 @@ from vang.bitbucket.create_repo import create_repo
 from vang.bitbucket.create_repo import main
 from vang.bitbucket.create_repo import parse_args
 
+import pytest
+
 
 @patch('vang.bitbucket.create_repo.call')
 def test_create_repo(mock_call):
     create_repo('project', 'repo')
     assert [
-               call('/rest/api/1.0/projects/project/repos',
-                    '{"name":"repo","scmId":"git","forkable":true}', 'POST')
-           ] == mock_call.mock_calls
+        call('/rest/api/1.0/projects/project/repos',
+             '{"name":"repo","scmId":"git","forkable":true}', 'POST')
+    ] == mock_call.mock_calls
 
 
 @patch(
@@ -30,33 +32,37 @@ def test_main(mock_print, mock_create_repo):
     assert not main('project', 'repo')
     with patch('vang.bitbucket.create_repo.name', 'posix'):
         assert [
-                   call('If you already have code ready to be pushed to this '
-                        'repository then run this in your terminal.'),
-                   call('    git remote add origin clone_url\n'
-                        '    git push -u origin develop'),
-                   call('(The commands are copied to the clipboard)')
-               ] == mock_print.mock_calls
+            call('If you already have code ready to be pushed to this '
+                 'repository then run this in your terminal.'),
+            call('    git remote add origin clone_url\n'
+                 '    git push -u origin develop'),
+            call('(The commands are copied to the clipboard)')
+        ] == mock_print.mock_calls
     mock_print.reset_mock()
     with patch('vang.bitbucket.create_repo.name', 'not-posix'):
         main('project', 'repo')
         assert [
-                   call('If you already have code ready to be pushed to this '
-                        'repository then run this in your terminal.'),
-                   call('    git remote add origin clone_url\n'
-                        '    git push -u origin develop')
-               ] == mock_print.mock_calls
+            call('If you already have code ready to be pushed to this '
+                 'repository then run this in your terminal.'),
+            call('    git remote add origin clone_url\n'
+                 '    git push -u origin develop')
+        ] == mock_print.mock_calls
 
 
-def test_parse_args():
-    for args in [
-        None, '', 'foo bar baz'
-    ]:
-        with raises(SystemExit):
-            parse_args(args.split(' ') if args else args)
+@pytest.mark.parametrize("args", [
+    '',
+    'foo bar baz',
+])
+def test_parse_args_raises(args):
+    with raises(SystemExit):
+        parse_args(args.split(' ') if args else args)
 
-    for args, pargs in [
-        ['project repo', {'project': 'project',
-                          'repository': 'repo'}],
 
-    ]:
-        assert pargs == parse_args(args.split(' ')).__dict__
+@pytest.mark.parametrize("args, expected", [
+    ['project repo', {
+        'project': 'project',
+        'repository': 'repo'
+    }],
+])
+def test_parse_args_valid(args, expected):
+    assert expected == parse_args(args.split(' ') if args else '').__dict__

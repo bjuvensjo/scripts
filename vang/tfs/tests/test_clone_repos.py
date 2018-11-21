@@ -26,24 +26,28 @@ def test_clone(mock_makedirs, mock_run_commands):
     ] == mock_run_commands.mock_calls
 
 
-def test_get_commands():
-    assert [
-        'git clone url1 -b branch clone_dir1',
-        'git clone url2 -b branch clone_dir2',
-    ] == get_commands(
+@pytest.mark.parametrize("clone_specs, branch, flat, expected", [
+    (
         [['url1', 'clone_dir1'], ['url2', 'clone_dir2']],
         'branch',
         False,
-    )
-
-    assert [
-        'git clone url1',
-        'git clone url2',
-    ] == get_commands(
+        [
+            'git clone url1 -b branch clone_dir1',
+            'git clone url2 -b branch clone_dir2',
+        ],
+    ),
+    (
         [['url1', 'clone_dir1'], ['url2', 'clone_dir2']],
         None,
         True,
-    )
+        [
+            'git clone url1',
+            'git clone url2',
+        ],
+    ),
+])
+def test_get_commands(clone_specs, branch, flat, expected):
+    assert expected == get_commands(clone_specs, branch, flat)
 
 
 @patch('vang.tfs.clone_repos.get_repos', autospec=True)

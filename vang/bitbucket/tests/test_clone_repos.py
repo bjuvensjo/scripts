@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from unittest.mock import MagicMock, call, patch
 
+import pytest
 from more_itertools import take
 from pytest import raises
 
@@ -139,7 +140,7 @@ def test_get_config_commands(mock_has_branch, mock_get_clone_urls,
 @patch('vang.bitbucket.clone_repos.get_config_commands')
 @patch('vang.bitbucket.clone_repos.get_projects_commands')
 @patch('vang.bitbucket.clone_repos.get_repos_commands')
-@patch('vang.bitbucket.clone_repos.load', return_value='load')
+@patch('vang.bitbucket.clone_repos.load')
 def test_main(
         mock_load,
         mock_get_repos_commands,
@@ -149,6 +150,7 @@ def test_main(
         mock_print,
         mock_open,
 ):
+    mock_load.return_value = 'load'
     mock_process = MagicMock()
     mock_process.stdout.decode.return_value = 'Cloned...'
     mock_clone.return_value = [mock_process]
@@ -159,6 +161,7 @@ def test_main(
     mock_get_config_commands.return_value = commands
     mock_get_projects_commands.return_value = commands
     mock_get_repos_commands.return_value = commands
+
     assert not main('root_dir', projects=['project'], branch='branch')
     assert [call(
         ['project'],
@@ -188,55 +191,63 @@ def test_main(
     )] == mock_get_config_commands.mock_calls
 
 
-def test_parse_args():
-    for args in [None, '', 'foo', '-p p -r r', '-p p -c c', '-r r -c c']:
-        with raises(SystemExit):
-            parse_args(args.split(' ') if args else args)
+@pytest.mark.parametrize("args", [
+    '',
+    'foo',
+    '-p p -r r',
+    '-p p -c c',
+    '-r r -c c',
+])
+def test_parse_args_raises(args):
+    with raises(SystemExit):
+        parse_args(args.split(' ') if args else args)
 
-    for args, pargs in [
-        [
-            '-p p1 p2',
-            {
-                'branch': None,
-                'config': None,
-                'root_dir': '.',
-                'flat': False,
-                'projects': ['p1', 'p2'],
-                'repos': None
-            }
-        ],
-        [
-            '-r r1 r2',
-            {
-                'branch': None,
-                'config': None,
-                'root_dir': '.',
-                'flat': False,
-                'projects': None,
-                'repos': ['r1', 'r2']
-            }
-        ],
-        [
-            '-c c',
-            {
-                'branch': None,
-                'config': 'c',
-                'root_dir': '.',
-                'flat': False,
-                'projects': None,
-                'repos': None
-            }
-        ],
-        [
-            '-c c -b b -d d -f',
-            {
-                'branch': 'b',
-                'config': 'c',
-                'root_dir': 'd',
-                'flat': True,
-                'projects': None,
-                'repos': None
-            }
-        ],
-    ]:
-        assert pargs == parse_args(args.split(' ') if args else []).__dict__
+
+@pytest.mark.parametrize("args, expected", [
+    [
+        '-p p1 p2',
+        {
+            'branch': None,
+            'config': None,
+            'root_dir': '.',
+            'flat': False,
+            'projects': ['p1', 'p2'],
+            'repos': None
+        }
+    ],
+    [
+        '-r r1 r2',
+        {
+            'branch': None,
+            'config': None,
+            'root_dir': '.',
+            'flat': False,
+            'projects': None,
+            'repos': ['r1', 'r2']
+        }
+    ],
+    [
+        '-c c',
+        {
+            'branch': None,
+            'config': 'c',
+            'root_dir': '.',
+            'flat': False,
+            'projects': None,
+            'repos': None
+        }
+    ],
+    [
+        '-c c -b b -d d -f',
+        {
+            'branch': 'b',
+            'config': 'c',
+            'root_dir': 'd',
+            'flat': True,
+            'projects': None,
+            'repos': None
+        }
+    ],
+])
+def test_parse_args_valid(args, expected):
+    assert expected == parse_args(args.split(' ') if args else '').__dict__

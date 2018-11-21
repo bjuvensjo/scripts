@@ -11,22 +11,23 @@ def get_clone_urls(keys, command=False, branch=False, flat=False):
         project, repo, clone_url = repo['project']['key'], repo['slug'], repo[
             'links']['clone'][0]['href']
         if command:
-            clone_dir = normpath('{}/{}'.format(
-                project, repo if flat else repo.replace('.', '/')))
-            if branch:
-                clone_command = 'git clone -b {} {} {}'.format(
-                    branch, clone_url, clone_dir)
-            else:
-                clone_command = 'git clone {} {}'.format(clone_url, clone_dir)
+            clone_dir = normpath(
+                f'{project}/{repo if flat else repo.replace(".", "/")}')
+            branch_spec = f'-b {branch} ' if branch else ''
+            clone_command = f'git clone {branch_spec}{clone_url} {clone_dir}'
             yield clone_dir, project, repo, clone_command
         else:
             yield None, project, repo, clone_url
 
 
-def main(projects, command, branch):
-    for clone_dir, project, repo, clone_url in get_clone_urls(
-            projects, command, branch):
-        print(clone_url)
+def main(projects, command, branch, flat):
+    for clone_dir, project, repo, clone_output in get_clone_urls(
+            projects,
+            command,
+            branch,
+            flat,
+    ):
+        print(clone_output)
 
 
 def parse_args(args):
@@ -37,6 +38,11 @@ def parse_args(args):
         '-c', '--command', help='Print as clone commands', action='store_true')
     parser.add_argument(
         '-b', '--branch', help='Add -b <branch> to clone commands')
+    parser.add_argument(
+        '-f',
+        '--flat',
+        help='Make clone commands clone to flat structure',
+        action='store_true')
     return parser.parse_args(args)
 
 

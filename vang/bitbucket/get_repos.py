@@ -44,7 +44,7 @@ def get_all_repos(projects, max_processes=10, only_name=False, only_spec=False):
 def main(projects, name, repo_specs):
     for repo in get_all_repos(projects, only_name=name, only_spec=repo_specs):
         if repo_specs:
-            print('{}/{}'.format(repo[0], repo[1]))
+            print(f'{repo[0]}/{repo[1]}')
         else:
             print(repo)
 
@@ -52,9 +52,10 @@ def main(projects, name, repo_specs):
 def parse_args(args):
     parser = argparse.ArgumentParser(description='Get repos from Bitbucket')
     parser.add_argument('projects', nargs='+', help='Project keys')
-    parser.add_argument(
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
         '-n', '--name', help='Print only repo name', action='store_true')
-    parser.add_argument(
+    group.add_argument(
         '-r',
         '--repo_specs',
         help='Print only project_key/name',

@@ -5,26 +5,31 @@ from os import environ
 from urllib.request import Request, urlopen
 
 
-def call(uri, extra_headers=None, request_data=None, method='GET'):
+def call(uri,
+         extra_headers=None,
+         request_data=None,
+         method='GET',
+         rest_url=environ.get('ARTIFACTORY_REST_URL', None),
+         username=environ.get('ARTIFACTORY_USERNAME', None),
+         password=environ.get('ARTIFACTORY_PASSWORD', None)):
     """Makes a REST call to Artifactory.
-    Depends on three environment variables:
-    * ARTIFACTORY_REST_API_URL, e.g. http://myorg.com/artifactory
-    * U, the artifactory username
-    * P, the artifactory password
 
     Args:
         uri (str): e.g. "/{repository/{'/'.join(group_id.split('.'))}/{artifact_id}/{version}""
         extra_headers: default None
         request_data (bytes): the request payload
         method (str): http method
+        rest_url: artifactory rest url
+        username: artifactory username
+        password: artifactory password
 
     Return:
           the JSON response (dict)
     """
-    auth = '{}:{}'.format(environ['U'], environ['P'])
+    auth = f'{username}:{password}'
     basic_auth_header = 'Basic {}'.format(
         encodebytes(auth.encode()).decode('UTF-8').strip())
-    url = '{}{}'.format(environ['ARTIFACTORY_REST_API_URL'], uri)
+    url = f'{rest_url}{uri}'
     headers = {
         'Authorization': basic_auth_header,
         'Content-Type': 'application/json'
@@ -32,9 +37,13 @@ def call(uri, extra_headers=None, request_data=None, method='GET'):
     if extra_headers:
         headers.update(extra_headers)
 
-    request = Request(
-        url, request_data if request_data else None, headers, method=method)
+    request = create_request(headers, method, request_data, url)
     response = urlopen(request)
     response_data = response.read()
     return loads(
         response_data.decode('UTF-8')) if response_data else response.getcode()
+
+
+def create_request(headers, method, request_data, url):
+    return Request(
+        url, request_data if request_data else None, headers, method=method)

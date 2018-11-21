@@ -34,7 +34,7 @@ def get_reactor_summary(mvn_log):
     if lines:
         return lines[2:-1]
 
-    return ['{} {}'.format(single_project, single_project_result)]
+    return [f'{single_project} {single_project_result}']
 
 
 def get_project(line):
@@ -101,7 +101,7 @@ def print_summary(successes, failures):
 def main(roots, log_file_name):
     successes, failures = get_summary([
         realpath(p) for root in roots
-        for p in glob("{}/**/{}".format(root, log_file_name), recursive=True)
+        for p in glob(f'{root}/**/{log_file_name}', recursive=True)
     ])
     print_summary(successes, failures)
 

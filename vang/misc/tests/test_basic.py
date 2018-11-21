@@ -7,6 +7,8 @@ from vang.misc.basic import get_basic_auth_header
 from vang.misc.basic import main
 from vang.misc.basic import parse_args
 
+import pytest
+
 
 def test_get_basic_auth():
     assert 'Basic dXNlcm5hbWU6cGFzc3dvcmQ=' == \
@@ -18,31 +20,35 @@ def test_get_basic_auth_header():
            get_basic_auth_header('username', 'password')
 
 
-def test_parse_args():
-    for args in ['foo']:
-        with raises(SystemExit):
-            parse_args(args.split(' ') if args else args)
+@pytest.mark.parametrize("args", [
+    'foo',
+])
+def test_parse_args_raises(args):
+    with raises(SystemExit):
+        parse_args(args.split(' ') if args else args)
 
+
+@pytest.mark.parametrize("args, expected", [
+    ['', {
+        'password': 'password',
+        'username': 'username'
+    }],
+    ['-u u -p p', {
+        'password': 'p',
+        'username': 'u'
+    }],
+    ['-u u', {
+        'password': 'password',
+        'username': 'u'
+    }],
+    ['-p p', {
+        'password': 'p',
+        'username': 'username'
+    }],
+])
+def test_parse_args_valid(args, expected):
     with patch('vang.misc.basic.environ', {'U': 'username', 'P': 'password'}):
-        for args, pargs in [
-            ['', {
-                'password': 'password',
-                'username': 'username'
-            }],
-            ['-u u -p p', {
-                'password': 'p',
-                'username': 'u'
-            }],
-            ['-u u', {
-                'password': 'password',
-                'username': 'u'
-            }],
-            ['-p p', {
-                'password': 'p',
-                'username': 'username'
-            }],
-        ]:
-            assert pargs == parse_args(args.split(' ') if args else []).__dict__
+        assert expected == parse_args(args.split(' ') if args else []).__dict__
 
 
 def test_main():

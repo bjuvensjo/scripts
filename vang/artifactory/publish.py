@@ -10,7 +10,7 @@ from vang.artifactory.utils import get_artifact_base_uri, get_pom_path
 from vang.maven.pom import get_pom_info
 
 
-def read_file(file_path):
+def read_file(file_path):  # pragma: no cover
     with open(file_path, 'rb') as f:
         return f.read()
 
@@ -48,9 +48,9 @@ def get_publish_data(artifact_base_uri, path, name):
 def publish_maven_artifact(repository, pom_dirs):
     for pom_dir in pom_dirs:
         pom_info = get_pom_info(get_pom_path(pom_dir))
-        base_uri = get_artifact_base_uri(
-            repository, pom_info['group_id'],
-            pom_info['artifact_id'], pom_info['version'])
+        base_uri = get_artifact_base_uri(repository, pom_info['group_id'],
+                                         pom_info['artifact_id'],
+                                         pom_info['version'])
 
         publish_data = [get_publish_data(base_uri, pom_info['pom_path'],
                                          get_pom_publish_name(pom_info['pom_path'],

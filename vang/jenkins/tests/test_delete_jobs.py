@@ -7,6 +7,8 @@ from vang.jenkins.delete_jobs import delete_jobs
 from vang.jenkins.delete_jobs import main
 from vang.jenkins.delete_jobs import parse_args
 
+import pytest
+
 
 @patch('vang.jenkins.delete_jobs.call', autospec=True)
 def test_delete_jobs(mock_call):
@@ -19,17 +21,21 @@ def test_delete_jobs(mock_call):
     ] == mock_call.mock_calls
 
 
-def test_parse_args():
-    for args in ['']:
-        with raises(SystemExit):
-            parse_args(args.split(' ') if args else args)
+@pytest.mark.parametrize("args", [
+    '',
+])
+def test_parse_args_raises(args):
+    with raises(SystemExit):
+        parse_args(args.split(' ') if args else args)
 
-    for args, pargs in [
-        ['j1 j2', {
-            'job_names': ['j1', 'j2']
-        }],
-    ]:
-        assert pargs == parse_args(args.split(' ') if args else '').__dict__
+
+@pytest.mark.parametrize("args, expected", [
+    ['j1 j2', {
+        'job_names': ['j1', 'j2']
+    }],
+])
+def test_parse_args_valid(args, expected):
+    assert expected == parse_args(args.split(' ') if args else '').__dict__
 
 
 @patch('vang.jenkins.delete_jobs.print')

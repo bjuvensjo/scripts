@@ -23,7 +23,8 @@ def get_jobs(statuses=(FAILURE, SUCCESS), only_names=False):
 
 def parse_args(args):
     parser = argparse.ArgumentParser(description='Get Jenkins jobs')
-    parser.add_argument('-n', '--only_names', action='store_true', help='Get only job names')
+    parser.add_argument(
+        '-n', '--only_names', action='store_true', help='Get only job names')
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
         '-f',

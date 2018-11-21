@@ -1,7 +1,15 @@
-import unittest
 from unittest.mock import patch, mock_open
 
-from vang.artifactory.publish import *
+from vang.artifactory.publish import get_checksum_headers
+from vang.artifactory.publish import get_checksums
+from vang.artifactory.publish import get_pom_publish_name
+from vang.artifactory.publish import get_publish_data
+from vang.artifactory.publish import main
+from vang.artifactory.publish import parse_args
+from vang.artifactory.publish import publish_maven_artifact
+from vang.artifactory.publish import read_file
+
+import pytest
 
 
 @patch(
@@ -29,17 +37,25 @@ def test_get_checksum_headers():
     } == get_checksum_headers(5, 1, 256)
 
 
-def test_get_pom_publish_name():
-    assert 'business.baz-1.0.0-SNAPSHOT.pom' == get_pom_publish_name(
-        '/foo/bar/business.baz-1.0.0-SNAPSHOT.pom',
-        'business.baz',
-        '1.0.0-SNAPSHOT',
-    )
-    assert 'business.baz-1.0.0-SNAPSHOT.pom' == get_pom_publish_name(
-        '/foo/bar/pom.xml',
-        'business.baz',
-        '1.0.0-SNAPSHOT',
-    )
+@pytest.mark.parametrize("params, expected",
+                         [(
+                             (
+                                 '/foo/bar/business.baz-1.0.0-SNAPSHOT.pom',
+                                 'business.baz',
+                                 '1.0.0-SNAPSHOT',
+                             ),
+                             'business.baz-1.0.0-SNAPSHOT.pom',
+                         ),
+                          (
+                              (
+                                  '/foo/bar/pom.xml',
+                                  'business.baz',
+                                  '1.0.0-SNAPSHOT',
+                              ),
+                              'business.baz-1.0.0-SNAPSHOT.pom',
+                          )])
+def test_get_pom_publish_name(params, expected):
+    assert expected == get_pom_publish_name(*params)
 
 
 @patch('vang.artifactory.publish.get_checksum_headers')

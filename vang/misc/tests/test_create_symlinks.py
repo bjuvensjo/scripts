@@ -9,6 +9,8 @@ from vang.misc.create_symlinks import is_excluded
 from vang.misc.create_symlinks import map_to_link_name
 from vang.misc.create_symlinks import parse_args
 
+import pytest
+
 
 def test_is_excluded():
     assert is_excluded('__init__.py')
@@ -86,15 +88,21 @@ def test_create_symlinks(mock_is_excluded, mock_has_main, mock_glob,
                 ] == mock_run_command.mock_calls
 
 
-def test_parse_args():
-    for args in [None, '', 'foo', 'foo bar baz']:
-        with raises(SystemExit):
-            parse_args(args.split(' ') if args else args)
+@pytest.mark.parametrize("args", [
+    '',
+    'foo',
+    'foo bar baz',
+])
+def test_parse_args_raises(args):
+    with raises(SystemExit):
+        parse_args(args.split(' ') if args else args)
 
-    for args, pargs in [
-        ['source target', {
-            'source': 'source',
-            'target': 'target'
-        }],
-    ]:
-        assert pargs == parse_args(args.split(' ')).__dict__
+
+@pytest.mark.parametrize("args, expected", [
+    ['source target', {
+        'source': 'source',
+        'target': 'target'
+    }],
+])
+def test_parse_args_valid(args, expected):
+    assert expected == parse_args(args.split(' ') if args else '').__dict__

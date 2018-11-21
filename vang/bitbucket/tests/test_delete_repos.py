@@ -7,6 +7,8 @@ from vang.bitbucket.delete_repos import delete_repos
 from vang.bitbucket.delete_repos import main
 from vang.bitbucket.delete_repos import parse_args
 
+import pytest
+
 
 @patch(
     'vang.bitbucket.delete_repos.call',
@@ -56,24 +58,43 @@ def test_main(mock_get_repo_specs, mock_delete_repos, mock_print):
         ('project', 'repo2'),
     ])] == mock_delete_repos.mock_calls
     assert [
-               call('project/repo1: deleted'),
-               call('project/repo1: deleted'),
-           ] == mock_print.mock_calls
+        call('project/repo1: deleted'),
+        call('project/repo1: deleted'),
+    ] == mock_print.mock_calls
 
 
-def test_parse_args():
-    for args in [
-        'foo',
-        '-d d -r r', '-d d -p p', '-r r -p p'
-    ]:
-        with raises(SystemExit):
-            parse_args(args.split(' ') if args else args)
+@pytest.mark.parametrize("args", [
+    'foo',
+    '-d d -r r',
+    '-d d -p p',
+    '-r r -p p',
+])
+def test_parse_args_raises(args):
+    with raises(SystemExit):
+        parse_args(args.split(' ') if args else args)
 
-    for args, pargs in [
-        ['', {'dirs': ['.'], 'projects': None, 'repos': None}],
-        ['-d d', {'dirs': ['d'], 'projects': None, 'repos': None}],
-        ['-r r', {'dirs': ['.'], 'projects': None, 'repos': ['r']}],
-        ['-p p', {'dirs': ['.'], 'projects': ['p'], 'repos': None}],
 
-    ]:
-        assert pargs == parse_args(args.split(' ') if args else []).__dict__
+@pytest.mark.parametrize("args, expected", [
+    ['', {
+        'dirs': ['.'],
+        'projects': None,
+        'repos': None
+    }],
+    ['-d d', {
+        'dirs': ['d'],
+        'projects': None,
+        'repos': None
+    }],
+    ['-r r', {
+        'dirs': ['.'],
+        'projects': None,
+        'repos': ['r']
+    }],
+    ['-p p', {
+        'dirs': ['.'],
+        'projects': ['p'],
+        'repos': None
+    }],
+])
+def test_parse_args_valid(args, expected):
+    assert expected == parse_args(args.split(' ') if args else '').__dict__

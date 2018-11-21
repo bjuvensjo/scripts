@@ -31,7 +31,6 @@ def get_all_tags(spec, tag=''):
 
 
 def get_tags(specs, tag='', max_processes=10):
-    print(list(get_all_tags(['PCS1806', 'xml.ws'], '')))
     with Pool(processes=max_processes) as pool:
         return itertools.chain.from_iterable(
             pool.map(lambda s: get_all_tags(s, tag), specs))

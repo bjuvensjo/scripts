@@ -7,6 +7,8 @@ from vang.jenkins.trigger_builds import trigger_builds
 from vang.jenkins.trigger_builds import main
 from vang.jenkins.trigger_builds import parse_args
 
+import pytest
+
 
 @patch('vang.jenkins.trigger_builds.call', autospec=True)
 def test_trigger_builds(mock_call):
@@ -19,17 +21,21 @@ def test_trigger_builds(mock_call):
     ] == mock_call.mock_calls
 
 
-def test_parse_args():
-    for args in ['']:
-        with raises(SystemExit):
-            parse_args(args.split(' ') if args else args)
+@pytest.mark.parametrize("args", [
+    '',
+])
+def test_parse_args_raises(args):
+    with raises(SystemExit):
+        parse_args(args.split(' ') if args else args)
 
-    for args, pargs in [
-        ['j1 j2', {
-            'job_names': ['j1', 'j2']
-        }],
-    ]:
-        assert pargs == parse_args(args.split(' ') if args else '').__dict__
+
+@pytest.mark.parametrize("args, expected", [
+    ['j1 j2', {
+        'job_names': ['j1', 'j2']
+    }],
+])
+def test_parse_args_valid(args, expected):
+    assert expected == parse_args(args.split(' ') if args else '').__dict__
 
 
 @patch('vang.jenkins.trigger_builds.print')

@@ -8,6 +8,8 @@ from vang.maven.switch_settings import main
 from vang.maven.switch_settings import parse_args
 from vang.maven.switch_settings import switch_settings
 
+import pytest
+
 
 @patch(
     'vang.maven.switch_settings.exists',
@@ -33,39 +35,50 @@ def test_switch_settings(mock_run_command, mock_exists):
     ] == mock_run_command.mock_calls
 
 
+@pytest.mark.parametrize("name, switch_setting_calls, print_calls", [
+    (
+        'posix',
+        [call('project')],
+        [call('')],
+    ),
+    (
+        'not posix',
+        [],
+        [
+            call('Platform not supported. '
+                 'Please implement, and make a pull request.')
+        ],
+    ),
+])
 @patch('vang.maven.switch_settings.print')
 @patch(
     'vang.maven.switch_settings.switch_settings',
     return_value=(0, ''),
     autospec=True)
-def test_main(mock_switch_settings, mock_print):
-    with patch('vang.maven.switch_settings.name', 'posix'):
+def test_main(mock_switch_settings, mock_print, name, switch_setting_calls,
+              print_calls):
+    with patch('vang.maven.switch_settings.name', name):
         main('project')
-        assert [call('project')] == mock_switch_settings.mock_calls
-        assert [call('')] == mock_print.mock_calls
-
-    with patch('vang.maven.switch_settings.name', 'not posix'):
-        mock_switch_settings.reset_mock()
-        mock_print.reset_mock()
-        main('project')
-        assert [] == mock_switch_settings.mock_calls
-        assert [
-            call('Platform not supported. '
-                 'Please implement, and make a pull request.')
-        ] == mock_print.mock_calls
+        assert switch_setting_calls == mock_switch_settings.mock_calls
+        assert print_calls == mock_print.mock_calls
 
 
-def test_parse_args():
-    for args in ['', 'foo bar']:
-        with raises(SystemExit):
-            parse_args(args.split(' ') if args else args)
+@pytest.mark.parametrize("args", [
+    '',
+    'foo bar',
+])
+def test_parse_args_raises(args):
+    with raises(SystemExit):
+        parse_args(args.split(' ') if args else args)
 
-    for args, pargs in [
-        [
-            'project',
-            {
-                'ending': 'project'
-            },
-        ],
-    ]:
-        assert pargs == parse_args(args.split(' ')).__dict__
+
+@pytest.mark.parametrize("args, expected", [
+    [
+        'project',
+        {
+            'ending': 'project'
+        },
+    ],
+])
+def test_parse_args_valid(args, expected):
+    assert expected == parse_args(args.split(' ') if args else '').__dict__
