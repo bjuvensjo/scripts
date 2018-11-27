@@ -15,9 +15,36 @@ def synchronize_dirs(source_dir, dest_dir, ignore_sub_paths=('/.git',)):
     :param ignore_sub_paths: ignored sub paths as list of string
     :return: List describing synchronizations done
     """
-    syncs = []
+    adds = add(dest_dir, ignore_sub_paths, source_dir)
+    deletes = delete(dest_dir, ignore_sub_paths, source_dir)
+    return adds + deletes
 
-    # Copy files from source_dir to dest_dir
+
+def delete(dest_dir, ignore_sub_paths, source_dir):
+    deletes = []
+    for path, dirs, files in walk(dest_dir):
+        sub_path = path[len(dest_dir):]
+        if not any([sub_path.startswith(ignore) for ignore in ignore_sub_paths]):
+            source_path = source_dir + sub_path
+            if not exists(source_path):
+                # print('Removing dir', path)
+                rmtree(path)
+                deletes.append(f'Removed dir {path}')
+                print(deletes[-1])
+            else:
+                for file in files:
+                    source_file = f'{source_path}/{file}'
+                    dest_file = f'{path}/{file}'
+                    if not exists(source_file):
+                        # print('Removing file', dest_file)
+                        remove(dest_file)
+                        deletes.append(f'Removed file {dest_file}')
+                        print(deletes[-1])
+    return deletes
+
+
+def add(dest_dir, ignore_sub_paths, source_dir):
+    adds = []
     for path, dirs, files in walk(source_dir):
         sub_path = path[len(source_dir):]
         if not any([sub_path.startswith(ignore) for ignore in ignore_sub_paths]):
@@ -30,34 +57,13 @@ def synchronize_dirs(source_dir, dest_dir, ignore_sub_paths=('/.git',)):
                     if not cmp(source_file, dest_file):
                         # print('Copying', source_file, 'to', dest_file)
                         copyfile(source_file, dest_file)
-                        syncs.append(f'Updated from {source_file} to {dest_file}')
-                        print(syncs[-1])
+                        adds.append(f'Updated from {source_file} to {dest_file}')
+                        print(adds[-1])
                 else:
                     copyfile(source_file, dest_file)
-                    syncs.append(f'Added from {source_file} to {dest_file}')
-                    print(syncs[-1])
-
-    # Remove files from dest_dir not in dest_dir
-    for path, dirs, files in walk(dest_dir):
-        sub_path = path[len(dest_dir):]
-        if not any([sub_path.startswith(ignore) for ignore in ignore_sub_paths]):
-            source_path = source_dir + sub_path
-            if not exists(source_path):
-                # print('Removing dir', path)
-                rmtree(path)
-                syncs.append(f'Removed dir {path}')
-                print(syncs[-1])
-            else:
-                for file in files:
-                    source_file = f'{source_path}/{file}'
-                    dest_file = f'{path}/{file}'
-                    if not exists(source_file):
-                        # print('Removing file', dest_file)
-                        remove(dest_file)
-                        syncs.append(f'Removed file {dest_file}')
-                        print(syncs[-1])
-
-    return syncs
+                    adds.append(f'Added from {source_file} to {dest_file}')
+                    print(adds[-1])
+    return adds
 
 
 def parse_args(args):

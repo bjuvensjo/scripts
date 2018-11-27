@@ -116,21 +116,16 @@ def test_print_summary(mock_print):
 
 
 @patch('vang.maven.reactor_summary.glob')
+@patch('vang.maven.reactor_summary.realpath')
 @patch('vang.maven.reactor_summary.print_summary')
 @patch('vang.maven.reactor_summary.get_summary')
-def test_main(mock_get_summary, mock_print_summary, mock_glob):
+def test_main(mock_get_summary, mock_print_summary, mock_realpath, mock_glob):
     mock_get_summary.return_value = [['success'], ['failure']]
+    mock_realpath.side_effect = lambda x: x
     mock_glob.return_value = ['p1', 'p2']
     main(['r1', 'r2'], 'mvn.log')
 
-    assert [
-        call([
-            '/Users/ei4577/git/scripts/p1',
-            '/Users/ei4577/git/scripts/p2',
-            '/Users/ei4577/git/scripts/p1',
-            '/Users/ei4577/git/scripts/p2',
-        ])
-    ] == mock_get_summary.mock_calls
+    assert [call(['p1', 'p2', 'p1', 'p2'])] == mock_get_summary.mock_calls
     assert [
         call('r1/**/mvn.log', recursive=True),
         call(
