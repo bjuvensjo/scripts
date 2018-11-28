@@ -42,7 +42,7 @@ def get_repos_commands(repos, branch=None, flat=False):
 
     commands = []
     clone_urls_map = {
-        '{}/{}'.format(project, repo): (clone_dir, project, repo, command)
+        f'{project}/{repo}': (clone_dir, project, repo, command)
         for clone_dir, project, repo, command in get_clone_urls(
             projects,
             True,
@@ -54,7 +54,7 @@ def get_repos_commands(repos, branch=None, flat=False):
         if repo_spec in clone_urls_map:
             commands.append(clone_urls_map[repo_spec])
         else:
-            print('Warning! Non existing repo: {}'.format(repo_spec))
+            print(f'Warning! Non existing repo: {repo_spec}')
 
     return commands
 

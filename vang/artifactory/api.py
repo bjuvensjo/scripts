@@ -27,8 +27,7 @@ def call(uri,
           the JSON response (dict)
     """
     auth = f'{username}:{password}'
-    basic_auth_header = 'Basic {}'.format(
-        encodebytes(auth.encode()).decode('UTF-8').strip())
+    basic_auth_header = f'Basic {encodebytes(auth.encode()).decode("UTF-8").strip()}'
     url = f'{rest_url}{uri}'
     headers = {
         'Authorization': basic_auth_header,

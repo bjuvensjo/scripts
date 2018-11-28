@@ -28,15 +28,29 @@ def test_get_pom():
    </properties>
    <build>
        <plugins>
-           <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-compiler-plugin</artifactId>
-               <version>3.3</version>
-               <configuration>
-                   <source>${maven.compiler.source}</source>
-                   <target>${maven.compiler.target}</target>
-               </configuration>
-           </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <compilerId>groovy-eclipse-compiler</compilerId>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-compiler</artifactId>
+                        <version>2.9.2-01</version>
+                    </dependency>
+                    <!-- for 2.8.0-01 and later you must have an explicit dependency on groovy-eclipse-batch -->
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-batch</artifactId>
+                        <version>2.4.3-01</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
        </plugins>
    </build>
 </project>

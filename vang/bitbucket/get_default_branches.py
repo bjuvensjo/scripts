@@ -9,8 +9,7 @@ from vang.bitbucket.utils import get_repo_specs
 
 def get_repo_default_branch(spec):
     return spec, call(
-        '/rest/api/1.0/projects/{}/repos/{}/branches/default'.format(
-            spec[0], spec[1]))
+        f'/rest/api/1.0/projects/{spec[0]}/repos/{spec[1]}/branches/default')
 
 
 def get_default_branch(repo_specs, max_processes=10):

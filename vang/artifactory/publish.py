@@ -31,8 +31,8 @@ def get_checksum_headers(md5, sha1, sha256):
 
 def get_pom_publish_name(pom_path, artifact_id, version):
     pom_name = pom_path.split('/')[-1]
-    return pom_name if pom_name.split('.')[-1] == 'pom' else '{}-{}.pom'.format(
-        artifact_id, version)
+    return pom_name if pom_name.split(
+        '.')[-1] == 'pom' else f'{artifact_id}-{version}.pom'
 
 
 def get_publish_data(artifact_base_uri, path, name):
@@ -41,7 +41,7 @@ def get_publish_data(artifact_base_uri, path, name):
     return {
         'content': content,
         'checksum_headers': get_checksum_headers(md5, sha1, sha256),
-        'uri': '{}/{}'.format(artifact_base_uri, name)
+        'uri': f'{artifact_base_uri}/{name}'
     }
 
 
@@ -56,9 +56,10 @@ def publish_maven_artifact(repository, pom_dirs):
                                          get_pom_publish_name(pom_info['pom_path'],
                                                               pom_info['artifact_id'],
                                                               pom_info['version']))] + \
-                       [get_publish_data(base_uri, path, path.split('/')[-1]) for path in
-                        glob('{}/**/*.jar'.format(pom_dir), recursive=True) +
-                        glob('{}/**/*.war'.format(pom_dir), recursive=True)]
+                       [get_publish_data(base_uri, path, path.split('/')[-1])
+                        for path in
+                        glob(f'{pom_dir}/**/*.jar', recursive=True) +
+                        glob(f'{pom_dir}/**/*.war', recursive=True)]
 
         yield [
             api.call(pd['uri'], pd['checksum_headers'], pd['content'], 'PUT')

@@ -26,8 +26,7 @@ def has_main(py_file):
 
 def map_to_link_name(main_file):
     main_file_package, main_file_name = main_file.split('/')[-2:]
-    return '{}-{}'.format(main_file_package, main_file_name[:-3].replace(
-        '_', '-'))
+    return f'{main_file_package}-{main_file_name[:-3].replace("_", "-")}'
 
 
 def create_symlinks(source, target):
@@ -35,14 +34,14 @@ def create_symlinks(source, target):
         makedirs(target)
 
     for main_file in [
-            f for f in glob('{}/**/*.py'.format(source), recursive=True)
+            f for f in glob(f'{source}/**/*.py', recursive=True)
             if has_main(f) and not is_excluded(f)
     ]:
-        link_file = '{}/{}'.format(target, map_to_link_name(main_file))
+        link_file = f'{target}/{map_to_link_name(main_file)}'
         if exists(link_file):
-            print('{} already exists'.format(link_file))
+            print(f'{link_file} already exists')
         else:
-            command = 'ln -s {} {}'.format(main_file, link_file)
+            command = f'ln -s {main_file} {link_file}'
             print(command)
             run_command(command)
 

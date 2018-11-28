@@ -23,15 +23,29 @@ POM_TEMPLATE = """<project xmlns="http://maven.apache.org/POM/4.0.0"
    </properties>
    <build>
        <plugins>
-           <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-compiler-plugin</artifactId>
-               <version>3.3</version>
-               <configuration>
-                   <source>${maven.compiler.source}</source>
-                   <target>${maven.compiler.target}</target>
-               </configuration>
-           </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <compilerId>groovy-eclipse-compiler</compilerId>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-compiler</artifactId>
+                        <version>2.9.2-01</version>
+                    </dependency>
+                    <!-- for 2.8.0-01 and later you must have an explicit dependency on groovy-eclipse-batch -->
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-batch</artifactId>
+                        <version>2.4.3-01</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
        </plugins>
    </build>
 </project>
@@ -59,7 +73,7 @@ def make_dirs(output_dir, group_id, artifact_id, packaging):
         ]:
             makedirs(normpath(p.format(output_dir, package_path)))
         if packaging in ['war']:
-            makedirs(normpath('{}/src/main/webapp'.format(output_dir)))
+            makedirs(normpath(f'{output_dir}/src/main/webapp'))
 
 
 def make_project(output_dir, group_id, artifact_id, version, packaging):
@@ -67,7 +81,7 @@ def make_project(output_dir, group_id, artifact_id, version, packaging):
     make_dirs(output_dir, group_id, artifact_id, packaging)
     pom = get_pom(group_id, artifact_id, version, packaging)
     with open(
-            normpath('{}/pom.xml'.format(output_dir)), 'wt',
+            normpath(f'{output_dir}/pom.xml'), 'wt',
             encoding='utf-8') as pom_file:
         pom_file.write(pom)
 

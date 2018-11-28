@@ -10,7 +10,7 @@ from vang.bitbucket.utils import get_repo_specs
 
 
 def set_repo_default_branch(spec, branch):
-    request_data = '{{"id":"refs/heads/{}"}}'.format(branch)
+    request_data = f'{{"id":"refs/heads/{branch}"}}'
     return spec, call(
         f'/rest/api/1.0/projects/{spec[0]}/repos/{spec[1]}/branches/default',
         request_data,

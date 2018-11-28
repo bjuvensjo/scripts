@@ -21,13 +21,13 @@ def create_repo(repo):
 
 def main(repo):
     response = create_repo(repo)
-    commands = '    git remote add origin {}\n' \
-               '    git push -u origin develop'.format(response['remoteUrl'])
+    commands = f'    git remote add origin {response["remoteUrl"]}\n' \
+               '    git push -u origin develop'
     print('If you already have code ready to be pushed to this repository '
           'then run this in your terminal.')
     print(commands)
     if os_name == 'posix':
-        system('echo "{}\c" | pbcopy'.format(commands))
+        system(f'echo "{commands}\c" | pbcopy')
         print('(The commands are copied to the clipboard)')
 
 

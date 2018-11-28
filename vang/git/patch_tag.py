@@ -8,7 +8,7 @@ from vang.pio.shell import run_command
 
 
 def create_patch(repo, since_tag, tag, output):
-    patch_dir = '{}/{}'.format(output, tag)
+    patch_dir = f'{output}/{tag}'
     makedirs(patch_dir)
     cmd = ' '.join([
         'git log -p --reverse --pretty=email --full-index --binary',

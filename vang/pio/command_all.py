@@ -13,7 +13,7 @@ from vang.pio.shell import run_commands
 def get_work_dirs(find, root):
     return [
         Path(realpath(p)).parent for p in glob(
-            normpath('{}/**/{}'.format(root, find)),
+            normpath(f'{root}/**/{find}'),
             recursive=True,
         )
     ]

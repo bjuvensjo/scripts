@@ -12,8 +12,8 @@ def get_artifact_id(pom_path):
 def main():
     artifact_id = get_artifact_id('./pom.xml')
     if name == 'posix':
-        system('echo "{}\c" | pbcopy'.format(artifact_id))
-        print('"{}" copied to clipboard'.format(artifact_id))
+        system(f'echo "{artifact_id}\c" | pbcopy')
+        print(f'"{artifact_id}" copied to clipboard')
     else:
         print(artifact_id)
 

@@ -15,8 +15,7 @@ from vang.pio.shell import run_command
 def fork_repo(fork_project, branches, git_dir):
     try:
         for b in reversed(branches):
-            run_command(
-                'git checkout {}'.format(b), return_output=True, cwd=git_dir)
+            run_command(f'git checkout {b}', return_output=True, cwd=git_dir)
         rc, original_origin = run_command(
             'git remote get-url origin', return_output=True, cwd=git_dir)
         repo = original_origin.split('/')[-1][:-4]
@@ -24,20 +23,18 @@ def fork_repo(fork_project, branches, git_dir):
             '/')[:-2]) + '/' + fork_project.lower() + '/' + repo + '.git'
         create_repo(fork_project, repo)
         run_command(
-            'git remote set-url origin {}'.format(new_origin),
+            f'git remote set-url origin {new_origin}',
             return_output=True,
             cwd=git_dir)
         run_command('git remote prune origin', return_output=True, cwd=git_dir)
         for b in branches:
             run_command(
-                'git push -u origin {}'.format(b),
-                return_output=True,
-                cwd=git_dir)
+                f'git push -u origin {b}', return_output=True, cwd=git_dir)
         set_repo_default_branch((fork_project, repo), branches[0])
 
-        print('{}/{}: {}'.format(fork_project, repo, new_origin))
+        print(f'{fork_project}/{repo}: {new_origin}')
         return (fork_project, repo), new_origin
-    except OSError:
+    except OSError:  # pragma: no cover
         print_exc(file=sys.stdout)
 
 
@@ -70,11 +67,11 @@ def parse_args(args):
         '--branches',
         nargs='*',
         help='The branches to fork, e.g. develop master. '
-             'The first will be set as default branch',
+        'The first will be set as default branch',
         default=['develop'])
     parser.add_argument(
         '-d', '--work_dir', default='.', help='The directory to clone into')
-    group = parser.add_mutually_exclusive_group()
+    group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
         '-r', '--repos', nargs='*', help='Repos, e.g. key1/repo1 key2/repo2')
     group.add_argument(

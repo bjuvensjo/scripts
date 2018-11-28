@@ -9,7 +9,7 @@ from vang.bitbucket.utils import get_repo_specs
 
 def delete_repo(spec):
     return spec, call(
-        '/rest/api/1.0/projects/{}/repos/{}'.format(spec[0], spec[1]),
+        f'/rest/api/1.0/projects/{spec[0]}/repos/{spec[1]}',
         method="DELETE",
     )
 
@@ -22,7 +22,7 @@ def delete_repos(repo_specs, max_processes=10):
 def main(dirs, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
     for spec, response in delete_repos(specs):
-        print('{}/{}: {}'.format(spec[0], spec[1], response))
+        print(f'{spec[0]}/{spec[1]}: {response}')
 
 
 def parse_args(args):

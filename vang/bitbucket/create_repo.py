@@ -8,20 +8,20 @@ from vang.bitbucket.api import call
 
 
 def create_repo(project, repo):
-    uri = '/rest/api/1.0/projects/{}/repos'.format(project)
-    request_data = '{{"name":"{}","scmId":"git","forkable":true}}'.format(repo)
+    uri = f'/rest/api/1.0/projects/{project}/repos'
+    request_data = f'{{"name":"{repo}","scmId":"git","forkable":true}}'
     return call(uri, request_data, 'POST')
 
 
 def main(project, repository):
     response = create_repo(project, repository)
-    commands = '    git remote add origin {}\n' \
-               '    git push -u origin develop'.format(response['links']['clone'][0]['href'])
+    commands = f'    git remote add origin {response["links"]["clone"][0]["href"]}\n' \
+               '    git push -u origin develop'
     print('If you already have code ready to be pushed to this repository '
           'then run this in your terminal.')
     print(commands)
     if name == 'posix':
-        system('echo "{}\c" | pbcopy'.format(commands))
+        system(f'echo "{commands}\c" | pbcopy')
         print('(The commands are copied to the clipboard)')
 
 

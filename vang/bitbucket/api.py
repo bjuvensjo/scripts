@@ -41,8 +41,7 @@ def call(
         return loads(response_data.decode(
             'UTF-8')) if response_data else response.getcode()
     except HTTPError as e:  # pragma: no cover
-        print('Can not call {}, {}, {}, {}'.format(uri, request_data, method,
-                                                   e))
+        print(f'Can not call {uri}, {request_data}, {method}, {e}')
         raise e
 
 

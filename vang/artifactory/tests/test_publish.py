@@ -1,4 +1,6 @@
-from unittest.mock import patch, mock_open
+from pytest import raises
+
+from unittest.mock import call, patch, mock_open
 
 from vang.artifactory.publish import get_checksum_headers
 from vang.artifactory.publish import get_checksums
@@ -88,3 +90,82 @@ def test_get_publish_data(
         '/foo/bar/foo.pom',
         'business.baz-1.0.0-SNAPSHOT.pom',
     )
+
+
+@patch('vang.artifactory.publish.api.call')
+@patch('vang.artifactory.publish.glob')
+@patch('vang.artifactory.publish.get_pom_publish_name')
+@patch('vang.artifactory.publish.get_publish_data')
+@patch('vang.artifactory.publish.get_artifact_base_uri')
+@patch('vang.artifactory.publish.get_pom_info')
+@patch('vang.artifactory.publish.get_pom_path')
+def test_publish_maven_artifact(
+        mock_get_pom_path,
+        mock_get_pom_info,
+        mock_get_artifact_base_uri,
+        mock_get_publish_data,
+        mock_get_pom_publish_name,
+        mock_glob,
+        mock_call,
+):
+    mock_get_pom_path.return_value = 'pom_path'
+    mock_get_pom_info.return_value = {
+        'pom_path': 'pom_path',
+        'artifact_id': 'artifact_id',
+        'group_id': 'parent_group_id',
+        'version': 'parent_version',
+        'packaging': 'packaging',
+    }
+    mock_get_artifact_base_uri.return_value = 'base_uri'
+    mock_get_publish_data.return_value = {
+        'checksum_headers': {
+            'X-Checksum-Md5': 5,
+            'X-Checksum-Sha1': 1,
+            'X-Checksum-Sha256': 256
+        },
+        'content': b'content',
+        'uri': 'uri'
+    }
+    mock_get_pom_publish_name.return_value = 'pom_publish_name'
+    mock_glob.side_effect = [['foo.jar'], ['bar.war']] * 2
+    mock_call.return_value = '"response"'
+
+    assert [['"response"', '"response"', '"response"'],
+            ['"response"', '"response"', '"response"']] == list(
+                publish_maven_artifact('repository', ['d1', 'd2']))
+
+
+@patch('vang.artifactory.publish.print')
+@patch('vang.artifactory.publish.publish_maven_artifact')
+def test_main(mock_publish_maven_artifact, mock_print):
+    mock_publish_maven_artifact.return_value = ["'response'"]
+    main('repository', ['d1', 'd2'])
+    assert [call('repository',
+                 ['d1', 'd2'])] == mock_publish_maven_artifact.mock_calls
+    assert [call('"response"')] == mock_print.mock_calls
+
+
+@pytest.mark.parametrize("args", [
+    '',
+    '1 2',
+])
+def test_parse_args_raises(args):
+    with raises(SystemExit):
+        parse_args(args.split(' ') if args else args)
+
+
+@pytest.mark.parametrize("args, expected", [
+    ['repository', {
+        'repository': 'repository',
+        'dirs': ['.'],
+    }],
+    [
+        'repository -d d1 d2',
+        {
+            'repository': 'repository',
+            'dirs': ['d1', 'd2'],
+        }
+    ],
+])
+def test_parse_args_valid(args, expected):
+    assert expected == parse_args(args.split(' ') if args else '').__dict__

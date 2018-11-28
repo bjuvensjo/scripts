@@ -11,7 +11,7 @@ from vang.pio.shell import run_command
 
 
 def get_jars(root):
-    return [realpath(p) for p in glob(normpath('{}/**/{}'.format(root, '*.jar')), recursive=True)]
+    return [realpath(p) for p in glob(normpath(f'{root}/**/*.jar'), recursive=True)]
 
 
 def print_release_info(release_info, develop_branch, release_branch, release_tag):
@@ -28,16 +28,16 @@ def get_release_info(war, develop_branch, release_branch, release_tag):
     work_dir = environ['HOME'] + '/tmp_wildcat'
     try:
         release_info = 'META-INF/release.info'
-        release_info_path = '{}/{}'.format(work_dir, release_info)
+        release_info_path = f'{work_dir}/{release_info}'
         makedirs(work_dir)
-        run_command('jar xvf {}'.format(realpath(war)), cwd=work_dir, return_output=True)
-        with open('{}/WEB-INF/classes/{}'.format(work_dir, release_info), 'rt', encoding='utf-8') as f:
+        run_command(f'jar xvf {realpath(war)}', cwd=work_dir, return_output=True)
+        with open(f'{work_dir}/WEB-INF/classes/{release_info}', 'rt', encoding='utf-8') as f:
             print_release_info(f.read(), develop_branch, release_branch, release_tag)
 
         for jar in get_jars(work_dir):
             if exists(release_info_path):
                 remove(release_info_path)
-            run_command('jar xvf {} -x {}'.format(jar, release_info), cwd=work_dir, return_output=True)
+            run_command(f'jar xvf {jar} -x {release_info}', cwd=work_dir, return_output=True)
             if exists(release_info_path):
                 with open(release_info_path, 'rt', encoding='utf-8') as f:
                     print_release_info(f.read(), develop_branch, release_branch, release_tag)
