@@ -21,7 +21,8 @@ def get_commit_author_dates(repos_specs, branch):
         project, repo = spec
         try:
             commits = call(
-                f'/rest/api/1.0/projects/{project}/repos/{repo}/commits?limit=1&until={branch}')
+                f'/rest/api/1.0/projects/{project}'
+                f'/repos/{repo}/commits?limit=1&until={branch}')
             author_timestamp = commits['values'][0]['authorTimestamp']
         except HTTPError:
             # Does not have branch
@@ -45,7 +46,7 @@ def clone_repos(commands, clone_dir):
     makedirs(clone_dir)
     n = 1
     for process in clone(
-        [command for clone_dir, project, repo, command in commands],
+            [command for clone_dir, project, repo, command in commands],
             clone_dir,
     ):
         try:

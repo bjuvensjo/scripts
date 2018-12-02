@@ -7,7 +7,8 @@ from sys import argv
 
 
 def get_replace_function(regexp=False):
-    return lambda s, old, new: sub(old, new, s) if regexp else s.replace(old, new)
+    return lambda s, old, new: sub(old, new, s) if regexp else s.replace(old,
+                                                                         new)
 
 
 def _replace_in_file(old, new, path, replace_function):
@@ -18,9 +19,9 @@ def _replace_in_file(old, new, path, replace_function):
             encoding='UTF-8',
             errors='ignore',
     ) as old_file, open(
-            path + '.tmp',
-            'tw',
-            encoding='UTF-8',
+        path + '.tmp',
+        'tw',
+        encoding='UTF-8',
     ) as new_file:
         for line in old_file:
             new_line = replace_function(line, old, new)
@@ -66,7 +67,7 @@ def main(old, new, dirs, regexp):
 def parse_args(args):
     parser = argparse.ArgumentParser(
         description='Recursive search and replace of '
-        'directories, files and file contents')
+                    'directories, files and file contents')
     parser.add_argument('old', help='Old value')
     parser.add_argument('new', help='New value')
     parser.add_argument('-d', '--dirs', nargs='*', default=['.'])

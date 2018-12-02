@@ -8,7 +8,8 @@ from vang.core.core import pmap_unordered
 
 
 def get_repos_page(project, limit, start):
-    response = call(f'/rest/api/1.0/projects/{project}/repos?limit={limit}&start={start}')
+    response = call(f'/rest/api/1.0/projects/{project}'
+                    f'/repos?limit={limit}&start={start}')
     return response['size'], response['values'], response[
         'isLastPage'], response.get('nextPageStart', -1)
 

@@ -11,10 +11,12 @@ from vang.pio.shell import run_command
 
 
 def get_jars(root):
-    return [realpath(p) for p in glob(normpath(f'{root}/**/*.jar'), recursive=True)]
+    return [realpath(p) for p in
+            glob(normpath(f'{root}/**/*.jar'), recursive=True)]
 
 
-def print_release_info(release_info, develop_branch, release_branch, release_tag):
+def print_release_info(release_info, develop_branch, release_branch,
+                       release_tag):
     content = release_info.split("\n")
     if develop_branch:
         print(content[0])
@@ -30,17 +32,22 @@ def get_release_info(war, develop_branch, release_branch, release_tag):
         release_info = 'META-INF/release.info'
         release_info_path = f'{work_dir}/{release_info}'
         makedirs(work_dir)
-        run_command(f'jar xvf {realpath(war)}', cwd=work_dir, return_output=True)
-        with open(f'{work_dir}/WEB-INF/classes/{release_info}', 'rt', encoding='utf-8') as f:
-            print_release_info(f.read(), develop_branch, release_branch, release_tag)
+        run_command(f'jar xvf {realpath(war)}', cwd=work_dir,
+                    return_output=True)
+        with open(f'{work_dir}/WEB-INF/classes/{release_info}', 'rt',
+                  encoding='utf-8') as f:
+            print_release_info(f.read(), develop_branch, release_branch,
+                               release_tag)
 
         for jar in get_jars(work_dir):
             if exists(release_info_path):
                 remove(release_info_path)
-            run_command(f'jar xvf {jar} -x {release_info}', cwd=work_dir, return_output=True)
+            run_command(f'jar xvf {jar} -x {release_info}', cwd=work_dir,
+                        return_output=True)
             if exists(release_info_path):
                 with open(release_info_path, 'rt', encoding='utf-8') as f:
-                    print_release_info(f.read(), develop_branch, release_branch, release_tag)
+                    print_release_info(f.read(), develop_branch, release_branch,
+                                       release_tag)
     except OSError:
         print_exc()
     finally:
@@ -52,11 +59,18 @@ def main(war, develop_branch, release_branch, release_tag):
 
 
 def parse_args(args):
-    parser = argparse.ArgumentParser(description='Print release.info of all artifacts in war')
+    parser = argparse.ArgumentParser(
+        description='Print release.info of all artifacts in war')
     parser.add_argument('war', help='The war file')
-    parser.add_argument('-d', '--develop_branch', help='Print clone commands of develop_branch', action='store_true')
-    parser.add_argument('-r', '--release_branch', help='Print clone commands of release_branch', action='store_true')
-    parser.add_argument('-t', '--release_tag', help='Print clone commands of release_tag', action='store_true')
+    parser.add_argument('-d', '--develop_branch',
+                        help='Print clone commands of develop_branch',
+                        action='store_true')
+    parser.add_argument('-r', '--release_branch',
+                        help='Print clone commands of release_branch',
+                        action='store_true')
+    parser.add_argument('-t', '--release_tag',
+                        help='Print clone commands of release_tag',
+                        action='store_true')
     return parser.parse_args(args)
 
 

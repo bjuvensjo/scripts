@@ -15,7 +15,8 @@ def create_repo(project, repo):
 
 def main(project, repository):
     response = create_repo(project, repository)
-    commands = f'    git remote add origin {response["links"]["clone"][0]["href"]}\n' \
+    commands = '    git remote add origin ' \
+               f'{response["links"]["clone"][0]["href"]}\n' \
                '    git push -u origin develop'
     print('If you already have code ready to be pushed to this repository '
           'then run this in your terminal.')

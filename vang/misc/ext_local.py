@@ -38,8 +38,10 @@ def parse_args(args):
     parser = ArgumentParser(
         description=
         'Update ext.local entry in /etc/hosts to the current ip address.'
-        'Run it with sudo or give yourself write permission to the etc/hosts file and run it without sudo.'
-        'To run it automatically, modify ext_local.plist and copy it, load and start as below: '
+        'Run it with sudo or give yourself write permission to the etc/hosts '
+        'file and run it without sudo.'
+        'To run it automatically, modify ext_local.plist and copy it, load and '
+        'start as below: '
         'sudo cp ext_local.plist /Library/LaunchDaemons/com.github.bjuvensjo.scripts.ext_local.plist, '
         'sudo launchctl load /Library/LaunchDaemons/com.github.bjuvensjo.scripts.ext_local.plist, '
         'sudo launchctl start com.github.bjuvensjo.scripts.ext_local')

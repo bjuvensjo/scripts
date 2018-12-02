@@ -14,7 +14,8 @@ def get_pom_paths(root):
 
 
 def get_pom_info(pom_path):
-    """ Returns a dictionary with pom_path, artifact_id, group_id, version and packaging. """
+    """ Returns a dictionary with pom_path, artifact_id,
+    group_id, version and packaging. """
     e = parse(normpath(pom_path))
     info = {
         'pom_path': pom_path,

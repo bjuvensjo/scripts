@@ -60,9 +60,9 @@ def create_and_push_to_dest_repo(branch,
 
 def parse_args(args):
     parser = ArgumentParser(
-        description='Create a new repo based on template'
-                    ' repo.\nExample: create_from_template.vang PCS1806 foo PCS1806'
-                    ' bar -b develop -d . -w http://my-host:7777/wildcat/webhook/')
+        description='Create a new repo based on template repo.\nExample: '
+                    'create_from_template.vang PCS1806 foo PCS1806 bar -b '
+                    'develop -d . -w http://my-host:7777/wildcat/webhook/')
 
     parser.add_argument(
         'src_project',
@@ -93,8 +93,10 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(src_project, src_repo, branch, dest_project, dest_repo, work_dir, webhook):
-    clone_url, dest_repo_dir = setup(src_project, src_repo, branch, dest_project,
+def main(src_project, src_repo, branch, dest_project, dest_repo, work_dir,
+         webhook):
+    clone_url, dest_repo_dir = setup(src_project, src_repo, branch,
+                                     dest_project,
                                      dest_repo, work_dir)
 
     update(src_repo, dest_repo, dest_repo_dir)

@@ -2,7 +2,7 @@
 from argparse import ArgumentParser
 from glob import glob
 from itertools import product
-from os.path import realpath, normpath
+from os.path import normpath, realpath
 from pathlib import Path
 from subprocess import PIPE, STDOUT, run
 from sys import argv
@@ -29,7 +29,8 @@ def execute_in_parallel(root, commands, find='.git/'):
             get_command(commands),
             get_work_dirs(find, root),
         ))
-    yield from run_commands(commands_and_work_dirs, max_processes=25, check=False)
+    yield from run_commands(commands_and_work_dirs, max_processes=25,
+                            check=False)
 
 
 def execute_in_sequence(root, commands, find='.git/', timeout=None):
@@ -61,7 +62,7 @@ def parse_args(args):
         '-f',
         '--find',
         help='The file/dir to be in the directory in which to execute, '
-        'default ".git/"',
+             'default ".git/"',
         default='.git/')
     parser.add_argument(
         '-s',

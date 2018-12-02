@@ -25,7 +25,8 @@ def enable_web_hook(repo_specs, url, max_processes=10):
 def main(url, dirs, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
     for spec, response in enable_web_hook(specs, url):
-        print(f'{spec[0]}/{spec[1]}: {"enabled" if response["enabled"] else " not enabled"}')
+        print(f'{spec[0]}/{spec[1]}: '
+              f'{"enabled" if response["enabled"] else " not enabled"}')
 
 
 def parse_args(args):
