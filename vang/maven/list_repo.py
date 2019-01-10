@@ -23,11 +23,21 @@ def get_artifacts(repo_dir, endings=('pom', 'jar'), snapshots=False):
 def main(repo_dir, endings=('pom', 'jar'), snapshots=False):
     for artifact in get_artifacts(repo_dir, endings, snapshots):
         split = artifact.split('/')
-        print(
-            f'groupId: {".".join(split[:-2])},',
-            f'artifactId: {split[-2]},',
-            f'version: {split[-1]}',
-        )
+    # <groupId>se.lf.csl</groupId>
+    # <artifactId>xml.ws</artifactId>
+    # <version>1.0.0-SNAPSHOT</version>
+
+        print(f'''<dependency>
+    <groupId>{".".join(split[:-2])}</groupId>
+    <artifactId>{split[-2]}</artifactId>
+    <version>{split[-1]}</version>
+</dependency>''')
+
+    # print(
+    #     f'groupId: {".".join(split[:-2])},',
+    #     f'artifactId: {split[-2]},',
+    #     f'version: {split[-1]}',
+    # )
 
 
 def parse_args(args):

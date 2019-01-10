@@ -81,8 +81,14 @@ def test_main(mock_get_artifacts, mock_print):
     ]
     main('repo_dir')
     assert [
-        call('groupId: ch.qos.logback,', 'artifactId: logback-core,',
-             'version: 1.1.11'),
-        call('groupId: ch.qos.logback,', 'artifactId: logback-core,',
-             'version: 1.2.3')
+        call('<dependency>\n'
+             '    <groupId>ch.qos.logback</groupId>\n'
+             '    <artifactId>logback-core</artifactId>\n'
+             '    <version>1.1.11</version>\n'
+             '</dependency>'),
+        call('<dependency>\n'
+             '    <groupId>ch.qos.logback</groupId>\n'
+             '    <artifactId>logback-core</artifactId>\n'
+             '    <version>1.2.3</version>\n'
+             '</dependency>')
     ] == mock_print.mock_calls
