@@ -82,21 +82,44 @@ def create_commands(remote_dict, artifact_path, artifacts):
     return mkdir_commands + download_commands if any(download_commands) else []
 
 
-def main(settings_file):
-    skipped = []
+def create_urls(remote_dict, artifact_path, artifacts):
+    def create_artifact_urls(artifact):
+        extension = artifact.rsplit('.', 1)[1]
+        remote_dict_key = artifact[:-(len(extension) + 1)] if extension in [
+            'sha1', 'md5', 'sha256'] else artifact
+
+        remote_url = remote_dict.get(remote_dict_key, None)
+        if remote_url:
+            if remote_url.endswith('/'):
+                remote_url = remote_url[:-1]
+            rel_path = f'{artifact_path}/{artifact}'
+            return f'{remote_url}/{rel_path}'
+        else:
+            return None
+
+    urls = [create_artifact_urls(artifact) for artifact in artifacts]
+    return urls if any(urls) else []
+
+
+def main(settings_file, urls_only, skipped):
+    skipped_artifacts = []
     local_repo, remotes = get_settings_info(settings_file)
     for remote_repos, artifact_path, artifacts in get_repos_info(local_repo):
         remote_dict = parse_remote_repos(remote_repos, remotes)
-        commands = create_commands(remote_dict, artifact_path, artifacts)
 
-        if commands:
-            for c in commands:
+        params = [remote_dict, artifact_path, artifacts]
+        outputs = create_urls(*params) if urls_only else create_commands(
+            *params)
+
+        if outputs:
+            for c in outputs:
                 print(c)
         else:
-            skipped.append(artifact_path)
+            skipped_artifacts.append(artifact_path)
 
-    for s in skipped:
-        print('# Skipped:', s)
+    if skipped:
+        for s in skipped_artifacts:
+            print('# Skipped:', s)
 
 
 def parse_args(args):
@@ -105,6 +128,10 @@ def parse_args(args):
                     'a remote repo based on the content of a local')
     parser.add_argument(
         'settings_file', help='Settings file')
+    parser.add_argument(
+        '-u', '--urls_only', help='Print only urls', action='store_true')
+    parser.add_argument(
+        '-s', '--skipped', help='Print skipped artifacts', action='store_true')
     return parser.parse_args(args)
 
 
