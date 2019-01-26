@@ -9,12 +9,12 @@
         <key>EnvironmentVariables</key>
         <dict>
             <key>PATH</key>
-            <string>/bin:/usr/bin:/usr/local/bin:/usr/sbin/:/Library/Frameworks/Python.framework/Versions/3.6/bin</string>
+            <string>/bin:/usr/bin:/usr/local/bin:/usr/sbin/</string>
             <key>PYTHONPATH</key>
-            <string>/Users/ei4577/git/scripts</string>
+            <string>/Users/magnus/git/scripts</string>
         </dict>
         <key>Program</key>
-        <string>/Users/ei4577/bin/ext-local</string>
+        <string>/Users/magnus/bin/ext-local</string>
         <key>UserName</key>
         <string>root</string>
         <key>StandardOutPath</key>
