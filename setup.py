@@ -21,11 +21,11 @@ setup(
     keywords="python artifactory bitbucket git github maven script stash",
     url="https://github.com/bjuvensjo/scripts",
     packages=['vang.artifactory', 'vang.bitbucket', 'vang.core', 'vang.git', 'vang.github', 'vang.maven', 'vang.misc',
-              'vang.pio', 'vang.wildcat'],
+              'vang.nexus3', 'vang.pio', 'vang.tfs', 'vang.wildcat'],
     long_description=read('README.md'),
     classifiers=[
         "Development Status :: 4 - Beta",
         "Topic :: Utilities",
         "License :: OSI Approved :: MIT License",
-    ], install_requires=['more-itertools', 'pytest']
+    ], install_requires=['more-itertools', 'requests', 'pytest']
 )

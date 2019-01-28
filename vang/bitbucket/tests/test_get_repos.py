@@ -43,8 +43,10 @@ def get_call_fixtures(start, end, last):
             'public': False,
             'links': {
                 'clone': [{
-                    'href': f'http://myorg/stash/scm/project_key/r{n}.git',
-                    'name': 'http'
+                    'href':
+                    f'http://myorg/stash/scm/project_key/r{n}.git',
+                    'name':
+                    'http'
                 }],
                 'self': [{
                     'href':
@@ -58,9 +60,13 @@ def get_call_fixtures(start, end, last):
     return response if last else dict(response, nextPageStart=end)
 
 
+def get_the_call_fixtures():
+    return [get_call_fixtures(0, 25, False), get_call_fixtures(25, 30, True)]
+
+
 @pytest.fixture
 def call_fixtures():
-    return [get_call_fixtures(0, 25, False), get_call_fixtures(25, 30, True)]
+    return get_the_call_fixtures()
 
 
 @patch('vang.bitbucket.get_repos.call', autospec=True)
@@ -78,7 +84,7 @@ def test_get_repos_page(mock_call, call_fixtures):
 
 
 @pytest.mark.parametrize("only_name, only_spec, expected", [
-    (False, False, [v for r in call_fixtures() for v in r['values']]),
+    (False, False, [v for r in get_the_call_fixtures() for v in r['values']]),
     (True, False, [f'r{n}' for n in range(30)]),
     (False, True, [('project_key', f'r{n}') for n in range(30)]),
 ])
@@ -99,7 +105,8 @@ def test_get_all_repos(mock_get_repos):
 
 
 @pytest.mark.parametrize("only_name, only_spec, expected", [
-    (False, False, [call(v) for r in call_fixtures() for v in r['values']]),
+    (False, False,
+     [call(v) for r in get_the_call_fixtures() for v in r['values']]),
     (True, False, [call(f'r{n}') for n in range(30)]),
     (False, True, [call(f'project_key/r{n}') for n in range(30)]),
 ])

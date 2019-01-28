@@ -19,7 +19,7 @@ def test_fork_repo(mock_call):
     assert [
         call(
             '/rest/api/1.0/projects/project_key/repos/repo_slug',
-            '{"slug": "repo_slug", "project": {"key": "fork_project_key"}}',
+            {"slug": "repo_slug", "project": {"key": "fork_project_key"}},
             'POST',
         )
     ] == mock_call.mock_calls

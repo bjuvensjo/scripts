@@ -18,7 +18,7 @@ def test_create_repo():
             call(
                 '/organisation/project/_apis/git/repositories?api-version=3.2',
                 method='POST',
-                request_data='{"name": "name"}')
+                request_data={'name': 'name'})
         ] == mock_call.mock_calls
 
 

@@ -16,10 +16,16 @@ def is_excluded(py_file):
 
 
 def has_main(py_file):
+    main_lines = [
+        "if __name__ == '__main__':",
+        'if __name__ == "__main__":',
+    ]
     with open(py_file, 'rt', encoding='utf-8') as f:
         for line in f:
-            if line and match(r'.*if __name__ == ("|\')__main__("|\'): *',
-                              line):
+            # if line and match(r'.*if __name__ == ("|\')__main__("|\'): *',
+            #                   line):
+            print(line)
+            if line.strip() in main_lines:
                 return True
     return False
 

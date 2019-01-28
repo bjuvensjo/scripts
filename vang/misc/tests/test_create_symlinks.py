@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from unittest.mock import call, mock_open, patch
 
+import pytest
 from pytest import raises
 
 from vang.misc.create_symlinks import create_symlinks
@@ -8,8 +9,6 @@ from vang.misc.create_symlinks import has_main
 from vang.misc.create_symlinks import is_excluded
 from vang.misc.create_symlinks import map_to_link_name
 from vang.misc.create_symlinks import parse_args
-
-import pytest
 
 
 def test_is_excluded():
@@ -21,23 +20,16 @@ def test_is_excluded():
 
 def test_has_main():
     with patch('builtins.open',
-               mock_open(read_data="if __name__ == '__main__'")) as m:
-        m.return_value.__iter__.return_value = [
-            "if __name__ == '__main__':", 'foo'
-        ]
+               mock_open(read_data="foo\nif __name__ == '__main__':\nfoo")) as m:
         assert has_main('')
 
     with patch('builtins.open',
-               mock_open(read_data="if __name__ == '__main__'")) as m:
-        m.return_value.__iter__.return_value = [
-            'if __name__ == "__main__":', 'foo'
-        ]
+               mock_open(read_data='foo\nif __name__ == "__main__":\nfoo')) as m:
         assert has_main('')
 
     with patch('builtins.open',
-               mock_open(read_data="if __name__ == '__main__'")) as m:
-        m.return_value.__iter__.return_value = ['foo', 'bar']
-        assert not has_main('foo')
+               mock_open(read_data="foo\nfoo")) as m:
+        assert not has_main('')
 
 
 def test_map_to_link_name():
@@ -61,31 +53,31 @@ def test_create_symlinks(mock_is_excluded, mock_has_main, mock_glob,
         with patch('builtins.print') as mock_print:
             create_symlinks('source', 'target')
             assert [
-                call('target/bitbucket-clone-repos already exists'),
-                call('target/bitbucket-create-from-template already exists'),
-                call('target/bitbucket-create-repo already exists')
-            ] == mock_print.mock_calls
+                       call('target/bitbucket-clone-repos already exists'),
+                       call('target/bitbucket-create-from-template already exists'),
+                       call('target/bitbucket-create-repo already exists')
+                   ] == mock_print.mock_calls
     with patch('vang.misc.create_symlinks.exists', return_value=False):
         with patch('builtins.print') as mock_print:
             with patch('vang.misc.create_symlinks.run_command'
                        ) as mock_run_command:
                 create_symlinks('source', 'target')
                 assert [
-                    call('ln -s /vang/bitbucket/clone_repos.py '
-                         'target/bitbucket-clone-repos'),
-                    call('ln -s /vang/bitbucket/create_from_template.py '
-                         'target/bitbucket-create-from-template'),
-                    call('ln -s /vang/bitbucket/create_repo.py '
-                         'target/bitbucket-create-repo')
-                ] == mock_print.mock_calls
+                           call('ln -s /vang/bitbucket/clone_repos.py '
+                                'target/bitbucket-clone-repos'),
+                           call('ln -s /vang/bitbucket/create_from_template.py '
+                                'target/bitbucket-create-from-template'),
+                           call('ln -s /vang/bitbucket/create_repo.py '
+                                'target/bitbucket-create-repo')
+                       ] == mock_print.mock_calls
                 assert [
-                    call('ln -s /vang/bitbucket/clone_repos.py '
-                         'target/bitbucket-clone-repos'),
-                    call('ln -s /vang/bitbucket/create_from_template.py '
-                         'target/bitbucket-create-from-template'),
-                    call('ln -s /vang/bitbucket/create_repo.py '
-                         'target/bitbucket-create-repo')
-                ] == mock_run_command.mock_calls
+                           call('ln -s /vang/bitbucket/clone_repos.py '
+                                'target/bitbucket-clone-repos'),
+                           call('ln -s /vang/bitbucket/create_from_template.py '
+                                'target/bitbucket-create-from-template'),
+                           call('ln -s /vang/bitbucket/create_repo.py '
+                                'target/bitbucket-create-repo')
+                       ] == mock_run_command.mock_calls
 
 
 @pytest.mark.parametrize("args", [

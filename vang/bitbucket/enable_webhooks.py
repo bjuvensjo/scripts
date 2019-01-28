@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import argparse
 from itertools import product
-from json import dumps
 from multiprocessing.dummy import Pool
 from sys import argv
 
@@ -13,7 +12,7 @@ def enable_repo_web_hook(spec, url):
     uri = f'/rest/api/1.0/projects/{spec[0]}/repos/{spec[1]}' + \
           '/settings/hooks/com.atlassian.stash.plugin.stash-web-post-' + \
           'receive-hooks-plugin:postReceiveHook/enabled'
-    request_data = dumps({'hook-url-0': url})
+    request_data = {'hook-url-0': url}
     return spec, call(uri, request_data, 'PUT')
 
 

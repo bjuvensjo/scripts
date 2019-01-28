@@ -14,6 +14,7 @@ def delete_repo(repo):
     return call(
         f'/{organisation}/{project}/_apis/git/repositories/{repo_id}?api-version=3.2',
         method='DELETE',
+        only_response_code=True
     )
 
 

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import argparse
 from itertools import product
-from json import dumps
 from multiprocessing.dummy import Pool
 from sys import argv
 
@@ -11,9 +10,7 @@ from vang.bitbucket.utils import get_repo_specs
 
 def fork_repo(spec, fork_project):
     uri = f'/rest/api/1.0/projects/{spec[0]}/repos/{spec[1]}'
-    request_dict = {'slug': spec[1], 'project': {'key': fork_project}}
-
-    request_data = dumps(request_dict)
+    request_data = {'slug': spec[1], 'project': {'key': fork_project}}
     return spec, call(uri, request_data, 'POST')
 
 

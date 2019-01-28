@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 from unittest.mock import call, patch
 
+import pytest
 from pytest import raises
 
-from vang.bitbucket.set_default_branches import set_repo_default_branch
-from vang.bitbucket.set_default_branches import set_default_branch
 from vang.bitbucket.set_default_branches import main
 from vang.bitbucket.set_default_branches import parse_args
-
-import pytest
+from vang.bitbucket.set_default_branches import set_default_branch
+from vang.bitbucket.set_default_branches import set_repo_default_branch
 
 
 @pytest.fixture
@@ -24,9 +23,9 @@ def test_set_repo_default_branch(mock_call, call_fixtures):
     assert [
         call(
             '/rest/api/1.0/projects/project_key/repos/repo_slug/branches/default',
-            '{"id":"refs/heads/develop"}',
-            'PUT',
-        )
+            {'id': 'refs/heads/develop'},
+            method='PUT',
+            only_response_code=True)
     ] == mock_call.mock_calls
 
 

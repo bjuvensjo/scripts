@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 import argparse
-from multiprocessing.dummy import Pool
-
 from itertools import product
+from multiprocessing.dummy import Pool
 from sys import argv
 
 from vang.bitbucket.api import call
@@ -10,11 +9,12 @@ from vang.bitbucket.utils import get_repo_specs
 
 
 def set_repo_default_branch(spec, branch):
-    request_data = f'{{"id":"refs/heads/{branch}"}}'
+    request_data = {'id': f'refs/heads/{branch}'}
     return spec, call(
         f'/rest/api/1.0/projects/{spec[0]}/repos/{spec[1]}/branches/default',
         request_data,
-        'PUT',
+        only_response_code=True,
+        method='PUT',
     )
 
 

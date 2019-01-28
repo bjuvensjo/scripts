@@ -22,7 +22,7 @@ def test_delete_repo():
                 method='GET'),
             call(
                 '/org/project/_apis/git/repositories/id?api-version=3.2',
-                method='DELETE')
+                method='DELETE', only_response_code=True)
         ] == mock_call.mock_calls
 
 

@@ -19,7 +19,7 @@ def get_build_definitions(organisations=None,
     build_definitions = [(project, repo)
                          for project in projects
                          for repo in
-                         call(f'/{project}/_apis/build/definitions')['value']]
+                         call(f'/{project}/_apis/build/definitions?api-version=3.2')['value']]
     if names:
         return [repo[1]['name'] for repo in build_definitions]
     if urls:

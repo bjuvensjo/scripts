@@ -19,7 +19,7 @@ def test_enable_repo_web_hook(mock_enable_repo_web_hook):
         call(
             '/rest/api/1.0/projects/project/repos/repo/settings/hooks/'
             'com.atlassian.stash.plugin.stash-web-post-receive-hooks-plugin:'
-            'postReceiveHook/enabled', '{"hook-url-0": "url"}', 'PUT')
+            'postReceiveHook/enabled', {'hook-url-0': 'url'}, 'PUT')
     ] == mock_enable_repo_web_hook.mock_calls
 
 

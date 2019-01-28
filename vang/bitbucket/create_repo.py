@@ -9,14 +9,15 @@ from vang.bitbucket.api import call
 
 def create_repo(project, repo):
     uri = f'/rest/api/1.0/projects/{project}/repos'
-    request_data = f'{{"name":"{repo}","scmId":"git","forkable":true}}'
+    # request_data = f'{{"name":"{repo}","scmId":"git","forkable":true}}'
+    request_data = {'name': repo, 'scmId': 'git', 'forkable': True}
     return call(uri, request_data, 'POST')
 
 
 def main(project, repository):
     response = create_repo(project, repository)
     commands = '    git remote add origin ' \
-               f'{response["links"]["clone"][0]["href"]}\n' \
+        f'{response["links"]["clone"][0]["href"]}\n' \
                '    git push -u origin develop'
     print('If you already have code ready to be pushed to this repository '
           'then run this in your terminal.')

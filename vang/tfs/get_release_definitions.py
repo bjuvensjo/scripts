@@ -8,18 +8,19 @@ from vang.tfs.get_projects import get_projects
 
 
 def get_release_definitions(organisations=None,
-                          projects=None,
-                          names=False,
-                          urls=False,
-                          web_urls=False):
+                            projects=None,
+                            names=False,
+                            urls=False,
+                            web_urls=False):
     if organisations:
         projects = get_projects(organisations, project_specs=True)
     if not projects:
         return []
     release_definitions = [(project, repo)
-                         for project in projects
-                         for repo in
-                         call(f'/{project}/_apis/release/definitions')['value']]
+                           for project in projects
+                           for repo in
+                           # call(f'/{project}/_apis/release/definitions?api-version=3.2')['value']]
+                           call(f'/{project}/_apis/release/definitions')['value']]
     if names:
         return [repo[1]['name'] for repo in release_definitions]
     if urls:
@@ -32,7 +33,7 @@ def get_release_definitions(organisations=None,
 
 def main(organisations, projects, names, urls, web_urls):
     for repo in get_release_definitions(organisations, projects, names, urls,
-                                      web_urls):
+                                        web_urls):
         print(repo)
 
 

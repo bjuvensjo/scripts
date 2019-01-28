@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-from base64 import b64encode
-from json import loads
 from os import environ
-from urllib.error import HTTPError
-from urllib.request import Request, urlopen
+
+from requests import delete, get, post, put
 
 
 def call(
@@ -22,7 +20,7 @@ def call(
 
     Args:
         uri (str): e.g. "/rest/api/1.0/projects/{project}/repos/{repo}/branches?filterText={branch}"
-        request_data (str): the JSON request
+        request_data (dict): the JSON request
         method: http method
         only_response_code: default False
         rest_url: default environ.get('TFS_REST_URL', None)
@@ -31,32 +29,11 @@ def call(
     Return:
           the JSON response
     """
-    auth = f':{token}'
-    basic_auth_header = f'Basic {b64encode(auth.encode("utf-8")).decode()}'
-    url = f'{rest_url}{uri}'
+    m = {'DELETE': delete,
+         'GET': get,
+         'POST': post,
+         'PUT': put,
+         }[method]
 
-    request = create_request(basic_auth_header, method, request_data, url)
-
-    try:
-        response = urlopen(request)
-        response_code = response.getcode()
-        if only_response_code:
-            return response_code
-        response_data = response.read()
-        return loads(response_data.decode(
-            'UTF-8')) if response_data else response_code
-    except HTTPError as e:  # pragma: no cover
-        print(f'Can not call {url}, {request_data}, {method}, {e}')
-        raise e
-
-
-def create_request(basic_auth_header, method, request_data, url):
-    return Request(
-        url,
-        request_data.encode("UTF-8") if request_data else None,
-        {
-            'Authorization': basic_auth_header,
-            'Content-Type': "application/json"
-        },
-        method=method,
-    )
+    response = m(url=f'{rest_url}{uri}', json=request_data or '', auth=('', token))
+    return response.status_code if only_response_code else response.json()

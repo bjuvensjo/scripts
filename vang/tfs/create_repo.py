@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-from json import dumps
 from os import name as os_name
 from os import system
 from sys import argv
@@ -12,9 +11,9 @@ def create_repo(repo):
     organisation, project, name = repo.split('/')
     return call(
         f'/{organisation}/{project}/_apis/git/repositories?api-version=3.2',
-        request_data=dumps({
+        request_data={
             'name': name
-        }),
+        },
         method='POST',
     )
 
@@ -22,7 +21,7 @@ def create_repo(repo):
 def main(repo):
     response = create_repo(repo)
     commands = f'    git remote add origin {response["remoteUrl"]}\n' \
-               '    git push -u origin develop'
+        '    git push -u origin develop'
     print('If you already have code ready to be pushed to this repository '
           'then run this in your terminal.')
     print(commands)
