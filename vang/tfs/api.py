@@ -35,5 +35,9 @@ def call(
          'PUT': put,
          }[method]
 
-    response = m(url=f'{rest_url}{uri}', json=request_data or '', auth=('', token))
-    return response.status_code if only_response_code else response.json()
+    params = {'url': f'{rest_url}{uri}', 'auth': ('', token)}
+    if request_data:
+        params['json'] = request_data
+
+    response = m(**params)
+    return response.status_code if only_response_code else response.json() if response.text else response.status_code()

@@ -14,8 +14,9 @@ def test_call(mock_get, mock_post):
         only_response_code=True,
         rest_url='http://rest_url',
         token='token')
-    assert [call(auth=('', 'token'), json='',
-                 url='http://rest_url/uri')] == mock_get.mock_calls
+    assert [
+        call(auth=('', 'token'), url='http://rest_url/uri'),
+    ] == mock_get.mock_calls
 
     mock_post.return_value.status_code = 200
     mock_post.return_value.json.return_value = {'key': 'value'}
@@ -32,5 +33,6 @@ def test_call(mock_get, mock_post):
             auth=('', 'token'),
             json={'request_key': 'request_value'},
             url='http://rest_url/uri'),
+        call().text.__bool__(),
         call().json()
     ] == mock_post.mock_calls

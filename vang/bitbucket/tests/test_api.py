@@ -16,7 +16,7 @@ def test_call(mock_get, mock_post):
         username='username',
         password='password')
     assert [
-        call(auth=('username', 'password'), json='', url='http://rest_url/uri')
+        call(auth=('username', 'password'), url='http://rest_url/uri'),
     ] == mock_get.mock_calls
 
     mock_post.return_value.status_code = 200

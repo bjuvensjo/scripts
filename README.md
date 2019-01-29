@@ -5,10 +5,11 @@ Miscellaneous scripts
 ## Suggested usage ##
 
 1. Clone this repository
-2. Add required environment variables, see vang/artifactory/api.py and vang/bitbucket/api.py
-2. Create a directory, e.g. ~/bin, and add it to your path
-3. Create symbolic links (see example below). If on windows, create cmd-files that calls the scripts
-4. All python scripts has help, e.g 
+2. Install with pip3 install -e .
+3. Add required environment variables, see e.g. vang/artifactory/api.py and vang/bitbucket/api.py
+4. Create a directory, e.g. ~/bin, and add it to your path
+5. Create symbolic links (see example below). If on windows, create cmd-files that calls the scripts
+6. All python scripts has help, e.g 
 
         ~/bin clone-repos -h
         usage: clone-repos [-h]
@@ -30,7 +31,7 @@ Miscellaneous scripts
                                 file (-c)
           -d DIR, --dir DIR     The directory to clone into
 
-5. For the use of non-python scripts, look at the documentation in the script
+7. For the use of non-python scripts, look at the documentation in the scripts
       
 ## Symbolic links example ##
 
