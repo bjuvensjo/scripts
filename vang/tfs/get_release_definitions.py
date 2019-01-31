@@ -1,40 +1,28 @@
 #!/usr/bin/env python3
 
 import argparse
+from json import dumps
 from sys import argv
 
-from vang.tfs.api import call
-from vang.tfs.get_projects import get_projects
+from vang.tfs.api import call_url
+from vang.tfs.list_release_definitions import list_release_definitions
 
 
 def get_release_definitions(organisations=None,
                             projects=None,
-                            names=False,
-                            urls=False,
-                            web_urls=False):
-    if organisations:
-        projects = get_projects(organisations, project_specs=True)
-    if not projects:
-        return []
-    release_definitions = [(project, repo)
-                           for project in projects
-                           for repo in
-                           # call(f'/{project}/_apis/release/definitions?api-version=3.2')['value']]
-                           call(f'/{project}/_apis/release/definitions')['value']]
-    if names:
-        return [repo[1]['name'] for repo in release_definitions]
-    if urls:
-        return [repo[1]['url'] for repo in release_definitions]
-    if web_urls:
-        return [repo[1]['_links']['web']['href'] for repo in release_definitions]
-
-    return release_definitions
+                            filter_name=None, ):
+    release_definitions_dict = list_release_definitions(organisations, projects, filter_name)
+    return {name: call_url(definition['url'])
+            for name, definition in release_definitions_dict.items()}
 
 
-def main(organisations, projects, names, urls, web_urls):
-    for repo in get_release_definitions(organisations, projects, names, urls,
-                                        web_urls):
-        print(repo)
+def main(organisations,
+         projects,
+         filter_name=None,
+         format_output=False):
+    for name, definition in get_release_definitions(organisations, projects, filter_name).items():
+        json = dumps(definition, indent=4) if format_output else dumps(definition)
+        print(json)
 
 
 def parse_args(args):
@@ -51,16 +39,16 @@ def parse_args(args):
         nargs='+',
         help='TFS projects, e.g organisation/project')
 
+    parser.add_argument(
+        '-fn',
+        '--filter_name',
+        help='Filters to definitions whose names equal this value. Append a * to filter to definitions whose names '
+             'start with this value')
+
     optional_group = parser.add_mutually_exclusive_group(required=False)
     optional_group.add_argument(
-        '-n', '--names', action='store_true',
-        help='Get only release definition names')
-    optional_group.add_argument(
-        '-u', '--urls', action='store_true',
-        help='Get only release definition urls')
-    optional_group.add_argument(
-        '-w', '--web_urls', action='store_true',
-        help='Get only release definition web urls')
+        '-f', '--format_output', action='store_true',
+        help='Format output')
     return parser.parse_args(args)
 
 

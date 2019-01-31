@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from argparse import ArgumentParser
 from os import environ, path, walk
-from os.path import normpath
+from os.path import normpath, exists
 from sys import argv
 from xml.etree.ElementTree import parse
 
@@ -29,7 +29,10 @@ def get_settings_info(settings_path):
     plugin_remotes = {text(r, 'id'): text(r, 'url')
                       for r in findall(e, 'pluginRepository')}
 
-    return local_repo, {**remotes, **plugin_remotes}
+    mirrors = {text(r, 'id'): text(r, 'url')
+               for r in findall(e, 'mirror')}
+
+    return local_repo, {**remotes, **plugin_remotes, **mirrors}
 
 
 def excluded(f):
@@ -43,6 +46,16 @@ def excluded(f):
     if f.endswith('lastUpdated'):
         return True
     return False
+
+
+def get_file_repos_info(local_repo, files):
+    for f in files:
+        root, file = f.rsplit('/', 1)
+        remote_repositories = path.join(root, '_remote.repositories')
+        if exists(remote_repositories):
+            yield (remote_repositories,
+                   root[len(local_repo):],
+                   (file,))
 
 
 def get_repos_info(local_repo):
@@ -95,16 +108,18 @@ def create_urls(remote_dict, artifact_path, artifacts):
             rel_path = f'{artifact_path}/{artifact}'
             return f'{remote_url}/{rel_path}'
         else:
-            return None
+            return f'No url found for: {artifact_path}/{artifact}'
 
     urls = [create_artifact_urls(artifact) for artifact in artifacts]
     return urls if any(urls) else []
 
 
-def main(settings_file, urls_only, skipped):
+def main(settings_file, urls_only, skipped, files=None):
     skipped_artifacts = []
     local_repo, remotes = get_settings_info(settings_file)
-    for remote_repos, artifact_path, artifacts in get_repos_info(local_repo):
+
+    repos_info = get_file_repos_info(local_repo, files) if files else get_repos_info(local_repo)
+    for remote_repos, artifact_path, artifacts in repos_info:
         remote_dict = parse_remote_repos(remote_repos, remotes)
 
         params = [remote_dict, artifact_path, artifacts]
@@ -132,6 +147,8 @@ def parse_args(args):
         '-u', '--urls_only', help='Print only urls', action='store_true')
     parser.add_argument(
         '-s', '--skipped', help='Print skipped artifacts', action='store_true')
+    parser.add_argument(
+        '-f', '--files', nargs='*', help='Only for specified files and not all in local_repo')
     return parser.parse_args(args)
 
 

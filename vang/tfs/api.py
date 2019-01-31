@@ -19,11 +19,35 @@ def call(
     * TFS_TOKEN, the tfs token
 
     Args:
-        uri (str): e.g. "/rest/api/1.0/projects/{project}/repos/{repo}/branches?filterText={branch}"
+        uri (str): e.g. "{organisation}/{project}/_apis/build/definitions/{definition_id}?api-version=3.2"
         request_data (dict): the JSON request
         method: http method
         only_response_code: default False
         rest_url: default environ.get('TFS_REST_URL', None)
+        token: default environ.get('TFS_TOKEN', None),
+
+    Return:
+          the JSON response
+    """
+    return call_url(f'{rest_url}{uri}', request_data, method, only_response_code, token)
+
+
+def call_url(
+        url,
+        request_data=None,
+        method='GET',
+        only_response_code=False,
+        token=environ.get('TFS_TOKEN', None),
+):
+    """Makes a REST call to TFS rest api.
+    May use three environment variables:
+    * TFS_TOKEN, the tfs token
+
+    Args:
+        url (str): e.g. "http://myorg:8080/tfs/{organisation}/{project}/_apis/build/definitions/{definition_id}?api-version=3.2"
+        request_data (dict): the JSON request
+        method: http method
+        only_response_code: default False
         token: default environ.get('TFS_TOKEN', None),
 
     Return:
@@ -35,7 +59,7 @@ def call(
          'PUT': put,
          }[method]
 
-    params = {'url': f'{rest_url}{uri}', 'auth': ('', token)}
+    params = {'url': url, 'auth': ('', token)}
     if request_data:
         params['json'] = request_data
 
