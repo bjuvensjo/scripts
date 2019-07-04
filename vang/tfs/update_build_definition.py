@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import argparse
+from json import dumps
+from pprint import pprint
 from sys import argv
 
 from vang.tfs.api import call_url
@@ -29,7 +31,7 @@ def get_build_definition(template, organisation, project, repo, branch, definiti
 
 def update_build_definition(definition_url, build_definition):
     return call_url(
-        f'{definition_url}?api-version=3.2',
+        f'{definition_url}&api-version=3.2',
         request_data=build_definition,
         method='PUT',
         only_response_code=True
@@ -43,6 +45,10 @@ def main(project, repo, branch, template, comment=None):
     definition_url = definition['url']
     definition_id = definition['id']
     revision = definition['revision']
+
+    print(dumps(get_build_definition(template, organisation, project, repo,
+                                      branch, definition_name, definition_id, revision, comment)))
+
     response = update_build_definition(definition_url,
                                        get_build_definition(template, organisation, project, repo,
                                                             branch, definition_name, definition_id, revision, comment))

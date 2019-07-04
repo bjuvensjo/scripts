@@ -30,10 +30,14 @@ def get_basic_auth_header(username, password):
 def parse_args(args):
     parser = ArgumentParser(
         description='Prints and place in clipboard basic authentication header')
+    # parser.add_argument(
+    #     '-u', '--username', help='Username', default=environ['U'])
+    # parser.add_argument(
+    #     '-p', '--password', help='Password', default=environ['P'])
     parser.add_argument(
-        '-u', '--username', help='Username', default=environ['U'])
+        '-u', '--username', help='Username')
     parser.add_argument(
-        '-p', '--password', help='Password', default=environ['P'])
+        '-p', '--password', help='Password')
     return parser.parse_args(args)
 
 
@@ -46,5 +50,7 @@ def main(username, password):
         print(basic_auth_header)
 
 
-if __name__ == '__main__':  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+# if __name__ == '__main__':  # pragma: no cover
+#     main(**parse_args(argv[1:]).__dict__)
+
+main('', '6hlzowlokdnuwxqpy7vipqygj7h5lizw5uqiflwely6mw5yykbeq')

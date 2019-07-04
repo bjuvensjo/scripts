@@ -8,7 +8,7 @@ from requests import get
 
 def download(output_file, url, username, password):
     with open(output_file, 'wb') as f:
-        f.write(get(url, {'auth': (username, password)}).content)
+        f.write(get(url, auth=(username, password)).content)
 
 
 def extract_zip(zip_file):

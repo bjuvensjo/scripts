@@ -1,0 +1,138 @@
+{
+  "name": "##name##",
+  "path": "\\",
+  "type": "build",
+  "build": [
+    {
+      "enabled": true,
+      "continueOnError": false,
+      "alwaysRun": false,
+      "displayName": "Install Python",
+      "timeoutInMinutes": 0,
+      "condition": "succeeded()",
+      "task": {
+        "id": "6095fbbe-853d-4f2e-bc15-a88c92a78b4d",
+        "versionSpec": "1.*",
+        "definitionType": "task"
+      },
+      "inputs": {
+        "version": "python",
+        "prerelease": "false",
+        "dependencies": "",
+        "outputdir": "$(Agent.ToolsDirectory)\\PythonNuget",
+        "nuGetAdditionalArgs": ""
+      }
+    },
+    {
+      "enabled": true,
+      "continueOnError": false,
+      "alwaysRun": false,
+      "displayName": "HelloWorld",
+      "timeoutInMinutes": 0,
+      "condition": "succeeded()",
+      "task": {
+        "id": "d9bafed4-0b18-4f58-968d-86655b4d2ce9",
+        "versionSpec": "1.*",
+        "definitionType": "task"
+      },
+      "inputs": {
+        "filename": "python",
+        "arguments": "-c 'print(\"Hello World!\")'",
+        "workingFolder": "",
+        "failOnStandardError": "false"
+      }
+    }
+  ],
+  "options": [
+    {
+      "enabled": false,
+      "definition": {
+        "id": "5d58cc01-7c75-450c-be18-a388ddb129ec"
+      },
+      "inputs": {
+        "branchFilters": "[\"+refs/heads/*\"]",
+        "additionalFields": "{}"
+      }
+    },
+    {
+      "enabled": false,
+      "definition": {
+        "id": "7c555368-ca64-4199-add6-9ebaf0b0137d"
+      },
+      "inputs": {
+        "multipliers": "[]",
+        "parallel": "false",
+        "continueOnError": "true",
+        "additionalFields": "{}"
+      }
+    },
+    {
+      "enabled": false,
+      "definition": {
+        "id": "a9db38f9-9fdc-478c-b0f9-464221e58316"
+      },
+      "inputs": {
+        "workItemType": "6356",
+        "assignToRequestor": "true",
+        "additionalFields": "{}"
+      }
+    },
+    {
+      "enabled": false,
+      "definition": {
+        "id": "57578776-4c22-4526-aeb0-86b6da17ee9c"
+      },
+      "inputs": null
+    }
+  ],
+  "variables": {
+    "system.debug": {
+      "value": "false",
+      "allowOverride": true
+    }
+  },
+  "retentionRules": [
+    {
+      "branches": [
+        "+refs/heads/*"
+      ],
+      "artifacts": [],
+      "artifactTypesToDelete": [
+        "FilePath",
+        "SymbolStore"
+      ],
+      "daysToKeep": 10,
+      "minimumToKeep": 1,
+      "deleteBuildRecord": true,
+      "deleteTestResults": true
+    }
+  ],
+  "repository": {
+    "properties": {
+      "cleanOptions": "3",
+      "labelSources": "0",
+      "labelSourcesFormat": "$(build.buildNumber)",
+      "reportBuildStatus": "true",
+      "gitLfsSupport": "false",
+      "skipSyncSource": "false",
+      "checkoutNestedSubmodules": "false",
+      "fetchDepth": "0"
+    },
+    "type": "TfsGit",
+    "name": "##repo##",
+    "url": "http://tfs.lfnet.se:8080/tfs/##organisation##/##project##/_git/##repo##",
+    "defaultBranch": "refs/heads/##branch##",
+    "clean": "true",
+    "checkoutSubmodules": false
+  },
+  "processParameters": null,
+  "quality": "definition",
+  "queue": {
+    "id": 208,
+    "name": "Default",
+    "pool": {
+      "id": 1,
+      "name": "Default"
+    }
+  }
+}

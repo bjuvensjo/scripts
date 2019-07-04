@@ -20,6 +20,7 @@ def get_build_definition(template, organisation, project, repo, branch, comment=
 
 def create_build_definition(organisation, project, build_definition):
     return call(
+        # f'/{organisation}/{project}/_apis/build/definitions?api-version=3.2',
         f'/{organisation}/{project}/_apis/build/definitions?api-version=3.2',
         request_data=build_definition,
         method='POST',

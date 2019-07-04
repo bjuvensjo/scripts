@@ -1,0 +1,124 @@
+{
+  "name": "##name##",
+  "description": null,
+  "path": "\\",
+  "environments": [
+    {
+      "name": "Environment 1",
+      "rank": 1,
+      "owner": {
+        "id": "07e4729e-a57e-4558-ac82-d3f57db4479d",
+        "displayName": "Bjuvensjö Magnus Konsult",
+        "uniqueName": "LFAD\\B926BJ",
+        "url": "http://tfs.lfnet.se:8080/tfs/DefaultCollection/_apis/Identities/07e4729e-a57e-4558-ac82-d3f57db4479d",
+        "imageUrl": "http://tfs.lfnet.se:8080/tfs/DefaultCollection/_api/_common/identityImage?id=07e4729e-a57e-4558-ac82-d3f57db4479d"
+      },
+      "variables": null,
+      "preDeployApprovals": {
+        "approvals": [
+          {
+            "rank": 1,
+            "isAutomated": true,
+            "isNotificationOn": false,
+            "id": 4
+          }
+        ]
+      },
+      "deployStep": {
+        "tasks": [],
+        "id": 5
+      },
+      "postDeployApprovals": {
+        "approvals": [
+          {
+            "rank": 1,
+            "isAutomated": true,
+            "isNotificationOn": false,
+            "id": 6
+          }
+        ]
+      },
+      "deployPhases": [
+        {
+          "deploymentInput": {
+            "parallelExecution": {
+              "parallelExecutionType": "none"
+            },
+            "skipArtifactsDownload": false,
+            "timeoutInMinutes": 0,
+            "queueId": 208,
+            "demands": [],
+            "enableAccessToken": false
+          },
+          "rank": 1,
+          "phaseType": "agentBasedDeployment",
+          "name": "Run on agent",
+          "workflowTasks": []
+        }
+      ],
+      "environmentOptions": {
+        "emailNotificationType": "OnlyOnFailure",
+        "emailRecipients": "release.environment.owner;release.creator",
+        "skipArtifactsDownload": false,
+        "timeoutInMinutes": 0,
+        "enableAccessToken": false,
+        "publishDeploymentStatus": false
+      },
+      "demands": [],
+      "conditions": [
+        {
+          "name": "ReleaseStarted",
+          "conditionType": "event",
+          "value": ""
+        }
+      ],
+      "executionPolicy": {
+        "concurrencyCount": 0,
+        "queueDepthCount": 0
+      },
+      "schedules": [],
+      "retentionPolicy": {
+        "daysToKeep": 30,
+        "releasesToKeep": 3,
+        "retainBuild": true
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "sourceId": "04c80f01-4a96-43a0-bd9d-80d08ca448b2:2463",
+      "type": "Build",
+      "alias": "##name##",
+      "definitionReference": {
+        "defaultVersionType": {
+          "id": "latestType",
+          "name": "Latest"
+        },
+        "definition": {
+          "id": "2463",
+          "name": "##name##"
+        },
+        "project": {
+          "id": "04c80f01-4a96-43a0-bd9d-80d08ca448b2",
+          "name": "##project##"
+        }
+      },
+      "isPrimary": true
+    }
+  ],
+  "triggers": [
+    {
+      "artifactAlias": "##name##",
+      "triggerConditions": [
+        {
+          "sourceBranch": "##branch##",
+          "tags": []
+        }
+      ],
+      "triggerType": "artifactSource"
+    }
+  ],
+  "releaseNameFormat": "Release-$(rev:r)",
+  "tags": [],
+  "properties": null
+}

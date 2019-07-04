@@ -15,7 +15,7 @@ def clone(commands, root_dir):
     makedirs(root_dir, exist_ok=True)
     yield from run_commands([(cmd, root_dir) for cmd in commands],
                             max_processes=5,
-                            timeout=60,
+                            timeout=180,
                             check=False)
 
 

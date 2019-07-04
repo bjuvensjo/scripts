@@ -26,6 +26,6 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Topic :: Utilities",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: Apache 2",
     ], install_requires=['more-itertools', 'requests', 'pytest']
 )
