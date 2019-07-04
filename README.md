@@ -82,4 +82,4 @@ Miscellaneous scripts
 
 1. Create a virtual environment
 
-    conda create -n scripts python=3.7 autopep8 flake8 jedi more-itertools pytest pytest-cov requests yapf
+    conda create -n scripts python=3.7 autopep8 flake8 jedi more-itertools pytest pytest-cov requests twine wheel yapf

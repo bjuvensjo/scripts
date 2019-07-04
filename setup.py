@@ -23,9 +23,10 @@ setup(
     packages=['vang.artifactory', 'vang.bitbucket', 'vang.core', 'vang.git', 'vang.github', 'vang.maven', 'vang.misc',
               'vang.nexus3', 'vang.pio', 'vang.tfs', 'vang.wildcat'],
     long_description=read('README.md'),
+    long_description_content_type="text/markdown",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Topic :: Utilities",
-        "License :: OSI Approved :: Apache 2",
+        "License :: OSI Approved :: MIT License",
     ], install_requires=['more-itertools', 'requests', 'pytest']
 )
