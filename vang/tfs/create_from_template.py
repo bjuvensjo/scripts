@@ -39,14 +39,15 @@ def commit_all(repo_dir):
     )
 
 
-def update(repo, dest_repo, dest_repo_dir):
-    for old, new in get_zipped_cases([repo, dest_repo]):
-        rsr(
-            old,
-            new,
-            [dest_repo_dir],
-            get_replace_function(False),
-        )
+def update(replacements, dest_repo_dir):
+    for pair in replacements:
+        for old, new in set(get_zipped_cases(pair)):
+            rsr(
+                old,
+                new,
+                [dest_repo_dir],
+                get_replace_function(False),
+            )
 
 
 def create_and_push_to_dest_repo(
@@ -70,8 +71,8 @@ def create_and_push_to_dest_repo(
 def parse_args(args):
     parser = ArgumentParser(
         description='Create a new repo based on template'
-                    ' repo.\nExample: create_from_template PCS1906 foo PCS1906'
-                    ' bar -b develop -d .')
+                    ' repo.\nExample: create_from_template PCS1906/foo PCS1906/bar'
+                    ' -b develop -d .')
     parser.add_argument(
         'src_repo',
         help='The repo from which to create the new repo (must exist)'
@@ -95,6 +96,13 @@ def parse_args(args):
         default='.',
         help='The directory to create local repo in',
     )
+    parser.add_argument(
+        '-r',
+        '--replacements',
+        default=[],
+        nargs='+',
+        help='Pairs of replacements, e.i. the first in the pair is a string in the src_repo that will be replaced to the second in the pair in the dest_repo',
+    )
     return parser.parse_args(args)
 
 
@@ -103,7 +111,12 @@ def main(
         branch,
         dest_repo,
         work_dir,
+        replacements,
 ):
+    if len(replacements) % 2 > 0:
+        print("Error: Replacements must be pairs")
+        exit(1)
+
     clone_url, dest_repo_dir = setup(
         src_repo,
         branch,
@@ -111,7 +124,8 @@ def main(
         work_dir,
     )
 
-    update(src_repo, dest_repo, dest_repo_dir)
+    replacement_pairs = list(zip(replacements[0::2], replacements[1::2]))
+    update(replacement_pairs, dest_repo_dir)
 
     commit_all(dest_repo_dir)
 
