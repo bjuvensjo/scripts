@@ -22,7 +22,7 @@ def test_clone(mock_makedirs, mock_run_commands):
         call([('c1', 'root_dir'), ('c2', 'root_dir')],
              check=False,
              max_processes=5,
-             timeout=60)
+             timeout=180)
     ] == mock_run_commands.mock_calls
 
 
