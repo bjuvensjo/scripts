@@ -75,7 +75,7 @@ def test_fork_repos(mock_main, mock_get_work_dirs, mock_fork_repo):
     fork_repos('fork_project_key', ['develop', 'master'], 'work_dir', None,
                ['p1', 'p2'])
     assert [call('work_dir', ['p1', 'p2'], None,
-                 'develop')] == mock_main.mock_calls
+                 branch='develop', flat=True)] == mock_main.mock_calls
     assert [call('.git/', 'work_dir')] == mock_get_work_dirs.mock_calls
     assert [
         call('fork_project_key', ['develop', 'master'], 'd1'),

@@ -35,6 +35,7 @@ def fork_repo(fork_project, branches, git_dir):
         print(f'{fork_project}/{repo}: {new_origin}')
         return (fork_project, repo), new_origin
     except OSError:  # pragma: no cover
+        print(f'Error forking {git_dir}')
         print_exc(file=sys.stdout)
 
 
@@ -44,7 +45,7 @@ def fork_repos(fork_project,
                repos=None,
                projects=None,
                max_processes=10):
-    clone_repos.main(work_dir, projects, repos, branches[0])
+    clone_repos.main(work_dir, projects, repos, branch=branches[0], flat=True)
     git_dirs = get_work_dirs('.git/', work_dir)
     with Pool(processes=max_processes) as pool:
         pool.map(partial(fork_repo, fork_project, branches), git_dirs)
@@ -70,7 +71,7 @@ def parse_args(args):
         'The first will be set as default branch',
         default=['develop'])
     parser.add_argument(
-        '-d', '--work_dir', default='.', help='The directory to clone into')
+        '-d', '--work_dir', default='.', help='The directory to clone into. Preferably an empty directory!')
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
         '-r', '--repos', nargs='*', help='Repos, e.g. key1/repo1 key2/repo2')
