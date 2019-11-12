@@ -38,6 +38,7 @@ def call_url(
         method='GET',
         only_response_code=False,
         token=environ.get('TFS_TOKEN', None),
+        verify_certificate=False,
 ):
     """Makes a REST call to TFS rest api.
     May use three environment variables:
@@ -49,6 +50,7 @@ def call_url(
         method: http method
         only_response_code: default False
         token: default environ.get('TFS_TOKEN', None),
+        verify_certificate: True if https certificate should be verified,
 
     Return:
           the JSON response
@@ -59,7 +61,7 @@ def call_url(
          'PUT': put,
          }[method]
 
-    params = {'url': url, 'auth': ('', token)}
+    params = {'url': url, 'auth': ('', token), 'verify': verify_certificate}
     if request_data:
         params['json'] = request_data
 
