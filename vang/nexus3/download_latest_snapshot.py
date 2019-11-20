@@ -52,6 +52,3 @@ def parse_args(args):
 
 if __name__ == '__main__':
     main(**parse_args(argv[1:]).__dict__)
-
-# main("/Users/magnus/slask/crap", "http://10.201.36.81:8089/repository", "CSL-maven2-snapshots", "se.lf.csl",
-#      "ms.security.signing", "1.0-SNAPSHOT", "<username>", "<password>")
