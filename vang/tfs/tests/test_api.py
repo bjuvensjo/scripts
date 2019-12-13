@@ -15,24 +15,26 @@ def test_call(mock_get, mock_post):
         rest_url='http://rest_url',
         token='token')
     assert [
-        call(auth=('', 'token'), url='http://rest_url/uri'),
-    ] == mock_get.mock_calls
+               call(auth=('', 'token'), url='http://rest_url/uri', verify=False),
+           ] == mock_get.mock_calls
 
     mock_post.return_value.status_code = 200
     mock_post.return_value.json.return_value = {'key': 'value'}
     assert {
-        'key': 'value'
-    } == tfs_call(
+               'key': 'value'
+           } == tfs_call(
         '/uri',
         request_data={'request_key': 'request_value'},
         method='POST',
         rest_url='http://rest_url',
         token='token')
     assert [
-        call(
-            auth=('', 'token'),
-            json={'request_key': 'request_value'},
-            url='http://rest_url/uri'),
-        call().text.__bool__(),
-        call().json()
-    ] == mock_post.mock_calls
+               call(
+                   auth=('', 'token'),
+                   json={'request_key': 'request_value'},
+                   url='http://rest_url/uri',
+                   verify=False,
+               ),
+               call().text.__bool__(),
+               call().json()
+           ] == mock_post.mock_calls
