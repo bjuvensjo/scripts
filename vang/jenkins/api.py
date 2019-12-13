@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-from base64 import encodebytes
-from json import loads
 from os import environ
-from urllib.error import HTTPError
-from urllib.request import Request, urlopen
+
+from requests import delete, get, post, put
 
 
 def call(
@@ -24,7 +22,7 @@ def call(
 
     Args:
         uri (str): e.g. "/api/json"
-        request_data (str): the JSON request
+        request_data (dict): the JSON request
         method: http method
         only_response_code: default False
         rest_url: default environ.get('JENKINS_REST_URL', None)
@@ -34,32 +32,27 @@ def call(
     Return:
           the JSON response
     """
-    auth = f'{username}:{password}'
-    basic_auth_header = f'Basic {encodebytes(auth.encode()).decode("UTF-8").strip()}'
-    url = f'{rest_url}{uri}'
-
-    request = create_request(basic_auth_header, method, request_data, url)
-
-    try:
-        response = urlopen(request)
-        response_code = response.getcode()
-        if only_response_code:
-            return response_code
-        response_data = response.read()
-        return loads(response_data.decode(
-            'UTF-8')) if response_data else response.getcode()
-    except HTTPError as e:  # pragma: no cover
-        print(f'Can not call {url}, {request_data}, {method}, {e}')
-        raise e
+    return call_url(f'{rest_url}{uri}', request_data, method, only_response_code, username, password)
 
 
-def create_request(basic_auth_header, method, request_data, url):
-    return Request(
+def call_url(
         url,
-        request_data.encode("UTF-8") if request_data else None,
-        {
-            'Authorization': basic_auth_header,
-            'Content-Type': "application/json"
-        },
-        method=method,
-    )
+        request_data=None,
+        method='GET',
+        only_response_code=False,
+        username=environ.get('JENKINS_USERNAME', None),
+        password=environ.get('JENKINS_PASSWORD', None),
+):
+    m = {'DELETE': delete,
+         'GET': get,
+         'POST': post,
+         'PUT': put,
+         }[method]
+
+    params = {'url': url, 'auth': (username, password)}
+    if request_data:
+        params['json'] = request_data
+
+    response = m(**params)
+    return response.status_code if only_response_code else response.json() if response.text else response.status_code()
+
