@@ -13,6 +13,7 @@ def call(
         rest_url=environ.get('BITBUCKET_REST_URL', None),
         username=environ.get('BITBUCKET_USERNAME', None),
         password=environ.get('BITBUCKET_PASSWORD', None),
+        verify_certificate=environ.get('BITBUCKET_IGNORE_CERTIFICATE', None) != 'True',
 ):
     """Makes a REST call to Bitbucket rest api 1.0.
     Depends on three environment variables:
@@ -26,21 +27,25 @@ def call(
         method (str): http method
         only_response_code (bool): default False
         rest_url: default environ.get('BITBUCKET_REST_URL', None)
-        username (str): default environ.get('BITBUCKET_USERNAME', None),
+        username (str): default environ.get('BITBUCKET_USERNAME', None)
         password (str): default environ.get('BITBUCKET_PASSWORD', None)
+        verify_certificate: True if https certificate should be verified
 
     Return:
           the JSON response
     """
+    print('#####', verify_certificate)
+
     m = {'DELETE': delete,
          'GET': get,
          'POST': post,
          'PUT': put,
          }[method]
 
-    params = {'url': f'{rest_url}{uri}', 'auth': (username, password)}
+    params = {'url': f'{rest_url}{uri}', 'auth': (username, password), 'verify': verify_certificate}
     if request_data:
         params['json'] = request_data
 
     response = m(**params)
+    print(response)
     return response.status_code if only_response_code else response.json() if response.text else response.status_code()
