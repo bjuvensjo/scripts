@@ -34,7 +34,6 @@ def call(
     Return:
           the JSON response
     """
-    print('#####', verify_certificate)
 
     m = {'DELETE': delete,
          'GET': get,
@@ -47,5 +46,4 @@ def call(
         params['json'] = request_data
 
     response = m(**params)
-    print(response)
     return response.status_code if only_response_code else response.json() if response.text else response.status_code()
