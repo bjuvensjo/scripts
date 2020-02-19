@@ -13,7 +13,7 @@ def call(
         rest_url=environ.get('BITBUCKET_REST_URL', None),
         username=environ.get('BITBUCKET_USERNAME', None),
         password=environ.get('BITBUCKET_PASSWORD', None),
-        verify_certificate=environ.get('BITBUCKET_IGNORE_CERTIFICATE', None) != 'True',
+        verify_certificate=not environ.get('BITBUCKET_IGNORE_CERTIFICATE', None),
 ):
     """Makes a REST call to Bitbucket rest api 1.0.
     Depends on three environment variables:
