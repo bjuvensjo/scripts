@@ -2,11 +2,11 @@
 from argparse import ArgumentParser
 from sys import argv
 
-from vang.artifactory import api
+from vang.artifactory.api import call
 
 
 def get_repo_content(repo_key):
-    return api.call(f'/api/storage/{repo_key}?list&deep=1&listFolders=1')
+    return call(f'/api/storage/{repo_key}?list&deep=1&listFolders=1')
 
 
 def list_repo_content(repo_key, only_files=True):
