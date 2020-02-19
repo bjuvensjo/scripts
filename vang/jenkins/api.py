@@ -13,6 +13,7 @@ def call(
         rest_url=environ.get('JENKINS_REST_URL', None),
         username=environ.get('JENKINS_USERNAME', None),
         password=environ.get('JENKINS_PASSWORD', None),
+        verify_certificate=not environ.get('JENKINS_IGNORE_CERTIFICATE', None),
 ):
     """Makes a REST call to Jenkins rest api.
     May use three environment variables:
@@ -28,11 +29,13 @@ def call(
         rest_url: default environ.get('JENKINS_REST_URL', None)
         username: default environ.get('JENKINS_USERNAME', None)
         password: default environ.get('JENKINS_PASSWORD', None)
+        verify_certificate: True if https certificate should be verified
 
     Return:
-          the JSON response
+          the response
     """
-    return call_url(f'{rest_url}{uri}', request_data, method, only_response_code, username, password)
+    return call_url(f'{rest_url}{uri}', request_data, method, only_response_code, username, password,
+                    verify_certificate)
 
 
 def call_url(
@@ -42,6 +45,7 @@ def call_url(
         only_response_code=False,
         username=environ.get('JENKINS_USERNAME', None),
         password=environ.get('JENKINS_PASSWORD', None),
+        verify_certificate=True,
 ):
     m = {'DELETE': delete,
          'GET': get,
@@ -49,10 +53,9 @@ def call_url(
          'PUT': put,
          }[method]
 
-    params = {'url': url, 'auth': (username, password)}
+    params = {'url': url, 'auth': (username, password), 'verify': verify_certificate}
     if request_data:
         params['json'] = request_data
 
     response = m(**params)
     return response.status_code if only_response_code else response.json() if response.text else response.status_code()
-
