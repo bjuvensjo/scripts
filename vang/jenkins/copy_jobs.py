@@ -4,7 +4,7 @@ import argparse
 from importlib import import_module
 from sys import argv
 
-from vang.jenkins.clone_job import clone_job
+from vang.jenkins.copy_job import copy_job
 
 
 def copy_jobs(jobs, from_jenkins_spec, to_jenkins_spec, replacements=[]):
@@ -24,7 +24,7 @@ def copy_jobs(jobs, from_jenkins_spec, to_jenkins_spec, replacements=[]):
                     type(job_replacements) is list or callable(job_replacements)):
                 raise ValueError('job must be a string, a pair of strings or a pair of string and a callable')
 
-            response_code = clone_job(from_name, to_name, from_jenkins_spec, to_jenkins_spec, job_replacements)
+            response_code = copy_job(from_name, to_name, from_jenkins_spec, to_jenkins_spec, job_replacements)
             print('Created copy' if response_code == 200 else 'Failed to create copy', to_name, response_code)
         except IOError as r:
             print('IOError while trying to create copy', to_name, r)
@@ -33,7 +33,7 @@ def copy_jobs(jobs, from_jenkins_spec, to_jenkins_spec, replacements=[]):
 
 
 def parse_args(args):
-    parser = argparse.ArgumentParser(description='Get Jenkins jobs')
+    parser = argparse.ArgumentParser(description='Copy Jenkins jobs, possibly between Jenkins instances')
     parser.add_argument('-c', '--config_path', default='vang.jenkins.copy_jobs_config',
                         help='The configuration path')
     return parser.parse_args(args)
@@ -46,4 +46,3 @@ def main(config_path):
 
 if __name__ == '__main__':  # pragma: no cover
     main(**parse_args(argv[1:]).__dict__)
-
