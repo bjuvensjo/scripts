@@ -13,8 +13,7 @@ def has_match(s, regexps):
 
 
 def is_included(name, excludes=None, includes=None):
-    return not (excludes and has_match(name, excludes)) and (
-        not includes or has_match(name, includes))
+    return not (excludes and has_match(name, excludes)) and (not includes or has_match(name, includes))
 
 
 def pmap(f, iterable, chunksize=None, processes=25):
@@ -22,10 +21,16 @@ def pmap(f, iterable, chunksize=None, processes=25):
         return pool.map(f, iterable, chunksize)
 
 
+def pmap_ordered(f, iterable, chunksize=1, processes=10):
+    with Pool(processes=processes) as pool:
+        completed_processes = pool.map(f, iterable, chunksize=chunksize)
+        for cp in completed_processes:
+            yield cp
+
+
 def pmap_unordered(f, iterable, chunksize=1, processes=10):
     with Pool(processes=processes) as pool:
-        completed_processes = pool.imap_unordered(
-            f, iterable, chunksize=chunksize)
+        completed_processes = pool.imap_unordered(f, iterable, chunksize=chunksize)
         for cp in completed_processes:
             yield cp
 
