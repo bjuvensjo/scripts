@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
 
-import argparse
-from importlib import import_module
-from sys import argv
-
 from vang.jenkins.copy_job import copy_job
 
 
@@ -30,19 +26,3 @@ def copy_jobs(jobs, from_jenkins_spec, to_jenkins_spec, replacements=[]):
             print('IOError while trying to create copy', to_name, r)
         except ValueError as v:
             print('ValueError while trying to create copy', to_name, v)
-
-
-def parse_args(args):
-    parser = argparse.ArgumentParser(description='Copy Jenkins jobs, possibly between Jenkins instances')
-    parser.add_argument('-c', '--config_path', default='vang.jenkins.copy_jobs_config',
-                        help='The configuration path')
-    return parser.parse_args(args)
-
-
-def main(config_path):
-    config = import_module(config_path)
-    copy_jobs(config.jobs, config.from_jenkins_spec, config.to_jenkins_spec, config.replacements)
-
-
-if __name__ == '__main__':  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
