@@ -1,10 +1,11 @@
+#!/usr/bin/env python3
 from os import environ
+
+from vang.jenkins.copy_jobs import copy_jobs
 
 # Can be an iterable with pairs of old and new, or a function
 # that takes the from_job configuration as parameter and returns the updated configuration.
 # Will be used if no job specific replacement has been specified.
-from vang.jenkins.copy_jobs import copy_jobs
-
 replacements = [
     ('old_foo', 'new_foo'),
     ('old_bar', 'new_bar'),
