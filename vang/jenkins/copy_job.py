@@ -48,7 +48,13 @@ def copy_job(from_name, to_name, from_jenkins_spec=get_default_jenkins_spec(),
     from_response_code, from_config = get_config(from_name, from_jenkins_spec)
     to_config = update_config(from_config, replacements)
     to_response_code = create_job(to_jenkins_spec, to_name, to_config)
-    return to_response_code
+    return {
+        'from_name': from_name,
+        'to_name': to_name,
+        'from_config': from_config,
+        'to_config': to_config,
+        'response_code': to_response_code,
+    }
 
 
 def parse_args(args):
@@ -61,7 +67,8 @@ def parse_args(args):
 
 
 def main(from_name, to_name, replacements=()):
-    response_code = copy_job(from_name, to_name, replacements=zip(replacements[0::2], replacements[1::2]))
+    response = copy_job(from_name, to_name, replacements=zip(replacements[0::2], replacements[1::2]))
+    response_code = response['response_code']
     print('Created' if response_code == 200 else 'Failed to create', to_name, response_code)
 
 

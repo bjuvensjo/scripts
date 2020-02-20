@@ -3,7 +3,7 @@
 from vang.jenkins.copy_job import copy_job
 
 
-def copy_jobs(jobs, from_jenkins_spec, to_jenkins_spec, replacements=[]):
+def copy_jobs(jobs, from_jenkins_spec, to_jenkins_spec, replacements=[], verbose=False):
     for job in jobs:
         from_name = None
         to_name = None
@@ -20,8 +20,11 @@ def copy_jobs(jobs, from_jenkins_spec, to_jenkins_spec, replacements=[]):
                     type(job_replacements) is list or callable(job_replacements)):
                 raise ValueError('job must be a string, a pair of strings or a pair of string and a callable')
 
-            response_code = copy_job(from_name, to_name, from_jenkins_spec, to_jenkins_spec, job_replacements)
+            response = copy_job(from_name, to_name, from_jenkins_spec, to_jenkins_spec, job_replacements)
+            response_code = response['response_code']
             print('Created copy' if response_code == 200 else 'Failed to create copy', to_name, response_code)
+            if verbose:
+                print(response)
         except IOError as r:
             print('IOError while trying to create copy', to_name, r)
         except ValueError as v:
