@@ -22,10 +22,7 @@ def filter_repo_content(repo_content, excludes):
 
 
 def create_key(artifact_spec):
-    if artifact_spec['folder']:
-        return artifact_spec['uri']
-    else:
-        return f'{artifact_spec["uri"]}#{artifact_spec["sha1"]}'
+    return artifact_spec['uri'] if artifact_spec['folder'] else f'{artifact_spec["uri"]}#{artifact_spec["sha1"]}'
 
 
 def map_to_map(repo_files):
