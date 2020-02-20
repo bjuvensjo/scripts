@@ -44,8 +44,10 @@ def diff_repos(repo_specs, excludes=('.*maven-metadata.xml',), only_keys=True):
         processes=2
     ))
 
-    a_only_keys = set(a_repo_content_map.keys()).difference(set(b_repo_content_map.keys()))
-    b_only_keys = set(b_repo_content_map.keys()).difference(set(a_repo_content_map.keys()))
+    a_key_set = set(a_repo_content_map.keys())
+    b_key_set = set(b_repo_content_map.keys())
+    a_only_keys = a_key_set.difference(b_key_set)
+    b_only_keys = b_key_set.difference(a_key_set)
 
     if only_keys:
         return a_only_keys, b_only_keys
