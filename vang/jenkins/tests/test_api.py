@@ -14,9 +14,10 @@ def test_call(mock_get, mock_post):
         only_response_code=True,
         rest_url='http://rest_url',
         username='username',
-        password='password')
+        password='password',
+        verify_certificate=False)
     assert [
-               call(auth=('username', 'password'), url='http://rest_url/uri'),
+               call(auth=('username', 'password'), url='http://rest_url/uri', verify=False),
            ] == mock_get.mock_calls
 
     mock_post.return_value.status_code = 200
@@ -29,13 +30,15 @@ def test_call(mock_get, mock_post):
         method='POST',
         rest_url='http://rest_url',
         username='username',
-        password='password')
+        password='password',
+        verify_certificate=True)
     assert [
                call(
                    auth=('username', 'password'),
                    json={'request_key': 'request_value'},
-                   url='http://rest_url/uri'),
+                   url='http://rest_url/uri',
+                   verify=True
+               ),
                call().text.__bool__(),
                call().json()
            ] == mock_post.mock_calls
-
