@@ -101,27 +101,23 @@ def mirror(max_processes=10):
         else:
             from_repo_key, to_repo_key = repo_key
 
-        files_not_in_to_repo, files_not_in_from_repo = diff_repos((
-            {
-                'repo_key': from_repo_key,
-                'artifactory_url': config.from_artifactory_url,
-                'username': config.from_artifactory_username,
-                'password': config.from_artifactory_password,
-            },
-            {
-                'repo_key': to_repo_key,
-                'artifactory_url': config.to_artifactory_url,
-                'username': config.to_artifactory_username,
-                'password': config.to_artifactory_password,
-            }),
+        files_not_in_to_repo, files_not_in_from_repo = diff_repos(
+            (
+                dict(config.from_artifactory_spec,
+                     artifactory_url=config.from_artifactory_spec['url'],
+                     repo_key=from_repo_key),
+                dict(config.to_artifactory_spec,
+                     artifactory_url=config.to_artifactory_spec['url'],
+                     repo_key=to_repo_key),
+            ),
             only_keys=False)
 
-        from_repo_uri = f'{config.from_artifactory_url}/{from_repo_key}'
-        to_repo_uri = f'{config.to_artifactory_url}/{to_repo_key}'
+        from_repo_uri = f'{config.from_artifactory_spec["url"]}/{from_repo_key}'
+        to_repo_uri = f'{config.to_artifactory_spec["url"]}/{to_repo_key}'
         yield from pmap_unordered(
             lambda artifact_spec: mirror_file(f'{config.work_dir}/{from_repo_key}', from_repo_uri, artifact_spec,
-                                              config.is_excluded, to_repo_uri, config.to_artifactory_username,
-                                              config.to_artifactory_password),
+                                              config.is_excluded, to_repo_uri, config.to_artifactory_spec['username'],
+                                              config.to_artifactory_spec['password']),
             files_not_in_to_repo,
             processes=max_processes)
 

@@ -1,10 +1,15 @@
+from os import environ
+
 work_dir = './work_dir'
-from_artifactory_url = 'e.g. http://my_org/old_artifactory'
-from_artifactory_username = '<username>'
-from_artifactory_password = '<password>'
-to_artifactory_url = 'e.g. http://my_org/new_artifactory'
-to_artifactory_username = '<username>'
-to_artifactory_password = '<password'
+# Spec of the artifactory instance to copy from
+from_artifactory_spec = {
+    'url': environ['ARTIFACTORY_REST_URL'],
+    'username': environ['ARTIFACTORY_USERNAME'],
+    'password': environ['ARTIFACTORY_PASSWORD'],
+}
+# Spec of the artifactory instance to copy to
+# In example below, by creating a copy of from_artifactory_spec with a different url
+to_artifactory_spec = dict(from_artifactory_spec, url='<to_artifactory_url>')
 
 # Specify a pair (tuple) if the repo key to mirror to is not the same as the repo key to mirror from
 repositories = [
