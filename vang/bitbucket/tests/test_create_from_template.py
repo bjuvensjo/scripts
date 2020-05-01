@@ -170,7 +170,7 @@ def test_parse_args_raises(args):
         {
             'dest_project': 'dest_project',
             'dest_repo': 'dest_repo',
-            'dest_branch': 'develop',
+            'dest_branch': None,
             'work_dir': '.',
             'src_project': 'src_project',
             'src_repo': 'src_repo',

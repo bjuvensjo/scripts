@@ -77,8 +77,8 @@ def parse_args(args):
     parser.add_argument(
         '-db',
         '--dest_branch',
-        default='develop',
         help='The branch to create, e.g. develop. '
+             'Will be set to src_branch if not specified. '
              'It will be set as default branch on created repo')
     parser.add_argument(
         '-d',
@@ -94,6 +94,8 @@ def parse_args(args):
 
 
 def main(src_project, src_repo, src_branch, dest_project, dest_repo, dest_branch, work_dir, webhook):
+    if not dest_branch:
+        dest_branch = src_branch
     clone_url, dest_repo_dir = setup(src_project, src_repo, src_branch, dest_project, dest_repo, dest_branch, work_dir)
     update(src_repo, dest_repo, dest_repo_dir)
     commit_all(dest_repo_dir)
