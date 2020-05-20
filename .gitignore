@@ -18,3 +18,4 @@ README.html
 **/*egg-info
 .coverage
 htmlcov/
+work_dir
