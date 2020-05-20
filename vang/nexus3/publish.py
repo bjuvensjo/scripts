@@ -3,6 +3,7 @@
 from argparse import ArgumentParser
 from glob import glob
 from os import environ
+from os.path import basename
 from sys import argv
 
 from vang.maven.pom import get_pom_info
@@ -26,7 +27,7 @@ def get_publish_data(artifact_base_uri, path, name):
 def publish_maven_artifact(repository, pom_dirs, url, username, password):
     for pom_dir in pom_dirs:
         pom_info = get_pom_info(get_pom_path(pom_dir))
-        base_uri = get_artifact_base_uri(repository, pom_info['group_id'],
+        base_uri = get_artifact_base_uri(pom_info['group_id'],
                                          pom_info['artifact_id'],
                                          pom_info['version'])
 
@@ -34,7 +35,7 @@ def publish_maven_artifact(repository, pom_dirs, url, username, password):
                                          get_pom_publish_name(pom_info['pom_path'],
                                                               pom_info['artifact_id'],
                                                               pom_info['version']))] + \
-                       [get_publish_data(base_uri, path, path.split('/')[-1])
+                       [get_publish_data(base_uri, path, basename(path))
                         for path in
                         glob(f'{pom_dir}/**/*.jar', recursive=True) +
                         glob(f'{pom_dir}/**/*.war', recursive=True)]
