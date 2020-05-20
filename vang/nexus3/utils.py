@@ -16,5 +16,5 @@ def get_pom_path(pom_dir):
     return sorted(pom_paths, key=len)[0]  # The pom without timestamp
 
 
-def get_artifact_base_uri(repository, group_id, artifact_id, version):
-    return f'/{repository}/{"/".join(group_id.split("."))}/{artifact_id}/{version}'
+def get_artifact_base_uri(group_id, artifact_id, version):
+    return f'{"/".join(group_id.split("."))}/{artifact_id}/{version}'
