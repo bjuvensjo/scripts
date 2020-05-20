@@ -1,33 +1,13 @@
 #!/usr/bin/env python3
 
-import hashlib
-import json
 from argparse import ArgumentParser
 from glob import glob
+from os import environ
 from sys import argv
 
-from vang.nexus3 import api
-from vang.nexus3.utils import get_artifact_base_uri, get_pom_path
 from vang.maven.pom import get_pom_info
-
-
-def read_file(file_path):  # pragma: no cover
-    with open(file_path, 'rb') as f:
-        return f.read()
-
-
-def get_checksums(the_bytes):
-    return hashlib.md5(the_bytes).hexdigest(), hashlib.sha1(
-        the_bytes).hexdigest(), hashlib.sha256(the_bytes).hexdigest()
-
-
-def get_checksum_headers(md5, sha1, sha256):
-    return {
-        'X-Checksum-Md5': md5,
-        'X-Checksum-Sha1': sha1,
-        # sha256 Not yet supported...
-        'X-Checksum-Sha256': sha256
-    }
+from vang.nexus3.upload import upload
+from vang.nexus3.utils import get_artifact_base_uri, get_pom_path
 
 
 def get_pom_publish_name(pom_path, artifact_id, version):
@@ -37,16 +17,13 @@ def get_pom_publish_name(pom_path, artifact_id, version):
 
 
 def get_publish_data(artifact_base_uri, path, name):
-    content = read_file(path)
-    md5, sha1, sha256 = get_checksums(content)
     return {
-        'content': content,
-        'checksum_headers': get_checksum_headers(md5, sha1, sha256),
-        'uri': f'{artifact_base_uri}/{name}'
+        'file_path': path,
+        'repository_path': f'{artifact_base_uri}/{name}'
     }
 
 
-def publish_maven_artifact(repository, pom_dirs):
+def publish_maven_artifact(repository, pom_dirs, url, username, password):
     for pom_dir in pom_dirs:
         pom_info = get_pom_info(get_pom_path(pom_dir))
         base_uri = get_artifact_base_uri(repository, pom_info['group_id'],
@@ -63,14 +40,14 @@ def publish_maven_artifact(repository, pom_dirs):
                         glob(f'{pom_dir}/**/*.war', recursive=True)]
 
         yield [
-            api.call(pd['uri'], pd['checksum_headers'], pd['content'], 'PUT')
+            upload(pd['file_path'], repository, pd['repository_path'], url, username, password)
             for pd in publish_data
         ]
 
 
-def main(repository, dirs):
-    for response in publish_maven_artifact(repository, dirs):
-        print(json.dumps(json.loads(str(response).replace("'", '"')), indent=2))
+def main(repository, dirs, url, username, password):
+    for response in publish_maven_artifact(repository, dirs, url, username, password):
+        print(response)
 
 
 def parse_args(args):
@@ -83,6 +60,10 @@ def parse_args(args):
         nargs='*',
         default=['.'],
         help='Maven pom directories to extract artifact information from')
+    parser.add_argument('-l', '--url', default=environ.get('NEXUS3_REST_URL', None),
+                        help='Nexus3 url, e.g. http://nexus_host:8080')
+    parser.add_argument('-u', '--username', default=environ.get('NEXUS3_USERNAME', None), help='Nexus3 username')
+    parser.add_argument('-p', '--password', default=environ.get('NEXUS3_PASSWORD', None), help='Nexus3 password')
     return parser.parse_args(args)
 
 

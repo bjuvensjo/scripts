@@ -37,7 +37,7 @@ def main(output_dir, nexus_url, repo, group_id, artifact_id, version,
 
 
 def parse_args(args):
-    parser = ArgumentParser(description='Download latest snapshot from Nexus (requires: pipenv install requests)')
+    parser = ArgumentParser(description='Download is_later snapshot from Nexus (requires: pipenv install requests)')
     parser.add_argument('output_dir', help='output dir')
     parser.add_argument('nexus_url',
                         help='Nexus url, e.g. http://localhost:9002/repository')

@@ -1,98 +1,49 @@
+from os import environ
+from unittest.mock import call, patch
+
+import pytest
 from pytest import raises
 
-from unittest.mock import call, patch, mock_open
-
-from vang.nexus3.publish import get_checksum_headers
-from vang.nexus3.publish import get_checksums
 from vang.nexus3.publish import get_pom_publish_name
 from vang.nexus3.publish import get_publish_data
 from vang.nexus3.publish import main
 from vang.nexus3.publish import parse_args
 from vang.nexus3.publish import publish_maven_artifact
-from vang.nexus3.publish import read_file
-
-import pytest
-
-
-@patch(
-    'builtins.open',
-    new_callable=mock_open,
-    read_data=b'Nobody inspects the spammish repetition')
-def test_read_file(mock_file):
-    assert b'Nobody inspects the spammish repetition' == read_file('file_path')
-    mock_file.assert_called_with('file_path', 'rb')
-
-
-def test_get_checksums():
-    md5, sha1, sha256 = get_checksums(
-        b'Nobody inspects the spammish repetition')
-    assert 'bb649c83dd1ea5c9d9dec9a18df0ffe9' == md5
-    assert '531b07a0f5b66477a21742d2827176264f4bbfe2' == sha1
-    assert '031edd7d41651593c5fe5c006fa5752b37fddff7bc4e843aa6af0c950f4b9406' == sha256
-
-
-def test_get_checksum_headers():
-    assert {
-        'X-Checksum-Md5': 5,
-        'X-Checksum-Sha1': 1,
-        'X-Checksum-Sha256': 256
-    } == get_checksum_headers(5, 1, 256)
 
 
 @pytest.mark.parametrize("params, expected",
                          [(
-                             (
-                                 '/foo/bar/business.baz-1.0.0-SNAPSHOT.pom',
-                                 'business.baz',
-                                 '1.0.0-SNAPSHOT',
-                             ),
-                             'business.baz-1.0.0-SNAPSHOT.pom',
+                                 (
+                                         '/foo/bar/business.baz-1.0.0-SNAPSHOT.pom',
+                                         'business.baz',
+                                         '1.0.0-SNAPSHOT',
+                                 ),
+                                 'business.baz-1.0.0-SNAPSHOT.pom',
                          ),
-                          (
-                              (
-                                  '/foo/bar/pom.xml',
-                                  'business.baz',
-                                  '1.0.0-SNAPSHOT',
-                              ),
-                              'business.baz-1.0.0-SNAPSHOT.pom',
-                          )])
+                             (
+                                     (
+                                             '/foo/bar/pom.xml',
+                                             'business.baz',
+                                             '1.0.0-SNAPSHOT',
+                                     ),
+                                     'business.baz-1.0.0-SNAPSHOT.pom',
+                             )])
 def test_get_pom_publish_name(params, expected):
     assert expected == get_pom_publish_name(*params)
 
 
-@patch('vang.nexus3.publish.get_checksum_headers')
-@patch('vang.nexus3.publish.get_checksums')
-@patch('vang.nexus3.publish.read_file')
-def test_get_publish_data(
-        mock_read_file,
-        mock_get_checksums,
-        mock_get_checksum_headers,
-):
-    mock_read_file.return_value = b'Hello World!'
-    mock_get_checksums.return_value = [5, 1, 256]
-    mock_get_checksum_headers.return_value = {
-        'X-Checksum-Md5': 5,
-        'X-Checksum-Sha1': 1,
-        'X-Checksum-Sha256': 256
-    }
+def test_get_publish_data():
     assert {
-        'checksum_headers': {
-            'X-Checksum-Md5': 5,
-            'X-Checksum-Sha1': 1,
-            'X-Checksum-Sha256': 256
-        },
-        'content':
-        b'Hello World!',
-        'uri':
-        '/repo/com/foo/bar/business.baz/1.0.0-SNAPSHOT/business.baz-1.0.0-SNAPSHOT.pom'
-    } == get_publish_data(
+               'file_path': '/foo/bar/foo.pom',
+               'repository_path': '/repo/com/foo/bar/business.baz/1.0.0-SNAPSHOT/business.baz-1.0.0-SNAPSHOT.pom',
+           } == get_publish_data(
         '/repo/com/foo/bar/business.baz/1.0.0-SNAPSHOT',
         '/foo/bar/foo.pom',
         'business.baz-1.0.0-SNAPSHOT.pom',
     )
 
 
-@patch('vang.nexus3.publish.api.call')
+@patch('vang.nexus3.publish.upload')
 @patch('vang.nexus3.publish.glob')
 @patch('vang.nexus3.publish.get_pom_publish_name')
 @patch('vang.nexus3.publish.get_publish_data')
@@ -106,7 +57,7 @@ def test_publish_maven_artifact(
         mock_get_publish_data,
         mock_get_pom_publish_name,
         mock_glob,
-        mock_call,
+        mock_upload,
 ):
     mock_get_pom_path.return_value = 'pom_path'
     mock_get_pom_info.return_value = {
@@ -118,31 +69,24 @@ def test_publish_maven_artifact(
     }
     mock_get_artifact_base_uri.return_value = 'base_uri'
     mock_get_publish_data.return_value = {
-        'checksum_headers': {
-            'X-Checksum-Md5': 5,
-            'X-Checksum-Sha1': 1,
-            'X-Checksum-Sha256': 256
-        },
-        'content': b'content',
-        'uri': 'uri'
+        'file_path': 'file_path',
+        'repository_path': 'repository_path'
     }
     mock_get_pom_publish_name.return_value = 'pom_publish_name'
     mock_glob.side_effect = [['foo.jar'], ['bar.war']] * 2
-    mock_call.return_value = '"response"'
+    mock_upload.return_value = 201
 
-    assert [['"response"', '"response"', '"response"'],
-            ['"response"', '"response"', '"response"']] == list(
-                publish_maven_artifact('repository', ['d1', 'd2']))
+    assert [[201, 201, 201],
+            [201, 201, 201]] == list(publish_maven_artifact('repository', ['d1', 'd2'], 'url', 'username', 'password'))
 
 
 @patch('vang.nexus3.publish.print')
 @patch('vang.nexus3.publish.publish_maven_artifact')
 def test_main(mock_publish_maven_artifact, mock_print):
-    mock_publish_maven_artifact.return_value = ["'response'"]
-    main('repository', ['d1', 'd2'])
-    assert [call('repository',
-                 ['d1', 'd2'])] == mock_publish_maven_artifact.mock_calls
-    assert [call('"response"')] == mock_print.mock_calls
+    mock_publish_maven_artifact.return_value = [201]
+    main('repository', ['d1', 'd2'], 'url', 'username', 'password')
+    assert [call('repository', ['d1', 'd2'], 'url', 'username', 'password')] == mock_publish_maven_artifact.mock_calls
+    assert [call(201)] == mock_print.mock_calls
 
 
 @pytest.mark.parametrize("args", [
@@ -158,14 +102,25 @@ def test_parse_args_raises(args):
     ['repository', {
         'repository': 'repository',
         'dirs': ['.'],
+        'url': 'url',
+        'username': 'username',
+        'password': 'password',
     }],
     [
         'repository -d d1 d2',
         {
             'repository': 'repository',
             'dirs': ['d1', 'd2'],
+            'url': 'url',
+            'username': 'username',
+            'password': 'password',
         }
     ],
 ])
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(' ') if args else '').__dict__
+    with patch.dict(environ, {
+        'NEXUS3_REST_URL': 'url',
+        'NEXUS3_USERNAME': 'username',
+        'NEXUS3_PASSWORD': 'password',
+    }, clear=True):
+        assert expected == parse_args(args.split(' ') if args else '').__dict__
