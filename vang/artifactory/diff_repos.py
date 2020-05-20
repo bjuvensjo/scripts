@@ -9,16 +9,16 @@ from requests import get
 from vang.core.core import pmap_ordered
 
 
-def get_repo_content(repo_key, artifactory_url, username, password):
-    response = get(f'{artifactory_url}/api/storage/{repo_key}?list&deep=1&listFolders=1', auth=(username, password))
+def get_repo_content(repo_key, url, username, password):
+    response = get(f'{url}/api/storage/{repo_key}?list&deep=1&listFolders=1', auth=(username, password))
     if response.status_code == 200:
         return response.json()
     else:
         response.raise_for_status()
 
 
-def filter_repo_content(repo_content, excludes):
-    return [f for f in repo_content['files'] if not (f['folder'] or any(fullmatch(e, f['uri']) for e in excludes))]
+def filter_repo_files(repo_files, excludes):
+    return [f for f in repo_files if not (f['folder'] or any(fullmatch(e, f['uri']) for e in excludes))]
 
 
 def create_key(artifact_spec):
@@ -29,29 +29,38 @@ def map_to_map(repo_files):
     return {create_key(s): s for s in repo_files}
 
 
-def diff_repos(repo_specs, excludes=('.*maven-metadata.xml',), only_keys=True):
-    a_repo_content_map, b_repo_content_map = list(pmap_ordered(
-        lambda spec: map_to_map(
-            filter_repo_content(
-                get_repo_content(**spec),
+def diff(a_repo_files, b_repo_files, excludes=('.*maven-metadata.xml',), only_keys=True):
+    a_repo_files_map, b_repo_files_map = list(pmap_ordered(
+        lambda repo_files: map_to_map(
+            filter_repo_files(
+                repo_files,
                 excludes
             )
         ),
-        repo_specs,
+        (a_repo_files, b_repo_files),
         processes=2
     ))
 
-    a_key_set = set(a_repo_content_map.keys())
-    b_key_set = set(b_repo_content_map.keys())
+    a_key_set = set(a_repo_files_map.keys())
+    b_key_set = set(b_repo_files_map.keys())
     a_only_keys = a_key_set.difference(b_key_set)
     b_only_keys = b_key_set.difference(a_key_set)
 
     if only_keys:
         return a_only_keys, b_only_keys
     else:
-        return (v for k, v in a_repo_content_map.items()
-                if k in a_only_keys), (v for k, v in b_repo_content_map.items()
+        return (v for k, v in a_repo_files_map.items()
+                if k in a_only_keys), (v for k, v in b_repo_files_map.items()
                                        if k in b_only_keys)
+
+
+def diff_repos(repo_specs, excludes=('.*maven-metadata.xml',), only_keys=True):
+    a_repo_content, b_repo_content = list(pmap_ordered(
+        lambda spec: get_repo_content(**spec),
+        repo_specs,
+        processes=2
+    ))
+    return diff(a_repo_content['files'], b_repo_content['files'], excludes, only_keys)
 
 
 def main(
