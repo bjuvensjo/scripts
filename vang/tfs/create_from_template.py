@@ -9,11 +9,11 @@ from vang.tfs.clone_repos import clone_repos
 from vang.tfs.create_repo import create_repo
 
 
-def setup(repo, branch, dest_repo, work_dir):
+def setup(repo, src_branch,  dest_repo, dest_branch, work_dir):
     clone_url, repo_dir = clone_repos(
         work_dir,
         repos=[repo],
-        branch=branch,
+        branch=src_branch,
     )[0]
 
     dest_repo_dir = f'{work_dir}/{dest_repo}'
@@ -21,9 +21,9 @@ def setup(repo, branch, dest_repo, work_dir):
 
     run_command('rm -rf .git', return_output=True, cwd=dest_repo_dir)
     run_command('git init', return_output=True, cwd=dest_repo_dir)
-    if not branch == 'master':
+    if not dest_branch == 'master':
         run_command(
-            f'git checkout -b {branch}',
+            f'git checkout -b {dest_branch}',
             return_output=True,
             cwd=dest_repo_dir,
         )
@@ -72,7 +72,7 @@ def parse_args(args):
     parser = ArgumentParser(
         description='Create a new repo based on template'
                     ' repo.\nExample: create_from_template PCS1906/foo PCS1906/bar'
-                    ' -b develop -d .')
+                    ' -sb sourcebranch -db destinationbranch -d .')
     parser.add_argument(
         'src_repo',
         help='The repo from which to create the new repo (must exist)'
@@ -84,10 +84,16 @@ def parse_args(args):
              'e.g. organisation/project/repo2',
     )
     parser.add_argument(
-        '-b',
-        '--branch',
+        '-sb',
+        '--src_branch',
         default='develop',
-        help='The branch to use and create, e.g. develop. '
+        help='The branch to use, e.g. develop',
+    )
+    parser.add_argument(
+        '-db',
+        '--dest_branch',
+        default='develop',
+        help='The branch to create, e.g. develop. '
              'It will be set as default branch on created repo',
     )
     parser.add_argument(
@@ -108,7 +114,8 @@ def parse_args(args):
 
 def main(
         src_repo,
-        branch,
+        src_branch,
+        dest_branch,
         dest_repo,
         work_dir,
         replacements,
@@ -119,8 +126,9 @@ def main(
 
     clone_url, dest_repo_dir = setup(
         src_repo,
-        branch,
+        src_branch,
         dest_repo,
+        dest_branch,
         work_dir,
     )
 
@@ -130,7 +138,7 @@ def main(
     commit_all(dest_repo_dir)
 
     dest_repo_origin = create_and_push_to_dest_repo(
-        branch,
+        dest_branch,
         dest_repo,
         dest_repo_dir,
     )
