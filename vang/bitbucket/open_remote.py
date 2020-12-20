@@ -11,9 +11,9 @@ from vang.bitbucket.utils import get_branch, get_project_and_repo
 
 def open_remote(
         git_dir,
-        repo=None,
-        project=None,
-        base_url=environ['BITBUCKET_REST_URL'],
+        repo,
+        project,
+        base_url,
 ):
     if project:
         url = f'{base_url}/projects/{project}'
@@ -29,8 +29,8 @@ def open_remote(
     run(shlex.split(f'open {url}'))
 
 
-def main(repo_dir, repo=None, project=None):
-    open_remote(abspath(f'{repo_dir}/.git'), repo, project)
+def main(repo_dir, repo, project, baseurl):
+    open_remote(abspath(f'{repo_dir}/.git'), repo, project, baseurl)
 
 
 def parse_args(args):
@@ -44,6 +44,7 @@ def parse_args(args):
         help='Git directory to extract repo information from')
     group.add_argument('-r', '--repo', help='Repo, e.g. key1/repo1')
     group.add_argument('-p', '--project', help='Project, e.g. key1')
+    parser.add_argument('-b', '--baseurl', default=environ.get('BITBUCKET_REST_URL', None), help='')
 
     return parser.parse_args(args)
 

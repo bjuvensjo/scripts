@@ -23,6 +23,7 @@ def test_setup(mock_clone_repos, mock_run_command):
         'repo',
         'branch',
         'dest_repo',
+        'dest_branch',
         'work_dir',
     )
     assert [
@@ -33,7 +34,7 @@ def test_setup(mock_clone_repos, mock_run_command):
                call('rm -rf .git', cwd='work_dir/dest_repo', return_output=True),
                call('git init', cwd='work_dir/dest_repo', return_output=True),
                call(
-                   'git checkout -b branch',
+                   'git checkout -b dest_branch',
                    cwd='work_dir/dest_repo',
                    return_output=True,
                )
@@ -106,7 +107,8 @@ def test_parse_args_raises(args):
     [
         'src_repo dest_repo',
         {
-            'branch': 'develop',
+            'src_branch': 'develop',
+            'dest_branch': 'develop',
             'dest_repo': 'dest_repo',
             'src_repo': 'src_repo',
             'work_dir': '.',
@@ -114,9 +116,10 @@ def test_parse_args_raises(args):
         }
     ],
     [
-        'src_repo dest_repo -b b -d d -r old1 new1 old2 new2',
+        'src_repo dest_repo -sb sb -db db -d d -r old1 new1 old2 new2',
         {
-            'branch': 'b',
+            'src_branch': 'sb',
+            'dest_branch': 'db',
             'dest_repo': 'dest_repo',
             'src_repo': 'src_repo',
             'work_dir': 'd',
@@ -141,9 +144,9 @@ def test_parse_args(args, expected):
 @patch('vang.tfs.create_from_template.print')
 def test_main(mock_print, mock_create_and_push_to_dest_repo, mock_commit_all,
               mock_update, mock_setup):
-    main('src_repo', 'branch', 'dest_repo', 'work_dir', ['old1', 'new1', 'old2', 'new2'])
+    main('src_repo', 'branch', 'dest_branch', 'dest_repo', 'work_dir', ['old1', 'new1', 'old2', 'new2'])
     assert [
-               call('src_repo', 'branch', 'dest_repo', 'work_dir'),
+               call('src_repo', 'branch', 'dest_repo', 'dest_branch', 'work_dir'),
            ] == mock_setup.mock_calls
     assert [
                call([('old1', 'new1'), ('old2', 'new2')], 'dest_repo_dir'),
@@ -152,7 +155,7 @@ def test_main(mock_print, mock_create_and_push_to_dest_repo, mock_commit_all,
                call('dest_repo_dir'),
            ] == mock_commit_all.mock_calls
     assert [
-               call('branch', 'dest_repo', 'dest_repo_dir'),
+               call('dest_branch', 'dest_repo', 'dest_repo_dir'),
            ] == mock_create_and_push_to_dest_repo.mock_calls
     assert [
                call('Created', 'dest_repo_origin'),

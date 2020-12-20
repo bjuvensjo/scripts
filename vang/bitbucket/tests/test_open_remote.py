@@ -1,44 +1,43 @@
 #!/usr/bin/env python3
 from unittest.mock import call, patch
 
+import pytest
 from pytest import raises
 
-from vang.bitbucket.open_remote import open_remote
 from vang.bitbucket.open_remote import main
+from vang.bitbucket.open_remote import open_remote
 from vang.bitbucket.open_remote import parse_args
-
-import pytest
 
 
 @pytest.mark.parametrize("git_dir, repo, project, expected", [
     (
-        '.',
-        None,
-        None,
-        [
-            call([
-                'open', ''.join([
-                    'base_url/projects/project_key/repos/repo_slug/commits?',
-                    'until=refs%2Fheads%2Fdevelop&merges=include'
+            '.',
+            None,
+            None,
+            [
+                call([
+                    'open', ''.join([
+                        'base_url/projects/project_key/repos/repo_slug/commits?',
+                        'until=refs%2Fheads%2Fdevelop&merges=include'
+                    ])
                 ])
-            ])
-        ],
+            ],
     ),
     (
-        '.',
-        'project_key/repo_slug',
-        None,
-        [
-            call([
-                'open', 'base_url/projects/project_key/repos/repo_slug/browse'
-            ])
-        ],
+            '.',
+            'project_key/repo_slug',
+            None,
+            [
+                call([
+                    'open', 'base_url/projects/project_key/repos/repo_slug/browse'
+                ])
+            ],
     ),
     (
-        '.',
-        None,
-        'project_key',
-        [call(['open', 'base_url/projects/project_key'])],
+            '.',
+            None,
+            'project_key',
+            [call(['open', 'base_url/projects/project_key'])],
     ),
 ])
 @patch('vang.bitbucket.open_remote.run', autospec=True)
@@ -60,24 +59,27 @@ def test_open_remote(
     assert expected == mock_run.mock_calls
 
 
-@pytest.mark.parametrize("repo_dir, repo, project, expected", [
+@pytest.mark.parametrize("repo_dir, repo, project, baseurl, expected", [
     (
-        '.',
-        None,
-        None,
-        [call('abspath', None, None)],
+            '.',
+            None,
+            None,
+            'baseurl',
+            [call('abspath', None, None, 'baseurl')],
     ),
     (
-        '.',
-        'project_key/repo_slug',
-        None,
-        [call('abspath', 'project_key/repo_slug', None)],
+            '.',
+            'project_key/repo_slug',
+            None,
+            'baseurl',
+            [call('abspath', 'project_key/repo_slug', None, 'baseurl')],
     ),
     (
-        '.',
-        None,
-        'project_key',
-        [call('abspath', None, 'project_key')],
+            '.',
+            None,
+            'project_key',
+            'baseurl',
+            [call('abspath', None, 'project_key', 'baseurl')],
     ),
 ])
 @patch('vang.bitbucket.open_remote.abspath', autospec=True)
@@ -88,10 +90,11 @@ def test_main(
         repo_dir,
         repo,
         project,
+        baseurl,
         expected,
 ):
     mock_abspath.return_value = 'abspath'
-    main(repo_dir, repo, project)
+    main(repo_dir, repo, project, baseurl)
     assert expected == mock_open_remote.mock_calls
     assert [call('./.git')] == mock_abspath.mock_calls
 
@@ -112,21 +115,25 @@ def test_parse_args_raises(args):
         'repo_dir': '.',
         'repo': None,
         'project': None,
+        'baseurl': None,
     }],
     ['-d d', {
         'repo_dir': 'd',
         'repo': None,
         'project': None,
+        'baseurl': None,
     }],
     ['-r r', {
         'repo_dir': '.',
         'repo': 'r',
         'project': None,
+        'baseurl': None,
     }],
     ['-p p', {
         'repo_dir': '.',
         'repo': None,
         'project': 'p',
+        'baseurl': None,
     }],
 ])
 def test_parse_args_valid(args, expected):
