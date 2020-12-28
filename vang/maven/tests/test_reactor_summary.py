@@ -1,8 +1,7 @@
-#!/usr/bin/env python3
-
-from unittest.mock import call, patch
 from os.path import dirname
+from unittest.mock import call, patch
 
+import pytest
 from pytest import raises
 
 from vang.maven.reactor_summary import get_failures
@@ -13,8 +12,6 @@ from vang.maven.reactor_summary import get_summary
 from vang.maven.reactor_summary import main
 from vang.maven.reactor_summary import parse_args
 from vang.maven.reactor_summary import print_summary
-
-import pytest
 
 
 @pytest.fixture
@@ -31,26 +28,26 @@ def test_get_reactor_summary():
     with open(dirname(__file__) + '/mvn.log', 'rt', encoding='utf-8') as f:
         mvn_log = f.readlines()
         assert [
-            '[INFO] myorg:app 0.0.1-SNAPSHOT ................. SUCCESS [ 1.095 s]',
-            '[INFO] config 1.0.0-SNAPSHOT ................. SUCCESS [  4.300 s]'
-        ] == get_reactor_summary(mvn_log)
+                   '[INFO] myorg:app 0.0.1-SNAPSHOT ................. SUCCESS [ 1.095 s]',
+                   '[INFO] config 1.0.0-SNAPSHOT ................. SUCCESS [  4.300 s]'
+               ] == get_reactor_summary(mvn_log)
 
 
 @pytest.mark.parametrize("mvn_log, expected", [
     ([
-        '[INFO] Building myorg:app 1.0.0-SNAPSHOT',
-        '[INFO] ----------------------------------------------------------',
-        '[INFO] BUILD SUCCESS',
-        '[INFO] ----------------------------------------------------------',
-        '[INFO] Total time: 50.316 s'
-    ], ['[INFO] myorg:app 1.0.0-SNAPSHOT SUCCESS']),
+         '[INFO] Building myorg:app 1.0.0-SNAPSHOT',
+         '[INFO] ----------------------------------------------------------',
+         '[INFO] BUILD SUCCESS',
+         '[INFO] ----------------------------------------------------------',
+         '[INFO] Total time: 50.316 s'
+     ], ['[INFO] myorg:app 1.0.0-SNAPSHOT SUCCESS']),
     ([
-        '[INFO] Building myorg:app 1.0.0-SNAPSHOT',
-        '[INFO] ----------------------------------------------------------',
-        '[INFO] BUILD FAILURE',
-        '[INFO] ----------------------------------------------------------',
-        '[INFO] Total time: 50.316 s'
-    ], ['[INFO] myorg:app 1.0.0-SNAPSHOT FAILURE']),
+         '[INFO] Building myorg:app 1.0.0-SNAPSHOT',
+         '[INFO] ----------------------------------------------------------',
+         '[INFO] BUILD FAILURE',
+         '[INFO] ----------------------------------------------------------',
+         '[INFO] Total time: 50.316 s'
+     ], ['[INFO] myorg:app 1.0.0-SNAPSHOT FAILURE']),
 ])
 def test_get_reactor_summary_single_project(mvn_log, expected):
     assert expected == get_reactor_summary(mvn_log)
@@ -83,11 +80,11 @@ def test_get_failures(reactor_summary_fixture, expected):
 @patch('vang.maven.reactor_summary.print_summary')
 def test_get_summary(mock_print_summary):
     assert ([
-        'myorg:app',
-        'config',
-        'myorg:app',
-        'config',
-    ], []) == get_summary([dirname(__file__) + '/mvn.log'] * 2, True)
+                'myorg:app',
+                'config',
+                'myorg:app',
+                'config',
+            ], []) == get_summary([dirname(__file__) + '/mvn.log'] * 2, True)
     assert [call(
         ['myorg:app', 'config', 'myorg:app', 'config'],
         [],
@@ -101,18 +98,18 @@ def test_print_summary(mock_print):
         ['yorg:app'],
     )
     assert [
-        call('\n'.join([
-            '********************************************************************************',
-            '*********************************** Summary ************************************',
-            '********************************************************************************',
-            'config...................................................................SUCCESS',
-            'config...................................................................SUCCESS',
-            'myorg:app................................................................SUCCESS',
-            'myorg:app................................................................SUCCESS',
-            'yorg:app.................................................................FAILURE',
-            '********************************************************************************'
-        ]))
-    ] == mock_print.mock_calls
+               call('\n'.join([
+                   '********************************************************************************',
+                   '*********************************** Summary ************************************',
+                   '********************************************************************************',
+                   'config...................................................................SUCCESS',
+                   'config...................................................................SUCCESS',
+                   'myorg:app................................................................SUCCESS',
+                   'myorg:app................................................................SUCCESS',
+                   'yorg:app.................................................................FAILURE',
+                   '********************************************************************************'
+               ]))
+           ] == mock_print.mock_calls
 
 
 @patch('vang.maven.reactor_summary.glob')
@@ -127,12 +124,12 @@ def test_main(mock_get_summary, mock_print_summary, mock_realpath, mock_glob):
 
     assert [call(['p1', 'p2', 'p1', 'p2'])] == mock_get_summary.mock_calls
     assert [
-        call('r1/**/mvn.log', recursive=True),
-        call(
-            'r2/**/mvn.log',
-            recursive=True,
-        )
-    ] == mock_glob.mock_calls
+               call('r1/**/mvn.log', recursive=True),
+               call(
+                   'r2/**/mvn.log',
+                   recursive=True,
+               )
+           ] == mock_glob.mock_calls
     assert [call(['success'], ['failure'])] == mock_print_summary.mock_calls
 
 

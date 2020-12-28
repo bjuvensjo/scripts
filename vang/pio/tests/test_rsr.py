@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from unittest.mock import MagicMock, call, mock_open, patch
 
 from pytest import raises

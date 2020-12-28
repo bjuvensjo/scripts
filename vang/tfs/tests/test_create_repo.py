@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from unittest.mock import call, patch
 
 import pytest
@@ -15,11 +13,11 @@ def test_create_repo():
             autospec=True) as mock_call:
         assert call_response == create_repo('organisation/project/name')
         assert [
-            call(
-                '/organisation/project/_apis/git/repositories?api-version=3.2',
-                method='POST',
-                request_data={'name': 'name'})
-        ] == mock_call.mock_calls
+                   call(
+                       '/organisation/project/_apis/git/repositories?api-version=3.2',
+                       method='POST',
+                       request_data={'name': 'name'})
+               ] == mock_call.mock_calls
 
 
 def test_main():
@@ -31,11 +29,11 @@ def test_main():
             with patch('vang.tfs.create_repo.os_name', 'not_posix'):
                 main('organisation/project/repo')
                 assert [
-                    call('If you already have code ready to be pushed to this '
-                         'repository then run this in your terminal.'),
-                    call('    git remote add origin remoteUrl\n'
-                         '    git push -u origin develop')
-                ] == mock_print.mock_calls
+                           call('If you already have code ready to be pushed to this '
+                                'repository then run this in your terminal.'),
+                           call('    git remote add origin remoteUrl\n'
+                                '    git push -u origin develop')
+                       ] == mock_print.mock_calls
         with patch('vang.tfs.create_repo.print') as mock_print:
             with patch('vang.tfs.create_repo.os_name', 'posix'):
                 with patch(
@@ -43,16 +41,16 @@ def test_main():
                         autospec=True) as mock_system:
                     main('organisation/project/repo')
                     assert [
-                        call('If you already have code ready to be pushed to '
-                             'this repository then run this in your terminal.'),
-                        call('    git remote add origin remoteUrl\n'
-                             '    git push -u origin develop'),
-                        call('(The commands are copied to the clipboard)')
-                    ] == mock_print.mock_calls
+                               call('If you already have code ready to be pushed to '
+                                    'this repository then run this in your terminal.'),
+                               call('    git remote add origin remoteUrl\n'
+                                    '    git push -u origin develop'),
+                               call('(The commands are copied to the clipboard)')
+                           ] == mock_print.mock_calls
                     assert [
-                        call('echo "    git remote add origin remoteUrl\n'
-                             '    git push -u origin develop\\c" | pbcopy')
-                    ] == mock_system.mock_calls
+                               call('echo "    git remote add origin remoteUrl\n'
+                                    '    git push -u origin develop\\c" | pbcopy')
+                           ] == mock_system.mock_calls
 
 
 @pytest.mark.parametrize("args", ['', 'foo bar'])

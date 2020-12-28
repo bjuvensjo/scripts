@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from unittest.mock import call, patch
 
 import pytest
@@ -15,7 +13,7 @@ def test_get_projects():
             'vang.tfs.get_projects.call',
             return_value={
                 'count':
-                1,
+                    1,
                 'value': [{
                     'id': 'id',
                     'name': 'project',

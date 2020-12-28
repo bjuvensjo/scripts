@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from unittest.mock import call, patch
 
 from vang.bitbucket.api import call as bitbucket_call

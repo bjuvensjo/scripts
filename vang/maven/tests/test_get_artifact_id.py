@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from unittest.mock import call, patch
 
 from vang.maven.get_artifact_id import get_artifact_id

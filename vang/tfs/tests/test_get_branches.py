@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from unittest.mock import call, patch
 
 import pytest
@@ -14,15 +12,15 @@ def test_get_repo_branches():
             return_value={
                 'value': [{
                     'name':
-                    'refs/heads/develop',
+                        'refs/heads/develop',
                     'objectId':
-                    '071bd4a8b19c37b2c5290b127c787f8acd52272e',
+                        '071bd4a8b19c37b2c5290b127c787f8acd52272e',
                     'url':
-                    'remoteUrl',
+                        'remoteUrl',
                     'statuses': []
                 }],
                 'count':
-                1
+                    1
             },
             autospec=True) as mock_call:
         assert [{
@@ -32,10 +30,10 @@ def test_get_repo_branches():
             'statuses': []
         }] == get_repo_branches('organisation', 'project', 'repository')
         assert [
-            call('/organisation/project/_apis/git/'
-                 'repositories/repository/refs/heads?includeStatuses=true'
-                 '&api-version=3.2')
-        ] == mock_call.mock_calls
+                   call('/organisation/project/_apis/git/'
+                        'repositories/repository/refs/heads?includeStatuses=true'
+                        '&api-version=3.2')
+               ] == mock_call.mock_calls
 
 
 def test_get_branches():
@@ -49,22 +47,22 @@ def test_get_branches():
                 'vang.tfs.get_branches.get_repo_branches',
                 return_value=[{
                     'name':
-                    'refs/heads/develop',
+                        'refs/heads/develop',
                     'objectId':
-                    '071bd4a8b19c37b2c5290b127c787f8acd52272e',
+                        '071bd4a8b19c37b2c5290b127c787f8acd52272e',
                     'url':
-                    'remoteUrl',
+                        'remoteUrl',
                     'statuses': []
                 }],
                 autospec=True) as mock_get_repo_branches:
             assert [('organisation/project/repo', [{
                 'name':
-                'develop',
+                    'develop',
                 'objectId':
-                '071bd4a8b19c37b2c5290b127c787f8acd52272e',
+                    '071bd4a8b19c37b2c5290b127c787f8acd52272e',
                 'statuses': [],
                 'url':
-                'remoteUrl'
+                    'remoteUrl'
             }])] == get_branches(organisations=['organisation'])
             assert [call(organisations=['organisation'],
                          repo_specs=True)] == mock_get_repos.mock_calls
@@ -75,12 +73,12 @@ def test_get_branches():
 
             assert [('organisation/project/repo', [{
                 'name':
-                'develop',
+                    'develop',
                 'objectId':
-                '071bd4a8b19c37b2c5290b127c787f8acd52272e',
+                    '071bd4a8b19c37b2c5290b127c787f8acd52272e',
                 'statuses': [],
                 'url':
-                'remoteUrl'
+                    'remoteUrl'
             }])] == get_branches(projects=['organisation/project'])
             assert [call(projects=['organisation/project'],
                          repo_specs=True)] == mock_get_repos.mock_calls
@@ -91,20 +89,20 @@ def test_get_branches():
 
             assert [('organisation/project/repo', [{
                 'name':
-                'develop',
+                    'develop',
                 'objectId':
-                '071bd4a8b19c37b2c5290b127c787f8acd52272e',
+                    '071bd4a8b19c37b2c5290b127c787f8acd52272e',
                 'statuses': [],
                 'url':
-                'remoteUrl'
+                    'remoteUrl'
             }])] == get_branches(repos=['organisation/project/repo'])
             assert [] == mock_get_repos.mock_calls
             assert [call('organisation', 'project',
                          'repo')] == mock_get_repo_branches.mock_calls
 
             assert [
-                ('organisation/project/repo', ['develop']),
-            ] == get_branches(
+                       ('organisation/project/repo', ['develop']),
+                   ] == get_branches(
                 repos=['organisation/project/repo'], names=True)
 
 
@@ -172,8 +170,8 @@ def test_main():
             assert [call('organisations', None, None,
                          False)] == mock_get_branches.mock_calls
             assert [
-                call('r1: b1'),
-                call('r1: b2'),
-                call('r2: b1'),
-                call('r2: b2')
-            ] == mock_print.mock_calls
+                       call('r1: b1'),
+                       call('r1: b2'),
+                       call('r2: b1'),
+                       call('r2: b2')
+                   ] == mock_print.mock_calls

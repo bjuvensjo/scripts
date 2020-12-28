@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from unittest.mock import call, patch
 
 from vang.artifactory.api import call as artifactory_call, create_request

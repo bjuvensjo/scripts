@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from unittest.mock import patch, mock_open, call
 
 import pytest

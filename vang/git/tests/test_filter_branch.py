@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from unittest.mock import call, patch
 from pytest import raises
 from re import match

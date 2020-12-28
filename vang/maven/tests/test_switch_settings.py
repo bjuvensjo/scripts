@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from os import environ
 from unittest.mock import call, patch
 
