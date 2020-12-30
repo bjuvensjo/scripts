@@ -1,8 +1,9 @@
 from unittest.mock import mock_open, patch, call
 
 import pytest
+from pytest import raises
 
-from vang.misc.wc import is_excluded, is_included, count_words, count_letters, count, count_all, get_files
+from vang.misc.wc import is_excluded, is_included, count_words, count_letters, count, count_all, get_files, parse_args
 
 
 @pytest.mark.parametrize('excluded, expected', [
@@ -54,3 +55,20 @@ def test_count_all(mock_count, mock_get_files):
     mock_get_files.return_value = ('f1', 'f2')
     mock_count.return_value = (1, 2, 3)
     assert count_all() == {'files': 2, 'letters': 6, 'lines': 2, 'words': 4}
+
+
+@pytest.mark.parametrize("args", [
+    'foo',
+    '-x bar',
+])
+def test_parse_args_raises(args):
+    with raises(SystemExit):
+        parse_args(args.split(' ') if args else args)
+
+
+@pytest.mark.parametrize("args, expected", [
+    ['', {'dirs': ['.'], 'excluded': [], 'included': ['.*']}],
+    ['-d d1 d2 -e e1 e2 -i i1 i2', {'dirs': ['d1', 'd2'], 'excluded': ['e1', 'e2'], 'included': ['i1', 'i2']}],
+])
+def test_parse_args_valid(args, expected):
+    assert expected == parse_args(args.split(' ') if args else '').__dict__
