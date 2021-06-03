@@ -13,7 +13,7 @@ def get_ip_address():  # pragma: no cover
 
 def main():
     ip_address = get_ip_address()
-    system(f'echo "{ip_address}\c" | pbcopy')
+    system(f'echo "{ip_address}\\c" | pbcopy')
     print(ip_address)
 
 

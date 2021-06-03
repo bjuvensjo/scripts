@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
+import argparse
 from os import walk
 from pprint import pprint
 from re import fullmatch
+from sys import argv
 
 
 def is_excluded(file, excluded):
@@ -12,7 +14,7 @@ def is_included(file, included):
     return any([fullmatch(ex, file) for ex in included])
 
 
-def get_files(root_dir, excluded=(), included=('*',)):
+def get_files(root_dir, excluded=(), included=('.*',)):
     for root, dirs, files in walk(root_dir):
         for f in files:
             if is_included(f, included) and not is_excluded(f, excluded):
@@ -44,7 +46,7 @@ def count(root, file):
     return line_count, word_count, letter_count
 
 
-def count_all(dirs=('.',), excluded=(), included=('*',)):
+def count_all(dirs=('.',), excluded=(), included=('.*',)):
     total_files = 0
     total_lines = 0
     total_words = 0
@@ -52,33 +54,40 @@ def count_all(dirs=('.',), excluded=(), included=('*',)):
 
     for d in dirs:
         for root, file in get_files(d, excluded, included):
-            # print(join(root, file))
             total_files += 1
             line_count, word_count, letter_count = count(root, file)
             total_lines += line_count
             total_words += word_count
             total_letters += letter_count
 
-    # return total_files, total_lines, total_words, total_letters
     return {'files': total_files, 'lines': total_lines, 'words': total_words, 'letters': total_letters}
 
 
-# code_dirs = ['/Users/magnus/git-es']
-# code_dirs = ['/Users/magnus/slask/crap/DefaultCollection/CSL']
-code_dirs = ['/Users/magnus/slask/CSL/ms.common.signing']
-# code_dirs = ['/Users/magnus/slask/wiremock/git/wiremock']
-code_dirs = ['/Users/magnus/slask/rsimulator/rsimulator-camel-direct',
-             '/Users/magnus/slask/rsimulator/rsimulator-core',
-             '/Users/magnus/slask/rsimulator/rsimulator-cxf-rt-transport']
-# code_dirs = ['/Users/magnus/git/rsimulator-kotlin/rsimulator-core']
-code_dirs = ['/Users/magnus/git-csl/continuous.deployment',
-             '/Users/magnus/git-csl/cd.tfs.scripts/src/nexus',
-             '/Users/magnus/git-csl/cd.jenkins.job',
-             '/Users/magnus/git-csl/cd.jenkins.lib',
-             '/Users/magnus/git-csl/cd.jenkins.sync']
+def parse_args(args):
+    parser = argparse.ArgumentParser(description='Count files, lines, words and letters.')
+    parser.add_argument('-d', '--dirs', nargs='*', default=['.'], help='Directories to count in')
+    parser.add_argument('-e', '--excluded', nargs='*', default=[],
+                        help='File name exclusion patterns, e.g .*Test\\..* .*IT\\..*')
+    parser.add_argument('-i', '--included', nargs='*', default=['.*'],
+                        help='File name inclusion patterns, e.g .*\\.groovy .*\\.java .*\\.py')
+    return parser.parse_args(args)
 
-result = count_all(
-    code_dirs,
-    # excluded=('.*Test\..*', '.*IT\..*', 'test.*'),
-    included=('.*\.groovy', '.*\.java', '.*\.kt', '.*\.py', 'Jenkinsfile'))
-pprint(result)
+
+def main(dirs=('.',), excluded=(), included=('.*',)):
+    result = count_all(dirs, excluded=excluded, included=included)
+    pprint(result)
+
+
+if __name__ == '__main__':  # pragma: no cover
+    main(**parse_args(argv[1:]).__dict__)
+
+# code_dirs = ['/Users/magnus/git/rsimulator/rsimulator-camel-direct',
+#              '/Users/magnus/git/rsimulator/rsimulator-core',
+#              '/Users/magnus/git/rsimulator/rsimulator-cxf-rt-transport']
+# code_dirs = ['/Users/magnus/git/rsimulator']
+#
+# result = count_all(
+#     code_dirs,
+#     # excluded=('.*Test\..*', '.*IT\..*', 'test.*'),
+#     included=('.*\.groovy', '.*\.java', '.*\.kt', '.*\.py', 'Jenkinsfile'))
+# pprint(result)

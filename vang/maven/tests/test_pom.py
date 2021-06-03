@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from unittest.mock import call, patch
 
 from vang.maven.pom import get_pom_paths

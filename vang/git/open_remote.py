@@ -30,7 +30,7 @@ def open_remote(repo_dir, remote):
         print(f'Found no url to open in {repo_dir}')
 
 
-def main(repo_dir, remote): # pragma: no cover
+def main(repo_dir, remote):  # pragma: no cover
     open_remote(abspath(repo_dir), remote)
 
 

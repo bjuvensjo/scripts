@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from subprocess import CalledProcessError
 
 from unittest.mock import MagicMock, call, patch

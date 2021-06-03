@@ -32,22 +32,10 @@ def test_parse_args_raises(args):
 
 
 @pytest.mark.parametrize("args, expected", [
-    ['', {
-        'password': 'password',
-        'username': 'username'
-    }],
     ['-u u -p p', {
         'password': 'p',
         'username': 'u'
-    }],
-    ['-u u', {
-        'password': 'password',
-        'username': 'u'
-    }],
-    ['-p p', {
-        'password': 'p',
-        'username': 'username'
-    }],
+    }]
 ])
 def test_parse_args_valid(args, expected):
     with patch('vang.misc.basic.environ', {'U': 'username', 'P': 'password'}):

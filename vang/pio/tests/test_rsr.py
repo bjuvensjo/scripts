@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from unittest.mock import MagicMock, call, mock_open, patch
 
 from pytest import raises
@@ -80,27 +79,29 @@ def test__rsr(mock__replace_file, mock__replace_in_file, mock_walk):
         ('/old/.git', (), ('oldest', 'eggs')),
     ]
 
+    def replace_function(x, y, z):
+        pass
     _rsr(
         'root',
         ['.git', '.gitignore', 'target'],
         'old',
         'new',
-        'replace_function',
+        replace_function,
     )
 
     assert [call('root', False)] == mock_walk.mock_calls
 
     assert [
-        call('old', 'new', '/old', 'baz', 'replace_function'),
-        call('old', 'new', '/old', 'older', 'replace_function'),
-        call('old', 'new', '/old/older', 'oldest', 'replace_function'),
-        call('old', 'new', '/old/older', 'eggs', 'replace_function')
+        call('old', 'new', '/old', 'baz', replace_function),
+        call('old', 'new', '/old', 'older', replace_function),
+        call('old', 'new', '/old/older', 'oldest', replace_function),
+        call('old', 'new', '/old/older', 'eggs', replace_function)
     ] == mock__replace_file.mock_calls
 
     assert [
-        call('old', 'new', '/old/baz', 'replace_function'),
-        call('old', 'new', '/old/older/oldest', 'replace_function'),
-        call('old', 'new', '/old/older/eggs', 'replace_function')
+        call('old', 'new', '/old/baz', replace_function),
+        call('old', 'new', '/old/older/oldest', replace_function),
+        call('old', 'new', '/old/older/eggs', replace_function)
     ] == mock__replace_in_file.mock_calls
 
 

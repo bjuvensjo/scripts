@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from unittest.mock import call, patch
 
 from vang.bitbucket.utils import get_branch

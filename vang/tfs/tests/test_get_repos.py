@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from unittest.mock import call, patch
 
 import pytest
@@ -10,35 +8,35 @@ from vang.tfs.get_repos import get_repos, main, parse_args
 
 @pytest.mark.parametrize("params, expected", [
     ({
-        'organisations': ['organisation']
-    }, [(
-        'organisation/project',
-        {
-            'name': 'name',
-            'remoteUrl': 'remoteUrl'
-        },
+         'organisations': ['organisation']
+     }, [(
+            'organisation/project',
+            {
+                'name': 'name',
+                'remoteUrl': 'remoteUrl'
+            },
     )]),
     ({
-        'projects': ['organisation/project']
-    }, [(
-        'organisation/project',
-        {
-            'name': 'name',
-            'remoteUrl': 'remoteUrl'
-        },
+         'projects': ['organisation/project']
+     }, [(
+            'organisation/project',
+            {
+                'name': 'name',
+                'remoteUrl': 'remoteUrl'
+            },
     )]),
     ({
-        'projects': ['organisation/project'],
-        'names': True
-    }, ['name']),
+         'projects': ['organisation/project'],
+         'names': True
+     }, ['name']),
     ({
-        'projects': ['organisation/project'],
-        'repo_specs': True
-    }, ['organisation/project/name']),
+         'projects': ['organisation/project'],
+         'repo_specs': True
+     }, ['organisation/project/name']),
     ({
-        'projects': ['organisation/project'],
-        'urls': True
-    }, ['remoteUrl']),
+         'projects': ['organisation/project'],
+         'urls': True
+     }, ['remoteUrl']),
 ])
 @patch('vang.tfs.get_repos.get_projects', autospec=True)
 @patch('vang.tfs.get_repos.call', autospec=True)

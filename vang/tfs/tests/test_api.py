@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from unittest.mock import patch, call
 
 from vang.tfs.api import call as tfs_call

@@ -2,9 +2,10 @@
 """ Makes Maven multi module project. """
 
 from argparse import ArgumentParser
-from os import makedirs
-from os.path import realpath, relpath, dirname, normpath
+from os import makedirs, getcwd
+from os.path import realpath, relpath, dirname, normpath, sep
 from sys import argv
+
 import vang.maven.pom as pom
 
 POM_TEMPLATE = """<project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -71,12 +72,13 @@ def parse_args(args):
 
 
 def main(use_defaults):
+    artifact_id = f'ws-{getcwd().split(sep)[-1]}'
     defaults = {
         'group_id': 'my.group',
-        'artifact_id': 'ws',
+        'artifact_id': artifact_id,
         'version': '1.0.0-SNAPSHOT',
         'source_dir': '.',
-        'output_dir': 'ws'
+        'output_dir': artifact_id
     }
 
     if use_defaults:
@@ -85,15 +87,15 @@ def main(use_defaults):
     else:
 
         group_id = str(
-            input('groupId (default mygroup): ') or defaults['group_id'])
+            input(f'groupId (default {defaults["group_id"]}): ') or defaults['group_id'])
         artifact_id = str(
-            input('artifactId (default ws): ') or defaults['artifact_id'])
+            input(f'artifactId (default {defaults["artifact_id"]}): ') or defaults['artifact_id'])
         version = str(
-            input('version (default 1.0.0-SNAPSHOT): ') or defaults['version'])
+            input(f'version (default {defaults["version"]}): ') or defaults['version'])
         source_dir = normpath(
-            str(input('sourceDir: (default .)') or defaults['source_dir']))
+            str(input(f'sourceDir: (default {defaults["source_dir"]})') or defaults['source_dir']))
         output_dir = normpath(
-            str(input('outputDir: (default ./ws)') or defaults['output_dir']))
+            str(input(f'outputDir: (default {defaults["output_dir"]})') or defaults['output_dir']))
 
         pom_infos = get_pom_infos(source_dir)
         make_project(pom_infos, output_dir, group_id, artifact_id, version)

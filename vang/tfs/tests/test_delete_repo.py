@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from unittest.mock import call, patch
 
 import pytest
@@ -17,13 +15,13 @@ def test_delete_repo():
             autospec=True) as mock_call:
         assert second_call_response == delete_repo('org/project/name')
         assert [
-            call(
-                '/org/project/_apis/git/repositories/name?api-version=3.2',
-                method='GET'),
-            call(
-                '/org/project/_apis/git/repositories/id?api-version=3.2',
-                method='DELETE', only_response_code=True)
-        ] == mock_call.mock_calls
+                   call(
+                       '/org/project/_apis/git/repositories/name?api-version=3.2',
+                       method='GET'),
+                   call(
+                       '/org/project/_apis/git/repositories/id?api-version=3.2',
+                       method='DELETE', only_response_code=True)
+               ] == mock_call.mock_calls
 
 
 def test_main():

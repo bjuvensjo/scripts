@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from pytest import raises
 
 from vang.misc.util import chunks

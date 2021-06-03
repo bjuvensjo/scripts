@@ -1,15 +1,13 @@
-#!/usr/bin/env python3
-from pytest import raises
-
 from unittest.mock import call, mock_open, patch
+
+import pytest
+from pytest import raises
 
 from vang.maven.multi_module_project import get_pom
 from vang.maven.multi_module_project import get_pom_infos
-from vang.maven.multi_module_project import make_project
 from vang.maven.multi_module_project import main
+from vang.maven.multi_module_project import make_project
 from vang.maven.multi_module_project import parse_args
-
-import pytest
 
 
 @pytest.fixture
@@ -70,30 +68,30 @@ def test_make_project(mock_get_pom, mock_makedirs, pom_infos_fixture):
             'version',
         )
         assert [
-            call([
-                {
-                    'pom_path': '/root/m1/pom.xml',
-                    'artifact_id': 'm1',
-                    'group_id': 'com.example',
-                    'version': '1.0.0-SNAPSHOT',
-                    'packaging': 'jar'
-                },
-                {
-                    'pom_path': '/root/m2/pom.xml',
-                    'artifact_id': 'm2',
-                    'group_id': 'com.example',
-                    'version': '1.0.0-SNAPSHOT',
-                    'packaging': 'jar'
-                },
-            ], '/root/ws', 'group_id', 'artifact_id', 'version')
-        ] == mock_get_pom.mock_calls
+                   call([
+                       {
+                           'pom_path': '/root/m1/pom.xml',
+                           'artifact_id': 'm1',
+                           'group_id': 'com.example',
+                           'version': '1.0.0-SNAPSHOT',
+                           'packaging': 'jar'
+                       },
+                       {
+                           'pom_path': '/root/m2/pom.xml',
+                           'artifact_id': 'm2',
+                           'group_id': 'com.example',
+                           'version': '1.0.0-SNAPSHOT',
+                           'packaging': 'jar'
+                       },
+                   ], '/root/ws', 'group_id', 'artifact_id', 'version')
+               ] == mock_get_pom.mock_calls
         assert [call('/root/ws')] == mock_makedirs.mock_calls
         assert [
-            call('/root/ws/pom.xml', 'wt', encoding='utf-8'),
-            call().__enter__(),
-            call().write('pom'),
-            call().__exit__(None, None, None)
-        ] == m.mock_calls
+                   call('/root/ws/pom.xml', 'wt', encoding='utf-8'),
+                   call().__enter__(),
+                   call().write('pom'),
+                   call().__exit__(None, None, None)
+               ] == m.mock_calls
 
 
 @patch('vang.maven.multi_module_project.pom.get_pom_info')
@@ -107,21 +105,21 @@ def test_get_pom_infos(mock_get_pom_paths, mock_get_pom_info,
     mock_get_pom_info.side_effect = pom_infos_fixture
 
     assert [
-        {
-            'artifact_id': 'm1',
-            'group_id': 'com.example',
-            'packaging': 'jar',
-            'pom_path': '/root/m1/pom.xml',
-            'version': '1.0.0-SNAPSHOT'
-        },
-        {
-            'artifact_id': 'm2',
-            'group_id': 'com.example',
-            'packaging': 'jar',
-            'pom_path': '/root/m2/pom.xml',
-            'version': '1.0.0-SNAPSHOT'
-        },
-    ] == get_pom_infos('source_dir')
+               {
+                   'artifact_id': 'm1',
+                   'group_id': 'com.example',
+                   'packaging': 'jar',
+                   'pom_path': '/root/m1/pom.xml',
+                   'version': '1.0.0-SNAPSHOT'
+               },
+               {
+                   'artifact_id': 'm2',
+                   'group_id': 'com.example',
+                   'packaging': 'jar',
+                   'pom_path': '/root/m2/pom.xml',
+                   'version': '1.0.0-SNAPSHOT'
+               },
+           ] == get_pom_infos('source_dir')
 
 
 @pytest.mark.parametrize("args", [
@@ -160,13 +158,13 @@ def test_parse_args_valid(args, expected):
                 'version': '1.0.0-SNAPSHOT',
                 'packaging': 'jar'
             },
-             {
-                 'pom_path': '/root/m2/pom.xml',
-                 'artifact_id': 'm2',
-                 'group_id': 'com.example',
-                 'version': '1.0.0-SNAPSHOT',
-                 'packaging': 'jar'
-             }],
+                {
+                    'pom_path': '/root/m2/pom.xml',
+                    'artifact_id': 'm2',
+                    'group_id': 'com.example',
+                    'version': '1.0.0-SNAPSHOT',
+                    'packaging': 'jar'
+                }],
             'o',
             'g',
             'a',
@@ -175,28 +173,29 @@ def test_parse_args_valid(args, expected):
     ]),
     (True, [call('.')], [
         call(
-            [{
-                'pom_path': '/root/m1/pom.xml',
-                'artifact_id': 'm1',
-                'group_id': 'com.example',
-                'version': '1.0.0-SNAPSHOT',
-                'packaging': 'jar'
-            },
-             {
-                 'pom_path': '/root/m2/pom.xml',
-                 'artifact_id': 'm2',
-                 'group_id': 'com.example',
-                 'version': '1.0.0-SNAPSHOT',
-                 'packaging': 'jar'
-             }],
-            artifact_id='ws',
+            [
+                {
+                    'pom_path': '/root/m1/pom.xml',
+                    'artifact_id': 'm1',
+                    'group_id': 'com.example',
+                    'version': '1.0.0-SNAPSHOT',
+                    'packaging': 'jar'
+                },
+                {
+                    'pom_path': '/root/m2/pom.xml',
+                    'artifact_id': 'm2',
+                    'group_id': 'com.example',
+                    'version': '1.0.0-SNAPSHOT',
+                    'packaging': 'jar'}],
+            artifact_id='ws-tests',
             group_id='my.group',
-            output_dir='ws',
+            output_dir='ws-tests',
             source_dir='.',
-            version='1.0.0-SNAPSHOT',
+            version='1.0.0-SNAPSHOT'
         )
     ]),
 ])
+@patch('vang.maven.multi_module_project.getcwd')
 @patch('vang.maven.multi_module_project.input')
 @patch('vang.maven.multi_module_project.make_project')
 @patch('vang.maven.multi_module_project.get_pom_infos')
@@ -204,11 +203,13 @@ def test_main(
         mock_get_pom_infos,
         mock_make_project,
         mock_input,
+        mock_getcwd,
         pom_infos_fixture,
         use_defaults,
         source_dir_expected,
         expected,
 ):
+    mock_getcwd.return_value = 'tests'
     mock_get_pom_infos.return_value = pom_infos_fixture
     mock_input.side_effect = ('g', 'a', 'v', 's', 'o')
 

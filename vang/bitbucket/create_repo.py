@@ -23,7 +23,7 @@ def main(project, repository):
           'then run this in your terminal.')
     print(commands)
     if name == 'posix':
-        system(f'echo "{commands}\c" | pbcopy')
+        system(f'echo "{commands}\\c" | pbcopy')
         print('(The commands are copied to the clipboard)')
 
 

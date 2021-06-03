@@ -29,9 +29,8 @@ def test_get_pom_path(mock_exists, mock_glob):
 
 
 def test_get_artifact_base_uri():
-    assert '/repo/com/foo/bar/business.baz/1.0.0-SNAPSHOT' == get_artifact_base_uri(
-        'repo',
+    assert 'com/foo/bar/business.baz/1.0.0-SNAPSHOT' == get_artifact_base_uri(
         'com.foo.bar',
         'business.baz',
-        '1.0.0-SNAPSHOT',
+        '1.0.0-SNAPSHOT'
     )

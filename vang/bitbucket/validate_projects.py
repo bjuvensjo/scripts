@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-import os
 from sys import argv
 
 from vang.bitbucket.get_branches import get_all_branches
@@ -10,7 +9,7 @@ from vang.bitbucket.get_tags import get_all_tags
 from vang.core.core import pmap_unordered
 
 
-def projects(max=None):
+def projects(max_nb_projects=None):
     count = -1
     limit = 25
     start = 0
@@ -22,13 +21,13 @@ def projects(max=None):
         if size:
             for value in values:
                 count = count + 1
-                if max and count == max:
+                if max_nb_projects and count == max_nb_projects:
                     return value
                 else:
                     yield value
 
 
-def repos(project, max=None):
+def repos(project, max_nb_projects=None):
     count = -1
     limit = 25
     start = 0
@@ -42,7 +41,7 @@ def repos(project, max=None):
             for value in values:
                 count = count + 1
                 result = (value['project']['key'], value['slug'])
-                if max and count == max:
+                if max_nb_projects and count == max_nb_projects:
                     return result
                 else:
                     yield result
@@ -65,9 +64,7 @@ def validate_repos(project, max_repos=None):
             branches(r)
             tags(r)
             valid.append(s)
-            # print(f'{"/".join(r)} is OK')
-        except KeyError as e:
-            # print(f'{"/".join(r)} is CORRUPT')
+        except KeyError:
             corrupt.append(s)
     return valid, corrupt
 

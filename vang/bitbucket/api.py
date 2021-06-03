@@ -40,7 +40,7 @@ def call(
          'POST': post,
          'PUT': put,
          }[method]
-
+    #print(username, password, rest_url, request_data, uri)
     params = {'url': f'{rest_url}{uri}', 'auth': (username, password), 'verify': verify_certificate}
     if request_data:
         params['json'] = request_data
