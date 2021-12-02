@@ -115,8 +115,8 @@ def parse_args(args):
 def main(
         src_repo,
         src_branch,
-        dest_branch,
         dest_repo,
+        dest_branch,
         work_dir,
         replacements,
 ):

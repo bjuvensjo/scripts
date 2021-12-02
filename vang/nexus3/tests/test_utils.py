@@ -32,5 +32,5 @@ def test_get_artifact_base_uri():
     assert 'com/foo/bar/business.baz/1.0.0-SNAPSHOT' == get_artifact_base_uri(
         'com.foo.bar',
         'business.baz',
-        '1.0.0-SNAPSHOT',
+        '1.0.0-SNAPSHOT'
     )

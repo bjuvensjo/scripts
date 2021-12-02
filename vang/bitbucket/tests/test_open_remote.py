@@ -114,26 +114,27 @@ def test_parse_args_raises(args):
         'repo_dir': '.',
         'repo': None,
         'project': None,
-        'baseurl': None,
+        'baseurl': 'url',
     }],
     ['-d d', {
         'repo_dir': 'd',
         'repo': None,
         'project': None,
-        'baseurl': None,
+        'baseurl': 'url',
     }],
     ['-r r', {
         'repo_dir': '.',
         'repo': 'r',
         'project': None,
-        'baseurl': None,
+        'baseurl': 'url',
     }],
     ['-p p', {
         'repo_dir': '.',
         'repo': None,
         'project': 'p',
-        'baseurl': None,
+        'baseurl': 'url',
     }],
 ])
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(' ') if args else '').__dict__
+    with patch('vang.bitbucket.open_remote.environ', {'BITBUCKET_REST_URL': 'url'}):
+        assert expected == parse_args(args.split(' ') if args else '').__dict__

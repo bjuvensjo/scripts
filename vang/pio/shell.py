@@ -4,17 +4,18 @@ import logging
 import sys
 import traceback
 from subprocess import PIPE, STDOUT, run
+from typing import Tuple, Union, Iterable, Any
 
 from vang.core.core import pmap_unordered
 
 log = logging.getLogger(__name__)
 
 
-def run_command(command,
-                return_output=False,
-                cwd=None,
-                check=True,
-                timeout=None):
+def run_command(command: str,
+                return_output: bool = False,
+                cwd: str = None,
+                check: bool = True,
+                timeout: int = None) -> Tuple[int, Union[str, int]]:
     cp = run(
         command,
         cwd=cwd,
@@ -28,7 +29,8 @@ def run_command(command,
             cp.stdout.decode().strip()) if return_output else cp.returncode
 
 
-def run_commands(commands_and_cwds, max_processes=10, check=True, timeout=None):
+def run_commands(commands_and_cwds: Iterable[Iterable[str]], max_processes: int = 10, check: bool = True,
+                 timeout: int = None) -> Iterable[Any]:
     """
     Runs commands in parallel.
 

@@ -1,7 +1,9 @@
 from datetime import datetime
 from unittest.mock import patch
 
-from vang.core.core import create_timestamp
+import pytest
+
+from vang.core.core import create_timestamp, get_in
 from vang.core.core import has_match
 from vang.core.core import is_included
 from vang.core.core import pmap
@@ -41,11 +43,14 @@ def test_pmap_unordered():
 
 
 def test_select_keys():
-    assert {
-        'foo': 1,
-        'bar': 2
-    } == select_keys({
-        'foo': 1,
-        'bar': 2,
-        'baz': 3
-    }, ('foo', 'bar'))
+    assert {'foo': 1, 'bar': 2} == select_keys({'foo': 1, 'bar': 2, 'baz': 3}, ('foo', 'bar'))
+
+
+@pytest.mark.parametrize("keys, expected", [
+    [['a'], {'b': {'c': 'c', 'd': 'd'}}],
+    [['a', 'b', 'c'], 'c'],
+    [['x'], None],
+])
+def test_get_in(keys, expected):
+    d = {'a': {'b': {'c': 'c', 'd': 'd'}}}
+    assert get_in(d, keys) == expected

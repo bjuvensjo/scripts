@@ -4,14 +4,14 @@ from os import remove, rename, replace, walk
 from os.path import join, sep
 from re import fullmatch, sub
 from sys import argv
+from typing import Callable, Iterable
 
 
-def get_replace_function(regexp=False):
-    return lambda s, old, new: sub(old, new, s) if regexp else s.replace(old,
-                                                                         new)
+def get_replace_function(regexp=False) -> Callable[[str, str, str], str]:
+    return lambda s, old, new: sub(old, new, s) if regexp else s.replace(old, new)
 
 
-def _replace_in_file(old, new, path, replace_function):
+def _replace_in_file(old: str, new: str, path: str, replace_function: Callable[[str, str, str], str]) -> None:
     content_changed = False
     with open(
             path,
@@ -30,17 +30,18 @@ def _replace_in_file(old, new, path, replace_function):
     replace(path + '.tmp', path) if content_changed else remove(path + '.tmp')
 
 
-def _replace_file(old, new, path, file, replace_function):
+def _replace_file(old: str, new: str, path: str, file: str, replace_function: Callable[[str, str, str], str]) -> None:
     new_file = replace_function(file, old, new)
     if new_file != file:
         rename(join(path, file), join(path, new_file))
 
 
-def _in(name, regexps):
+def _in(name: str, regexps: Iterable[str]) -> bool:
     return any(fullmatch(name, e) for e in regexps)
 
 
-def _rsr(root, excludes, old, new, replace_function):
+def _rsr(root: str, excludes: Iterable[str], old: str, new: str,
+         replace_function: Callable[[str, str, str], str]) -> None:
     for dir_path, dir_names, files in walk(root, False):
         if not any(_in(d, excludes) for d in dir_path.split(sep)):
             for file in files:
@@ -55,12 +56,12 @@ def _rsr(root, excludes, old, new, replace_function):
                                   replace_function)
 
 
-def rsr(old, new, dirs, replace_function):
+def rsr(old: str, new: str, dirs: Iterable[str], replace_function: Callable[[str, str, str], str]) -> None:
     for d in dirs:
         _rsr(d, ['.git', '.gitignore', 'target'], old, new, replace_function)
 
 
-def main(old, new, dirs, regexp):
+def main(old: str, new: str, dirs: Iterable[str], regexp: bool) -> None:
     rsr(old, new, dirs, get_replace_function(regexp))
 
 

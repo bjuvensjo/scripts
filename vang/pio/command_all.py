@@ -2,15 +2,17 @@
 from argparse import ArgumentParser
 from glob import glob
 from itertools import product
+from os import PathLike
 from os.path import normpath, realpath
 from pathlib import Path
-from subprocess import PIPE, STDOUT, run
+from subprocess import PIPE, STDOUT, run, CompletedProcess
 from sys import argv
+from typing import Iterable
 
 from vang.pio.shell import run_commands
 
 
-def get_work_dirs(find, root):
+def get_work_dirs(find: str, root: str) -> Iterable[PathLike]:
     return [
         Path(realpath(p)).parent for p in glob(
             normpath(f'{root}/**/{find}'),
@@ -19,11 +21,11 @@ def get_work_dirs(find, root):
     ]
 
 
-def get_command(commands):
+def get_command(commands: Iterable[str]) -> Iterable[str]:
     return [' && '.join(commands)]
 
 
-def execute_in_parallel(root, commands, find='.git/'):
+def execute_in_parallel(root: str, commands: Iterable[str], find: str = '.git/') -> Iterable[CompletedProcess]:
     commands_and_work_dirs = tuple(
         product(
             get_command(commands),
@@ -33,7 +35,7 @@ def execute_in_parallel(root, commands, find='.git/'):
                             check=False)
 
 
-def execute_in_sequence(root, commands, find='.git/', timeout=None):
+def execute_in_sequence(root: str, commands: Iterable[str], find: str = '.git/', timeout: int = None) -> Iterable[CompletedProcess]:
     command = get_command(commands)[0]
     for cwd in get_work_dirs(find, root):
         yield run(
@@ -46,7 +48,7 @@ def execute_in_sequence(root, commands, find='.git/', timeout=None):
             shell=True)
 
 
-def main(root, commands, find='.git/', sequence=False):
+def main(root: str, commands: Iterable[str], find: str = '.git/', sequence: bool = False):
     execute = execute_in_sequence if sequence else execute_in_parallel
     for process in execute(root, commands, find):
         print(process.stdout.decode(errors="ignore").strip())

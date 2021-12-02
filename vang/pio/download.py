@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 import argparse
 from sys import argv
+from typing import Union
 from zipfile import ZipFile
 
 from requests import get
 
 
-def download(output_file, url, username, password):
+def download(output_file: Union[str, bytes, int], url: str, username: str, password: str) -> None:
     with open(output_file, 'wb') as f:
         f.write(get(url, auth=(username, password)).content)
 
@@ -16,7 +17,7 @@ def extract_zip(zip_file):
         z.extractall()
 
 
-def main(output_file, url, username, password, extract):
+def main(output_file: Union[str, bytes, int], url: str, username: str, password: str, extract: bool) -> None:
     download(output_file, url, username, password)
     if extract:
         extract_zip(output_file)
