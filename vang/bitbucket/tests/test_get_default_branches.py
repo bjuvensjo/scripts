@@ -1,13 +1,12 @@
 from unittest.mock import call, patch
 
+import pytest
 from pytest import raises
 
-from vang.bitbucket.get_default_branches import get_repo_default_branch
 from vang.bitbucket.get_default_branches import get_default_branch
+from vang.bitbucket.get_default_branches import get_repo_default_branch
 from vang.bitbucket.get_default_branches import main
 from vang.bitbucket.get_default_branches import parse_args
-
-import pytest
 
 
 @pytest.fixture
@@ -56,9 +55,9 @@ def test_main(mock_call, mock_get_repo_specs, mock_print, call_fixtures):
     mock_get_repo_specs.return_value = [['project_key', 'repo_slug']] * 2
     main(['.'], None, ['project_key'] * 2)
     assert [
-        call('project_key/repo_slug: develop'),
-        call('project_key/repo_slug: develop')
-    ] == mock_print.mock_calls
+               call('project_key/repo_slug: develop'),
+               call('project_key/repo_slug: develop')
+           ] == mock_print.mock_calls
     assert [call(['.'], None, ['project_key', 'project_key'])
             ] == mock_get_repo_specs.mock_calls
 

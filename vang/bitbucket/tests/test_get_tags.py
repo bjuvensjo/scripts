@@ -1,76 +1,29 @@
 from unittest.mock import call, patch
 
+import pytest
 from pytest import raises
 
 from vang.bitbucket.get_tags import get_all_tags
-from vang.bitbucket.get_tags import get_tags_page
 from vang.bitbucket.get_tags import get_tags
 from vang.bitbucket.get_tags import main
 from vang.bitbucket.get_tags import parse_args
 
-import pytest
-
 
 @pytest.fixture
-def call_fixtures():
-    return [
-        {
-            'size':
-            25,
-            'limit':
-            25,
-            'isLastPage':
-            False,
-            'values': [{
-                'id': f'refs/tags/t{n}',
-                'displayId': f't{n}',
-                'type': 'TAG',
-                'latestCommit': 'f89ed59',
-                'latestChangeset': 'f89ed5',
-                'hash': '430f79'
-            } for n in range(25)],
-            'start':
-            0
-        },
-        {
-            'size':
-            25,
-            'limit':
-            25,
-            'isLastPage':
-            True,
-            'values': [{
-                'id': f'refs/tags/t{n}',
-                'displayId': f't{n}',
-                'type': 'TAG',
-                'latestCommit': 'f89ed59',
-                'latestChangeset': 'f89ed5',
-                'hash': '430f79'
-            } for n in range(25, 50)],
-            'start':
-            25
-        },
-    ]
+def fixtures():
+    return [{
+        'id': f'refs/tags/t{n}',
+        'displayId': f't{n}',
+        'type': 'TAG',
+        'latestCommit': 'f89ed59',
+        'latestChangeset': 'f89ed5',
+        'hash': '430f79'
+    } for n in range(50)]
 
 
-@patch('vang.bitbucket.get_tags.call')
-def test_get_tags_page(mock_call, call_fixtures):
-    mock_call.return_value = call_fixtures[0]
-    assert (
-        call_fixtures[0]['size'],
-        call_fixtures[0]['values'],
-        call_fixtures[0]['isLastPage'],
-        call_fixtures[0].get('nextPageStart', -1),
-    ) == get_tags_page(['project_key', 'repo_slug'], '', 25, 0)
-    assert [
-        call('/rest/api/1.0/projects/project_key/repos/repo_slug/tags'
-             '?filterText=&limit=25&start=0&orderBy=MODIFICATION')
-    ] == mock_call.mock_calls
-
-
-@patch('vang.bitbucket.get_tags.call')
-def test_get_all_tags(mock_call, call_fixtures):
-    mock_call.side_effect = call_fixtures
+@patch('vang.bitbucket.get_tags.get_all')
+def test_get_all_tags(mock_get_all, fixtures):
+    mock_get_all.return_value = fixtures
     assert [(['project_key', 'repo_slug'], {
         'displayId': f't{n}',
         'hash': '430f79',

@@ -1,12 +1,11 @@
 from unittest.mock import call, patch
 
+import pytest
 from pytest import raises
 
 from vang.bitbucket.get_clone_urls import get_clone_urls
 from vang.bitbucket.get_clone_urls import main
 from vang.bitbucket.get_clone_urls import parse_args
-
-import pytest
 
 
 @pytest.fixture
@@ -35,13 +34,13 @@ def repos_fixture():
         'links': {
             'clone': [{
                 'href':
-                f'http://myorg/stash/scm/project_key/foo.r{n}.git',
+                    f'http://myorg/stash/scm/project_key/foo.r{n}.git',
                 'name':
-                'http'
+                    'http'
             }],
             'self': [{
                 'href':
-                f'http://myorg/stash/projects/project_key/repos/foo.r{n}/browse'
+                    f'http://myorg/stash/projects/project_key/repos/foo.r{n}/browse'
             }]
         }
     } for n in range(10)]
@@ -49,39 +48,39 @@ def repos_fixture():
 
 @pytest.mark.parametrize("command, branch, flat, expected", [
     (
-        False,
-        False,
-        False,
-        [(
-            None,
-            'project_key',
-            f'foo.r{n}',
-            f'http://myorg/stash/scm/project_key/foo.r{n}.git',
-        ) for n in range(10)],
+            False,
+            False,
+            False,
+            [(
+                    None,
+                    'project_key',
+                    f'foo.r{n}',
+                    f'http://myorg/stash/scm/project_key/foo.r{n}.git',
+            ) for n in range(10)],
     ),
     (
-        True,
-        False,
-        False,
-        [(
-            f'project_key/foo/r{n}',
-            'project_key',
-            f'foo.r{n}',
-            'git clone http://myorg/stash/scm/project_key/'
-            f'foo.r{n}.git project_key/foo/r{n}',
-        ) for n in range(10)],
+            True,
+            False,
+            False,
+            [(
+                    f'project_key/foo/r{n}',
+                    'project_key',
+                    f'foo.r{n}',
+                    'git clone http://myorg/stash/scm/project_key/'
+                    f'foo.r{n}.git project_key/foo/r{n}',
+            ) for n in range(10)],
     ),
     (
-        True,
-        'develop',
-        True,
-        [(
-            f'project_key/foo.r{n}',
-            'project_key',
-            f'foo.r{n}',
-            'git clone -b develop http://myorg/stash/scm/project_key/'
-            f'foo.r{n}.git project_key/foo.r{n}',
-        ) for n in range(10)],
+            True,
+            'develop',
+            True,
+            [(
+                    f'project_key/foo.r{n}',
+                    'project_key',
+                    f'foo.r{n}',
+                    'git clone -b develop http://myorg/stash/scm/project_key/'
+                    f'foo.r{n}.git project_key/foo.r{n}',
+            ) for n in range(10)],
     ),
 ])
 @patch('vang.bitbucket.get_clone_urls.get_all_repos', autospec=True)
@@ -102,8 +101,8 @@ def test_get_clone_urls(
             flat,
         ))
     assert [
-        call(['project_key', 'project_key']),
-    ] == mock_get_all_repos.mock_calls
+               call(['project_key', 'project_key']),
+           ] == mock_get_all_repos.mock_calls
 
 
 @pytest.mark.parametrize("command, branch, flat, expected", [

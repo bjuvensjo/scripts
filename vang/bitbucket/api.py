@@ -1,8 +1,33 @@
 #!/usr/bin/env python3
-
+import sys
 from os import environ
 
 from requests import delete, get, post, put
+
+
+def get_page(uri, params, limit, start):
+    query = f"&{'&'.join([f'{k}={v}' for k, v in params.items()])}" if params else ''
+    response = call(f'{uri}?limit={limit}&start={start}{query}')
+    return response['size'], response['values'], response[
+        'isLastPage'], response.get('nextPageStart', -1)
+
+
+def get_all(uri, params=None, take=sys.maxsize):
+    if take == -1:
+        take = sys.maxsize
+    limit = take if take < 100 else 25
+    start = 0
+    is_last_page = False
+
+    count = 0
+    while not is_last_page and count < take:
+        size, values, is_last_page, start = get_page(uri, params, limit, start)
+
+        if size:
+            for v in values:
+                if count < take:
+                    count += 1
+                    yield v
 
 
 def call(
@@ -40,7 +65,7 @@ def call(
          'POST': post,
          'PUT': put,
          }[method]
-    #print(username, password, rest_url, request_data, uri)
+    # print(username, password, rest_url, request_data, uri)
     params = {'url': f'{rest_url}{uri}', 'auth': (username, password), 'verify': verify_certificate}
     if request_data:
         params['json'] = request_data

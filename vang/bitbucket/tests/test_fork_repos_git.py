@@ -1,13 +1,12 @@
 from unittest.mock import call, patch
 
+import pytest
 from pytest import raises
 
 from vang.bitbucket.fork_repos_git import fork_repo
 from vang.bitbucket.fork_repos_git import fork_repos
 from vang.bitbucket.fork_repos_git import main
 from vang.bitbucket.fork_repos_git import parse_args
-
-import pytest
 
 
 @patch('vang.bitbucket.fork_repos_git.print')
@@ -24,45 +23,45 @@ def test_fork_repo(
         0, 'http://myorg/stash/scm/project_key/repo_slug.git')
 
     assert (
-        ('fork_project_key', 'repo_slug'),
-        'http://myorg/stash/scm/fork_project_key/repo_slug.git') == fork_repo(
-            'fork_project_key', ['develop', 'master'], '/project_key/repo_slug')
+               ('fork_project_key', 'repo_slug'),
+               'http://myorg/stash/scm/fork_project_key/repo_slug.git') == fork_repo(
+        'fork_project_key', ['develop', 'master'], '/project_key/repo_slug')
 
     assert [call(('fork_project_key', 'repo_slug'),
                  'develop')] == mock_set_repo_default_branch.mock_calls
     assert [call('fork_project_key',
                  'repo_slug')] == mock_create_repo.mock_calls
     assert [
-        call(
-            'git checkout master',
-            cwd='/project_key/repo_slug',
-            return_output=True),
-        call(
-            'git checkout develop',
-            cwd='/project_key/repo_slug',
-            return_output=True),
-        call(
-            'git remote get-url origin',
-            cwd='/project_key/repo_slug',
-            return_output=True),
-        call(
-            'git remote set-url origin http://myorg/'
-            'stash/scm/fork_project_key/repo_slug.git',
-            cwd='/project_key/repo_slug',
-            return_output=True),
-        call(
-            'git remote prune origin',
-            cwd='/project_key/repo_slug',
-            return_output=True),
-        call(
-            'git push -u origin develop',
-            cwd='/project_key/repo_slug',
-            return_output=True),
-        call(
-            'git push -u origin master',
-            cwd='/project_key/repo_slug',
-            return_output=True)
-    ] == mock_run_command.mock_calls
+               call(
+                   'git checkout master',
+                   cwd='/project_key/repo_slug',
+                   return_output=True),
+               call(
+                   'git checkout develop',
+                   cwd='/project_key/repo_slug',
+                   return_output=True),
+               call(
+                   'git remote get-url origin',
+                   cwd='/project_key/repo_slug',
+                   return_output=True),
+               call(
+                   'git remote set-url origin http://myorg/'
+                   'stash/scm/fork_project_key/repo_slug.git',
+                   cwd='/project_key/repo_slug',
+                   return_output=True),
+               call(
+                   'git remote prune origin',
+                   cwd='/project_key/repo_slug',
+                   return_output=True),
+               call(
+                   'git push -u origin develop',
+                   cwd='/project_key/repo_slug',
+                   return_output=True),
+               call(
+                   'git push -u origin master',
+                   cwd='/project_key/repo_slug',
+                   return_output=True)
+           ] == mock_run_command.mock_calls
 
 
 @patch('vang.bitbucket.fork_repos_git.fork_repo')
@@ -77,9 +76,9 @@ def test_fork_repos(mock_main, mock_get_work_dirs, mock_fork_repo):
                  branch='develop', flat=True)] == mock_main.mock_calls
     assert [call('.git/', 'work_dir')] == mock_get_work_dirs.mock_calls
     assert [
-        call('fork_project_key', ['develop', 'master'], 'd1'),
-        call('fork_project_key', ['develop', 'master'], 'd2')
-    ] == mock_fork_repo.mock_calls
+               call('fork_project_key', ['develop', 'master'], 'd1'),
+               call('fork_project_key', ['develop', 'master'], 'd2')
+           ] == mock_fork_repo.mock_calls
 
 
 @pytest.mark.parametrize("repos, projects, expected", [

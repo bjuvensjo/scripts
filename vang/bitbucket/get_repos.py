@@ -3,34 +3,18 @@ import argparse
 import itertools
 from sys import argv
 
-from vang.bitbucket.api import call
+from vang.bitbucket.api import get_all
 from vang.core.core import pmap_unordered
 
 
-def get_repos_page(project, limit, start):
-    response = call(f'/rest/api/1.0/projects/{project}'
-                    f'/repos?limit={limit}&start={start}')
-    return response['size'], response['values'], response[
-        'isLastPage'], response.get('nextPageStart', -1)
-
-
 def get_repos(project, only_name=False, only_spec=False):
-    limit = 25
-    start = 0
-    is_last_page = False
-
-    while not is_last_page:
-        size, values, is_last_page, start = get_repos_page(
-            project, limit, start)
-
-        if size:
-            for value in values:
-                if only_name:
-                    yield value['slug']
-                elif only_spec:
-                    yield (value['project']['key'], value['slug'])
-                else:
-                    yield value
+    for value in get_all(f'/rest/api/1.0/projects/{project}/repos'):
+        if only_name:
+            yield value['slug']
+        elif only_spec:
+            yield value['project']['key'], value['slug']
+        else:
+            yield value
 
 
 def get_all_repos(projects, max_processes=10, only_name=False, only_spec=False):

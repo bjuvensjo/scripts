@@ -35,11 +35,11 @@ def test_clone(mock_makedirs, mock_run_commands):
     assert [1, 2, 3] == take(3, clone(['commands'], 'root_dir'))
     assert [call('root_dir', exist_ok=True)] == mock_makedirs.mock_calls
     assert [
-        call([('commands', 'root_dir')],
-             check=False,
-             max_processes=25,
-             timeout=60)
-    ] == mock_run_commands.mock_calls
+               call([('commands', 'root_dir')],
+                    check=False,
+                    max_processes=25,
+                    timeout=60)
+           ] == mock_run_commands.mock_calls
 
 
 @patch(
@@ -66,9 +66,9 @@ def test_get_projects_commands(mock_get_clone_urls):
     ])
 def test_get_repos_commands(mock_get_clone_urls, mock_print):
     assert [
-        ('clone_dir', 'project', 'repo1', 'command'),
-        ('clone_dir', 'project', 'repo2', 'command'),
-    ] == get_repos_commands([
+               ('clone_dir', 'project', 'repo1', 'command'),
+               ('clone_dir', 'project', 'repo2', 'command'),
+           ] == get_repos_commands([
         'project/repo1',
         'project/repo2',
         'project/non_existing_repo',
@@ -92,9 +92,9 @@ def test_get_repos_commands(mock_get_clone_urls, mock_print):
 def test_get_config_commands(mock_has_branch, mock_get_clone_urls,
                              mock_should_be_cloned):
     assert [
-        ('clone_dir', 'project', 'repo1', 'command'),
-        ('clone_dir', 'project', 'repo2', 'command'),
-    ] == list(
+               ('clone_dir', 'project', 'repo1', 'command'),
+               ('clone_dir', 'project', 'repo2', 'command'),
+           ] == list(
         get_config_commands({
             'projects': {
                 'project': 'project'
@@ -112,25 +112,25 @@ def test_get_config_commands(mock_has_branch, mock_get_clone_urls,
         False,
     )] == mock_get_clone_urls.mock_calls
     assert [
-        call(
-            'project',
-            'repo1',
-            'project',
-            {
-                ('project', 'repo1'): True,
-                ('project', 'repo2'): False
-            },
-        ),
-        call(
-            'project',
-            'repo2',
-            'project',
-            {
-                ('project', 'repo1'): True,
-                ('project', 'repo2'): False
-            },
-        )
-    ] == mock_should_be_cloned.mock_calls
+               call(
+                   'project',
+                   'repo1',
+                   'project',
+                   {
+                       ('project', 'repo1'): True,
+                       ('project', 'repo2'): False
+                   },
+               ),
+               call(
+                   'project',
+                   'repo2',
+                   'project',
+                   {
+                       ('project', 'repo1'): True,
+                       ('project', 'repo2'): False
+                   },
+               )
+           ] == mock_should_be_cloned.mock_calls
 
 
 @patch('builtins.open')
@@ -179,10 +179,10 @@ def test_main(
 
     assert not main('root_dir', config='config', branch='branch')
     assert [
-        call('config', 'rt', encoding='utf-8'),
-        call().__enter__(),
-        call().__exit__(None, None, None)
-    ] == mock_open.mock_calls
+               call('config', 'rt', encoding='utf-8'),
+               call().__enter__(),
+               call().__exit__(None, None, None)
+           ] == mock_open.mock_calls
     assert [call(
         'load',
         'branch',

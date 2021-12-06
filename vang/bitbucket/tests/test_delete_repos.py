@@ -1,13 +1,12 @@
 from unittest.mock import call, patch
 
+import pytest
 from pytest import raises
 
 from vang.bitbucket.delete_repos import delete_repo
 from vang.bitbucket.delete_repos import delete_repos
 from vang.bitbucket.delete_repos import main
 from vang.bitbucket.delete_repos import parse_args
-
-import pytest
 
 
 @patch(
@@ -58,9 +57,9 @@ def test_main(mock_get_repo_specs, mock_delete_repos, mock_print):
         ('project', 'repo2'),
     ])] == mock_delete_repos.mock_calls
     assert [
-        call('project/repo1: deleted'),
-        call('project/repo1: deleted'),
-    ] == mock_print.mock_calls
+               call('project/repo1: deleted'),
+               call('project/repo1: deleted'),
+           ] == mock_print.mock_calls
 
 
 @pytest.mark.parametrize("args", [

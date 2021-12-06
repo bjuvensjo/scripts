@@ -1,112 +1,43 @@
 from unittest.mock import call, patch
 
+import pytest
 from pytest import raises
 
-from vang.bitbucket.get_branches import get_all_branches
-from vang.bitbucket.get_branches import get_branch_page
 from vang.bitbucket.get_branches import get_branches
 from vang.bitbucket.get_branches import main
 from vang.bitbucket.get_branches import parse_args
 
-import pytest
-
-
-@pytest.fixture
-def call_fixtures():
-    return [
-        {
-            'size':
-            25,
-            'limit':
-            25,
-            'isLastPage':
-            False,
-            'values':
-            [{
-                'id': 'refs/heads/develop',
-                'displayId': 'develop',
-                'type': 'BRANCH',
-                'latestCommit': 'c3e8f3994a2f8c8fc46a5cc0cb5fd766948f7767',
-                'latestChangeset': 'c3e8f3994a2f8c8fc46a5cc0cb5fd766948f7767',
-                'isDefault': True
-            }] * 25,
-            'start':
-            0
-        },
-        {
-            'size':
-            25,
-            'limit':
-            25,
-            'isLastPage':
-            True,
-            'values':
-            [{
-                'id': 'refs/heads/develop',
-                'displayId': 'develop',
-                'type': 'BRANCH',
-                'latestCommit': 'c3e8f3994a2f8c8fc46a5cc0cb5fd766948f7767',
-                'latestChangeset': 'c3e8f3994a2f8c8fc46a5cc0cb5fd766948f7767',
-                'isDefault': True
-            }] * 25,
-            'start':
-            0
-        },
-    ]
-
-
-@patch('vang.bitbucket.get_branches.call')
-def test_get_branch_page(mock_call, call_fixtures):
-    mock_call.return_value = call_fixtures[0]
-    assert (
-        call_fixtures[0]['size'],
-        call_fixtures[0]['values'],
-        call_fixtures[0]['isLastPage'],
-        call_fixtures[0].get('nextPageStart', -1),
-    ) == get_branch_page(['project_key', 'repo_slug'], 'develop', 25, 0)
-    assert [
-        call('/rest/api/1.0/projects/project_key/repos/'
-             'repo_slug/branches?filterText=develop&limit=25&start=0')
-    ] == mock_call.mock_calls
-
-
-@patch('vang.bitbucket.get_branches.call')
-def test_get_all_branches(mock_call, call_fixtures):
-    mock_call.side_effect = call_fixtures
-    assert (['project_key', 'repo_slug'], call_fixtures[0]['values'] +
-            call_fixtures[1]['values']) == get_all_branches(
-                ['project_key', 'repo_slug'], 'branch')
-
 
 @pytest.fixture
 def branches_fixture():
-    return (('project_key', 'repo_slug'),
-            [{
-                'id': 'refs/heads/release',
-                'displayId': 'release',
-                'type': 'BRANCH',
-                'latestCommit': 'f89ed59695b89280c474d6c20f6c026dee7eca06',
-                'latestChangeset': 'f89ed59695b89280c474d6c20f6c026dee7eca06',
-                'isDefault': False
-            },
-             {
-                 'id': 'refs/heads/develop',
-                 'displayId': 'develop',
-                 'type': 'BRANCH',
-                 'latestCommit': 'c3e8f3994a2f8c8fc46a5cc0cb5fd766948f7767',
-                 'latestChangeset': 'c3e8f3994a2f8c8fc46a5cc0cb5fd766948f7767',
-                 'isDefault': True
-             }])
+    return [
+        {
+            'id': 'refs/heads/release',
+            'displayId': 'release',
+            'type': 'BRANCH',
+            'latestCommit': 'f89ed59695b89280c474d6c20f6c026dee7eca06',
+            'latestChangeset': 'f89ed59695b89280c474d6c20f6c026dee7eca06',
+            'isDefault': False
+        },
+        {
+            'id': 'refs/heads/develop',
+            'displayId': 'develop',
+            'type': 'BRANCH',
+            'latestCommit': 'c3e8f3994a2f8c8fc46a5cc0cb5fd766948f7767',
+            'latestChangeset': 'c3e8f3994a2f8c8fc46a5cc0cb5fd766948f7767',
+            'isDefault': True
+        }]
 
 
-@patch('vang.bitbucket.get_branches.get_all_branches')
-def test_get_branches(mock_get_all_branches, branches_fixture):
-    mock_get_all_branches.return_value = branches_fixture
-    assert [branches_fixture] * 2 == list(
+@patch('vang.bitbucket.get_branches.get_all')
+def test_get_branches(mock_get_all, branches_fixture):
+    mock_get_all.return_value = branches_fixture
+    assert list(
         get_branches([
             ['project_key', 'repo_slug'],
             ['project_key', 'repo_slug'],
-        ], ''))
+        ], '')) == [(['project_key', 'repo_slug'], branches_fixture),
+                    (['project_key', 'repo_slug'], branches_fixture)]
 
 
 @pytest.mark.parametrize("name, print_calls", [
@@ -131,7 +62,7 @@ def test_main(
         branches_fixture,
 ):
     mock_get_repo_specs.return_value = [['project_key', 'repo_slug']]
-    mock_get_branches.return_value = [branches_fixture]
+    mock_get_branches.return_value = [[['project_key', 'repo_slug'], branches_fixture]]
     main(name=name, dirs=['.'])
     assert [call(['.'], None, None)] == mock_get_repo_specs.mock_calls
     assert [call([['project_key', 'repo_slug']],

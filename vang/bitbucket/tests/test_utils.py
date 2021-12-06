@@ -33,13 +33,13 @@ def test_get_clone_url(mock_run_command):
     assert 'http://myorg/stash/scm/project/repo.git' == get_clone_url(
         'clone_dir')
     assert [
-        call('git --git-dir clone_dir/.git remote get-url origin', True,
-             'clone_dir/.git', False),
-        call('git --git-dir clone_dir remote get-url origin', True, 'clone_dir',
-             False),
-        call('git --git-dir clone_dir/.git remote get-url origin', True,
-             'clone_dir')
-    ] == mock_run_command.mock_calls
+               call('git --git-dir clone_dir/.git remote get-url origin', True,
+                    'clone_dir/.git', False),
+               call('git --git-dir clone_dir remote get-url origin', True, 'clone_dir',
+                    False),
+               call('git --git-dir clone_dir/.git remote get-url origin', True,
+                    'clone_dir')
+           ] == mock_run_command.mock_calls
 
 
 @patch(
@@ -79,6 +79,6 @@ def test_get_repo_specs(mock_get_all_repos, mock_get_project_and_repo):
     )] == mock_get_all_repos.mock_calls
 
     assert [
-        call('PROJECT/r1'),
-        call('PROJECT/r2'),
-    ] == mock_get_project_and_repo.mock_calls
+               call('PROJECT/r1'),
+               call('PROJECT/r2'),
+           ] == mock_get_project_and_repo.mock_calls

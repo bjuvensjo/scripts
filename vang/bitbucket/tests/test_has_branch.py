@@ -1,12 +1,11 @@
 from unittest.mock import call, patch
 
+import pytest
 from pytest import raises
 
 from vang.bitbucket.has_branch import has_branch
 from vang.bitbucket.has_branch import main
 from vang.bitbucket.has_branch import parse_args
-
-import pytest
 
 
 @pytest.fixture
@@ -14,17 +13,17 @@ def branches_fixture():
     return [
         (('project_key', 'repo_slug'), [{
             'id':
-            'refs/heads/develop',
+                'refs/heads/develop',
             'displayId':
-            'develop',
+                'develop',
             'type':
-            'BRANCH',
+                'BRANCH',
             'latestCommit':
-            'c92880a67728af1101c0dc776a30b57b5fedd497',
+                'c92880a67728af1101c0dc776a30b57b5fedd497',
             'latestChangeset':
-            'c92880a67728af1101c0dc776a30b57b5fedd497',
+                'c92880a67728af1101c0dc776a30b57b5fedd497',
             'isDefault':
-            True
+                True
         }]),
     ]
 

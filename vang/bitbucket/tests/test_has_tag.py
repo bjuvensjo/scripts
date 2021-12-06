@@ -1,12 +1,11 @@
 from unittest.mock import call, patch
 
+import pytest
 from pytest import raises
 
 from vang.bitbucket.has_tag import has_tag
 from vang.bitbucket.has_tag import main
 from vang.bitbucket.has_tag import parse_args
-
-import pytest
 
 
 @pytest.fixture
@@ -36,9 +35,9 @@ def tags_fixture():
 def test_has_tag(mock_get_tags, tag, expected, tags_fixture):
     mock_get_tags.return_value = tags_fixture
     assert [
-        (['project_key', 'repo_slug1'], expected),
-        (['project_key', 'repo_slug2'], expected),
-    ] == list(
+               (['project_key', 'repo_slug1'], expected),
+               (['project_key', 'repo_slug2'], expected),
+           ] == list(
         has_tag(
             [
                 ['project_key', 'repo_slug1'],
@@ -59,15 +58,15 @@ def test_main(mock_get_tags, mock_get_repo_specs, mock_print, tags_fixture):
     ]
     main('t1', repos=['project_key/repo_slug1', 'project_key/repo_slug2'])
     assert [
-        call(None, [
-            'project_key/repo_slug1',
-            'project_key/repo_slug2',
-        ], None)
-    ] == mock_get_repo_specs.mock_calls
+               call(None, [
+                   'project_key/repo_slug1',
+                   'project_key/repo_slug2',
+               ], None)
+           ] == mock_get_repo_specs.mock_calls
     assert [
-        call('project_key/repo_slug1, t1: True'),
-        call('project_key/repo_slug2, t1: True')
-    ] == mock_print.mock_calls
+               call('project_key/repo_slug1, t1: True'),
+               call('project_key/repo_slug2, t1: True')
+           ] == mock_print.mock_calls
 
 
 @pytest.mark.parametrize("args", [

@@ -2,37 +2,15 @@
 import argparse
 from sys import argv
 
-from vang.bitbucket.api import call
+from vang.bitbucket.api import get_all
 from vang.bitbucket.utils import get_repo_specs
 from vang.core.core import pmap_unordered
 
 
-def get_branch_page(spec, branch, limit, start):
-    response = call(
-        f'/rest/api/1.0/projects/{spec[0]}/repos/{spec[1]}'
-        f'/branches?filterText={branch}&limit={limit}&start={start}')
-    return response['size'], response['values'], response[
-        'isLastPage'], response.get('nextPageStart', -1)
-
-
-def get_all_branches(spec, branch=''):
-    limit = 25
-    start = 0
-    is_last_page = False
-
-    branches = []
-    while not is_last_page:
-        size, values, is_last_page, start = get_branch_page(
-            spec, branch, limit, start)
-
-        if size:
-            branches += values
-    return spec, branches
-
-
 def get_branches(repo_specs, branch='', max_processes=10):
     return pmap_unordered(
-        lambda s: get_all_branches(s, branch),
+        lambda s: (s, get_all(f'/rest/api/1.0/projects/{s[0]}/repos/{s[1]}/branches',
+                              {'filterText': branch})),
         repo_specs,
         processes=max_processes)
 

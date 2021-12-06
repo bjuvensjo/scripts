@@ -20,12 +20,12 @@ def test_set_repo_default_branch(mock_call, call_fixtures):
     assert (['project_key', 'repo_slug'], 204) == set_repo_default_branch(
         ['project_key', 'repo_slug'], 'develop')
     assert [
-        call(
-            '/rest/api/1.0/projects/project_key/repos/repo_slug/branches/default',
-            {'id': 'refs/heads/develop'},
-            method='PUT',
-            only_response_code=True)
-    ] == mock_call.mock_calls
+               call(
+                   '/rest/api/1.0/projects/project_key/repos/repo_slug/branches/default',
+                   {'id': 'refs/heads/develop'},
+                   method='PUT',
+                   only_response_code=True)
+           ] == mock_call.mock_calls
 
 
 @patch('vang.bitbucket.set_default_branches.call')

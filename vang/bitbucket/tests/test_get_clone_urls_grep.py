@@ -1,12 +1,11 @@
 from unittest.mock import call, patch
 
+import pytest
 from pytest import raises
 
 from vang.bitbucket.get_clone_urls_grep import get_clone_urls_grep
 from vang.bitbucket.get_clone_urls_grep import main
 from vang.bitbucket.get_clone_urls_grep import parse_args
-
-import pytest
 
 
 @pytest.fixture
@@ -44,8 +43,8 @@ def test_get_clone_urls_grep(
     assert clone_urls_fixture == get_clone_urls_grep(['.*4', 'P2.*'])
     assert [call()] == mock_get_projects.mock_calls
     assert [
-        call(['P2', 'P4', 'P14', 'P20', 'P21', 'P22', 'P23', 'P24'], False)
-    ] == mock_get_clone_urls.mock_calls
+               call(['P2', 'P4', 'P14', 'P20', 'P21', 'P22', 'P23', 'P24'], False)
+           ] == mock_get_clone_urls.mock_calls
 
 
 @patch('vang.bitbucket.get_clone_urls_grep.print')

@@ -1,95 +1,64 @@
 from unittest.mock import call, patch
 
+import pytest
 from pytest import raises
 
 from vang.bitbucket.get_repos import get_all_repos
 from vang.bitbucket.get_repos import get_repos
-from vang.bitbucket.get_repos import get_repos_page
 from vang.bitbucket.get_repos import main
 from vang.bitbucket.get_repos import parse_args
 
-import pytest
 
-
-def get_call_fixtures(start, end, last):
-    response = {
-        'size':
-        end - start,
-        'limit':
-        end - start,
-        'isLastPage':
-        last,
-        'values': [{
-            'slug': f'r{n}',
-            'id': 9000 + n,
-            'name': f'r{n}',
-            'scmId': 'git',
-            'state': 'AVAILABLE',
-            'statusMessage': 'Available',
-            'forkable': True,
-            'project': {
-                'key': 'project_key',
-                'id': 1000 + n,
-                'name': 'project_name',
-                'public': False,
-                'type': 'NORMAL',
-                'links': {
-                    'self': [{
-                        'href': 'http://myorg/stash/projects/project_key'
-                    }]
-                }
-            },
+def get_all_fixtures(start, end):
+    return [{
+        'slug': f'r{n}',
+        'id': 9000 + n,
+        'name': f'r{n}',
+        'scmId': 'git',
+        'state': 'AVAILABLE',
+        'statusMessage': 'Available',
+        'forkable': True,
+        'project': {
+            'key': 'project_key',
+            'id': 1000 + n,
+            'name': 'project_name',
             'public': False,
+            'type': 'NORMAL',
             'links': {
-                'clone': [{
-                    'href':
-                    f'http://myorg/stash/scm/project_key/r{n}.git',
-                    'name':
-                    'http'
-                }],
                 'self': [{
-                    'href':
-                    f'http://myorg/stash/projects/project_key/repos/r{n}/browse'
+                    'href': 'http://myorg/stash/projects/project_key'
                 }]
             }
-        } for n in range(start, end)],
-        'start':
-        start
-    }
-    return response if last else dict(response, nextPageStart=end)
-
-
-def get_the_call_fixtures():
-    return [get_call_fixtures(0, 25, False), get_call_fixtures(25, 30, True)]
+        },
+        'public': False,
+        'links': {
+            'clone': [{
+                'href':
+                    f'http://myorg/stash/scm/project_key/r{n}.git',
+                'name':
+                    'http'
+            }],
+            'self': [{
+                'href':
+                    f'http://myorg/stash/projects/project_key/repos/r{n}/browse'
+            }]
+        }
+    } for n in range(start, end)]
 
 
 @pytest.fixture
-def call_fixtures():
-    return get_the_call_fixtures()
-
-
-@patch('vang.bitbucket.get_repos.call', autospec=True)
-def test_get_repos_page(mock_call, call_fixtures):
-    mock_call.return_value = call_fixtures[0]
-    assert (
-        call_fixtures[0]['size'],
-        call_fixtures[0]['values'],
-        call_fixtures[0]['isLastPage'],
-        call_fixtures[0].get('nextPageStart', -1),
-    ) == get_repos_page('project_key', call_fixtures[0]['limit'],
-                        call_fixtures[0]['start'])
-    assert [call('/rest/api/1.0/projects/project_key/repos?limit=25&start=0')
-            ] == mock_call.mock_calls
+def fixtures():
+    return get_all_fixtures(0, 30)
 
 
 @pytest.mark.parametrize("only_name, only_spec, expected", [
-    (False, False, [v for r in get_the_call_fixtures() for v in r['values']]),
+    (False, False, [v for v in get_all_fixtures(0, 30)]),
     (True, False, [f'r{n}' for n in range(30)]),
     (False, True, [('project_key', f'r{n}') for n in range(30)]),
 ])
-@patch('vang.bitbucket.get_repos.call', autospec=True)
-def test_get_repos(mock_call, only_name, only_spec, expected, call_fixtures):
-    mock_call.side_effect = call_fixtures
+@patch('vang.bitbucket.get_repos.get_all', autospec=True)
+def test_get_repos(mock_get_all, only_name, only_spec, expected, fixtures):
+    mock_get_all.return_value = fixtures
     assert expected == list(get_repos('project_key', only_name, only_spec))
 
 
@@ -98,22 +67,21 @@ def test_get_all_repos(mock_get_repos):
     mock_get_repos.return_value = ['r']
     assert ['r', 'r'] == list(get_all_repos(['p1', 'p2']))
     assert [
-        call('p1', False, False),
-        call('p2', False, False),
-    ] == mock_get_repos.mock_calls
+               call('p1', False, False),
+               call('p2', False, False),
+           ] == mock_get_repos.mock_calls
 
 
 @pytest.mark.parametrize("only_name, only_spec, expected", [
-    (False, False,
-     [call(v) for r in get_the_call_fixtures() for v in r['values']]),
+    (False, False, [call(v) for v in get_all_fixtures(0, 30)]),
     (True, False, [call(f'r{n}') for n in range(30)]),
     (False, True, [call(f'project_key/r{n}') for n in range(30)]),
 ])
 @patch('vang.bitbucket.get_repos.print')
-@patch('vang.bitbucket.get_repos.call', autospec=True)
-def test_main(mock_call, mock_print, only_name, only_spec, expected,
-              call_fixtures):
-    mock_call.side_effect = call_fixtures
+@patch('vang.bitbucket.get_repos.get_all', autospec=True)
+def test_main(mock_get_all, mock_print, only_name, only_spec, expected,
+              fixtures):
+    mock_get_all.return_value = fixtures
     main(['project_key'], only_name, only_spec)
     assert expected == mock_print.mock_calls
 
