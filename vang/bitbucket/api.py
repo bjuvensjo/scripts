@@ -13,21 +13,17 @@ def get_page(uri, params, limit, start):
 
 
 def get_all(uri, params=None, take=sys.maxsize):
-    if take == -1:
-        take = sys.maxsize
-    limit = take if take < 100 else 25
+    limit = min(take, 1000)
     start = 0
     is_last_page = False
 
-    count = 0
-    while not is_last_page and count < take:
+    result = []
+    while not is_last_page and len(result) < take:
         size, values, is_last_page, start = get_page(uri, params, limit, start)
 
         if size:
-            for v in values:
-                if count < take:
-                    count += 1
-                    yield v
+            result += values
+    return result[:take]
 
 
 def call(

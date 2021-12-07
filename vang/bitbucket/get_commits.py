@@ -13,7 +13,7 @@ def get_commits(spec, branch, take):
 
 def main(repo, branch, take):
     spec = repo.split('/')
-    for commits in get_commits(spec, branch, take):
+    for commits in get_commits(spec, branch, take if take > 0 else sys.maxsize):
         print(commits)
 
 
