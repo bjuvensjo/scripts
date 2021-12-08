@@ -47,10 +47,10 @@ def test_select_keys():
 
 
 @pytest.mark.parametrize("keys, expected", [
-    [['a'], {'b': {'c': 'c', 'd': 'd'}}],
+    [['a'], {'b': {'c': 'c', 'd': [{'e': 1}]}}],
     [['a', 'b', 'c'], 'c'],
-    [['x'], None],
+    [['a', 'b', 'd', 0, 'e'], 1],
 ])
 def test_get_in(keys, expected):
-    d = {'a': {'b': {'c': 'c', 'd': 'd'}}}
+    d = {'a': {'b': {'c': 'c', 'd': [{'e': 1}]}}}
     assert get_in(d, keys) == expected
