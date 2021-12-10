@@ -13,7 +13,7 @@ def read(fname):
 
 setup(
     name="vang",
-    version="1.0.0",
+    version="1.1.0",
     author="Magnus Bjuvensjö",
     author_email="bjuvensjo@gmail.com",
     description=("Scripts"),
