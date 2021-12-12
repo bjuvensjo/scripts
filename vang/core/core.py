@@ -32,7 +32,7 @@ def pmap_ordered(f: Callable[[Any], Any], iterable: Iterable[Any], chunksize: in
 
 
 def pmap_unordered(f: Callable[[Any], Any], iterable: Iterable[Any], chunksize: int = 1, processes: int = 10) -> \
-Iterable[Any]:
+        Iterable[Any]:
     with Pool(processes=processes) as pool:
         completed_processes = pool.imap_unordered(f, iterable, chunksize=chunksize)
         for cp in completed_processes:
@@ -43,5 +43,5 @@ def select_keys(d: Mapping[Any, Any], keys: Iterable[Any]) -> Dict[Any, Any]:
     return {k: v for k, v in d.items() if k in keys}
 
 
-def get_in(d, keys):
-    return reduce(lambda mem, k: mem.get(k, {}), keys, d) or None
+def get_in(seq, keys):
+    return reduce(lambda mem, k: mem[k], keys, seq) or None
