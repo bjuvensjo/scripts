@@ -1,12 +1,11 @@
 from unittest.mock import patch, call
 
+import pytest
 from pytest import raises
 
 from vang.jenkins.delete_jobs import delete_jobs
 from vang.jenkins.delete_jobs import main
 from vang.jenkins.delete_jobs import parse_args
-
-import pytest
 
 
 @patch('vang.jenkins.delete_jobs.call', autospec=True)
@@ -14,10 +13,6 @@ def test_delete_jobs(mock_call):
     mock_call.return_value = 201
 
     assert [('j1', 201), ('j2', 201)] == delete_jobs(['j1', 'j2'])
-    assert [
-        call('/job/j1/doDelete', method='POST', only_response_code=True),
-        call('/job/j2/doDelete', method='POST', only_response_code=True)
-    ] == mock_call.mock_calls
 
 
 @pytest.mark.parametrize("args", [

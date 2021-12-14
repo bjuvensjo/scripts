@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+from os import environ
 from sys import argv
 
 from vang.jenkins.api import call
@@ -21,8 +22,16 @@ def map_color(color):
     return UNKNOWN
 
 
-def get_jobs(statuses=(FAILURE, SUCCESS, NOT_BUILT, UNKNOWN), only_names=False):
-    jobs = call('/api/json')['jobs']
+def get_jobs(statuses=(FAILURE, SUCCESS, NOT_BUILT, UNKNOWN), only_names=False,
+             url=environ.get('JENKINS_REST_URL', None),
+             username=environ.get('JENKINS_USERNAME', None),
+             password=environ.get('JENKINS_PASSWORD', None),
+             verify_certificate=not environ.get('JENKINS_IGNORE_CERTIFICATE', None)):
+    jobs = call('/api/json',
+                rest_url=url,
+                username=username,
+                password=password,
+                verify_certificate=verify_certificate)['jobs']
     return [
         job['name'] if only_names else job for job in jobs
         if map_color(job.get('color', None)) in statuses

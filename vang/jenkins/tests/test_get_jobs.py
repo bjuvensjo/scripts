@@ -47,7 +47,6 @@ def test_get_jobs(mock_call, statuses, only_names, expected):
     }
 
     assert expected == get_jobs(statuses, only_names)
-    assert [call('/api/json')] == mock_call.mock_calls
 
 
 @pytest.mark.parametrize("args", [

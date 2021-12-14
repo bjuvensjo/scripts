@@ -22,9 +22,7 @@ def get_view_xml(name, job_names=tuple()):
         <filterExecutors>false</filterExecutors>
         <filterQueue>false</filterQueue>
         <properties class="hudson.model.View$PropertyList"/>
-        <jobNames>
-            <comparator class="hudson.util.CaseInsensitiveComparator"/>{job_names_xml}
-        </jobNames>
+        <jobNames>{job_names_xml}</jobNames>
         <jobFilters/>
         <columns>
             <hudson.views.StatusColumn/>
