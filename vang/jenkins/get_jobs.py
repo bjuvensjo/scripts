@@ -26,8 +26,9 @@ def get_jobs(statuses=(FAILURE, SUCCESS, NOT_BUILT, UNKNOWN), only_names=False,
              url=environ.get('JENKINS_REST_URL', None),
              username=environ.get('JENKINS_USERNAME', None),
              password=environ.get('JENKINS_PASSWORD', None),
-             verify_certificate=not environ.get('JENKINS_IGNORE_CERTIFICATE', None)):
-    jobs = call('/api/json',
+             verify_certificate=not environ.get('JENKINS_IGNORE_CERTIFICATE', None),
+             view=None):
+    jobs = call(f'/view/{view}/api/json' if view else '/api/json',
                 rest_url=url,
                 username=username,
                 password=password,
@@ -40,8 +41,8 @@ def get_jobs(statuses=(FAILURE, SUCCESS, NOT_BUILT, UNKNOWN), only_names=False,
 
 def parse_args(args):
     parser = argparse.ArgumentParser(description='Get Jenkins jobs')
-    parser.add_argument(
-        '-n', '--only_names', action='store_true', help='Get only job names')
+    parser.add_argument('-n', '--only_names', action='store_true', help='Get only job names')
+    parser.add_argument('-v', '--view', default=None, help='Get only jobs in view')
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
         '-f',
@@ -70,7 +71,7 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(only_failures, only_successes, only_names, only_not_built, only_unknown):
+def main(only_failures, only_successes, only_names, only_not_built, only_unknown, view):
     if only_failures:
         job_statuses = [FAILURE]
     elif only_successes:
@@ -82,7 +83,7 @@ def main(only_failures, only_successes, only_names, only_not_built, only_unknown
     else:
         job_statuses = [FAILURE, SUCCESS, NOT_BUILT, UNKNOWN]
 
-    for a_job in get_jobs(job_statuses, only_names):
+    for a_job in get_jobs(job_statuses, only_names, view=view):
         print(a_job)
 
 

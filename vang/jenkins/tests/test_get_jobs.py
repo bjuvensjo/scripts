@@ -1,4 +1,4 @@
-from unittest.mock import patch, call
+from unittest.mock import patch
 
 import pytest
 from pytest import raises
@@ -6,7 +6,6 @@ from pytest import raises
 from vang.jenkins.get_jobs import FAILURE
 from vang.jenkins.get_jobs import SUCCESS
 from vang.jenkins.get_jobs import get_jobs, NOT_BUILT, UNKNOWN
-from vang.jenkins.get_jobs import main
 from vang.jenkins.get_jobs import map_color
 from vang.jenkins.get_jobs import parse_args
 
@@ -67,6 +66,7 @@ def test_parse_args_raises(args):
             'only_successes': False,
             'only_not_built': False,
             'only_unknown': False,
+            'view': None
         }
     ],
     [
@@ -77,35 +77,20 @@ def test_parse_args_raises(args):
             'only_successes': False,
             'only_not_built': False,
             'only_unknown': False,
+            'view': None
         }
     ],
     [
-        '-n -s',
+        '-n -s -v MyView',
         {
             'only_failures': False,
             'only_names': True,
             'only_successes': True,
             'only_not_built': False,
             'only_unknown': False,
+            'view': 'MyView'
         }
     ],
 ])
 def test_parse_args_valid(args, expected):
     assert expected == parse_args(args.split(' ') if args else '').__dict__
-
-
-@pytest.mark.parametrize(
-    "only_failures, only_successes, only_names, only_not_built, only_unknown, expected", [
-        (False, False, True, False, False, [call(['FAILURE', 'SUCCESS', 'NOT_BUILT', 'UNKNOWN'], True)]),
-        (True, False, True, False, False, [call(['FAILURE'], True)]),
-        (False, True, True, False, False, [call(['SUCCESS'], True)]),
-    ])
-@patch('vang.jenkins.get_jobs.print')
-@patch('vang.jenkins.get_jobs.get_jobs', autospec=True)
-def test_main(mock_get_jobs, mock_print, only_failures, only_successes,
-              only_names, only_not_built, only_unknown, expected):
-    mock_get_jobs.return_value = ['job']
-
-    main(only_failures, only_successes, only_names, only_not_built, only_unknown)
-    assert expected == mock_get_jobs.mock_calls
-    assert [call('job')] == mock_print.mock_calls
