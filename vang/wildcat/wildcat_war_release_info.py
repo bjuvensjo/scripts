@@ -84,6 +84,6 @@ def parse_args(args):
 
 
 if __name__ == "__main__":  # pragma: no cover
-    pargs = parse_args(argv[1:])
-    params = [pargs.develop_branch, pargs.release_branch, pargs.release_tag]
-    main(pargs.war, *params if any(params) else [True, True, True])
+    the_args = parse_args(argv[1:])
+    params = [the_args.develop_branch, the_args.release_branch, the_args.release_tag]
+    main(the_args.war, *params if any(params) else [True, True, True])

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import argparse
 from json import dumps
-from pprint import pprint
 from sys import argv
 
 from vang.tfs.api import call_url

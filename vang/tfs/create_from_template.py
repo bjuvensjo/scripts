@@ -73,7 +73,7 @@ def parse_args(args):
     parser = ArgumentParser(
         description="Create a new repo based on template"
         " repo.\nExample: create_from_template PCS1906/foo PCS1906/bar"
-        " -sb sourcebranch -db destinationbranch -d ."
+        " -sb source_branch -db destination_branch -d ."
     )
     parser.add_argument(
         "src_repo",
@@ -108,7 +108,10 @@ def parse_args(args):
         "--replacements",
         default=[],
         nargs="+",
-        help="Pairs of replacements, e.i. the first in the pair is a string in the src_repo that will be replaced to the second in the pair in the dest_repo",
+        help=(
+            "Pairs of replacements, e.i. the first in the pair is a string in "
+            "the src_repo that will be replaced to the second in the pair in the dest_repo"
+        ),
     )
     return parser.parse_args(args)
 

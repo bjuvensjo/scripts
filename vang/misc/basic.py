@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from argparse import ArgumentParser
 from base64 import encodebytes
-from os import environ, name, system
+from os import name, system
 from sys import argv
 
 

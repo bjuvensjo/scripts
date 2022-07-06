@@ -22,7 +22,7 @@ def get_work_dirs(find: str, root: str) -> Iterable[PathLike]:
     ]
 
 
-def get_command(commands: Iterable[str]) -> Iterable[str]:
+def get_command(commands: Iterable[str]) -> list[str]:
     return [" && ".join(commands)]
 
 

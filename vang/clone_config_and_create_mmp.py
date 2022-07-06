@@ -65,6 +65,6 @@ if __name__ == "__main__":  # pragma: no cover
         help="The root dir of clones and multi module project",
     )
     parser.add_argument("-b", "--branch", default="develop", help="The branch to clone")
-    pargs = parser.parse_args()
+    p_args = parser.parse_args()
 
-    main(pargs.root_dir, pargs.branch)
+    main(p_args.root_dir, p_args.branch)

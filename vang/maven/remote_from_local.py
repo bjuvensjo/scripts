@@ -54,7 +54,7 @@ def get_file_repos_info(local_repo, files):
         root, file = f.rsplit("/", 1)
         remote_repositories = path.join(root, "_remote.repositories")
         if exists(remote_repositories):
-            yield (remote_repositories, root[len(local_repo) :], (file,))
+            yield remote_repositories, root[len(local_repo) :], (file,)
 
 
 def get_repos_info(local_repo):

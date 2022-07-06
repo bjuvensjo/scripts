@@ -24,7 +24,7 @@ def generate_random_password(
             [ascii_uppercase, number_ascii_upper],
             [special_characters, number_special],
         ]
-        for i in range(n)
+        for _ in range(n)
     ]
 
     shuffle(password)
@@ -77,5 +77,5 @@ def parse_args(args):
 
 
 if __name__ == "__main__":
-    args = {k: v for (k, v) in parse_args(argv[1:]).__dict__.items() if v}
-    print(generate_random_password(**args))
+    the_args = {k: v for (k, v) in parse_args(argv[1:]).__dict__.items() if v}
+    print(generate_random_password(**the_args))
