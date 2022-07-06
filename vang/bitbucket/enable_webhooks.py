@@ -9,11 +9,13 @@ from vang.bitbucket.utils import get_repo_specs
 
 
 def enable_repo_web_hook(spec, url):
-    uri = f'/rest/api/1.0/projects/{spec[0]}/repos/{spec[1]}' + \
-          '/settings/hooks/com.atlassian.stash.plugin.stash-web-post-' + \
-          'receive-hooks-plugin:postReceiveHook/enabled'
-    request_data = {'hook-url-0': url}
-    return spec, call(uri, request_data, 'PUT')
+    uri = (
+        f"/rest/api/1.0/projects/{spec[0]}/repos/{spec[1]}"
+        + "/settings/hooks/com.atlassian.stash.plugin.stash-web-post-"
+        + "receive-hooks-plugin:postReceiveHook/enabled"
+    )
+    request_data = {"hook-url-0": url}
+    return spec, call(uri, request_data, "PUT")
 
 
 def enable_web_hook(repo_specs, url, max_processes=10):
@@ -24,29 +26,33 @@ def enable_web_hook(repo_specs, url, max_processes=10):
 def main(url, dirs, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
     for spec, response in enable_web_hook(specs, url):
-        print(f'{spec[0]}/{spec[1]}: '
-              f'{"enabled" if response["enabled"] else " not enabled"}')
+        print(
+            f"{spec[0]}/{spec[1]}: "
+            f'{"enabled" if response["enabled"] else " not enabled"}'
+        )
 
 
 def parse_args(args):
-    parser = argparse.ArgumentParser(description='Enables Bitbucket webhooks.')
+    parser = argparse.ArgumentParser(description="Enables Bitbucket webhooks.")
     parser.add_argument(
-        'url',
-        help='The url which to send repo info to, e.g. '
-             'http://10.20.30.40:8002/wildcat/webhook/')
+        "url",
+        help="The url which to send repo info to, e.g. "
+        "http://10.20.30.40:8002/wildcat/webhook/",
+    )
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
-        '-d',
-        '--dirs',
-        nargs='*',
-        default=['.'],
-        help='Git directories to extract repo information from.')
+        "-d",
+        "--dirs",
+        nargs="*",
+        default=["."],
+        help="Git directories to extract repo information from.",
+    )
     group.add_argument(
-        '-r', '--repos', nargs='*', help='Repos, e.g. key1/repo1 key2/repo2')
-    group.add_argument(
-        '-p', '--projects', nargs='*', help='Projects, e.g. key1 key2')
+        "-r", "--repos", nargs="*", help="Repos, e.g. key1/repo1 key2/repo2"
+    )
+    group.add_argument("-p", "--projects", nargs="*", help="Projects, e.g. key1 key2")
     return parser.parse_args(args)
 
 
-if __name__ == '__main__':  # pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
     main(**parse_args(argv[1:]).__dict__)

@@ -12,53 +12,51 @@ import pytest
 
 
 def test_get_basic_auth():
-    assert 'Basic dXNlcm5hbWU6cGFzc3dvcmQ=' == \
-           get_basic_auth('username', 'password')
+    assert "Basic dXNlcm5hbWU6cGFzc3dvcmQ=" == get_basic_auth("username", "password")
 
 
 def test_get_basic_auth_header():
-    assert 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' == \
-           get_basic_auth_header('username', 'password')
+    assert "Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=" == get_basic_auth_header(
+        "username", "password"
+    )
 
 
-@pytest.mark.parametrize("args", [
-    'foo',
-])
+@pytest.mark.parametrize(
+    "args",
+    [
+        "foo",
+    ],
+)
 def test_parse_args_raises(args):
-    environ['U'] = 'U'
-    environ['P'] = 'P'
+    environ["U"] = "U"
+    environ["P"] = "P"
     with raises(SystemExit):
-        parse_args(args.split(' ') if args else '')
+        parse_args(args.split(" ") if args else "")
 
 
-@pytest.mark.parametrize("args, expected", [
-    ['-u u -p p', {
-        'password': 'p',
-        'username': 'u'
-    }]
-])
+@pytest.mark.parametrize(
+    "args, expected", [["-u u -p p", {"password": "p", "username": "u"}]]
+)
 def test_parse_args_valid(args, expected):
-    with patch('vang.misc.basic.environ', {'U': 'username', 'P': 'password'}):
-        assert expected == parse_args(args.split(' ') if args else []).__dict__
+    with patch("vang.misc.basic.environ", {"U": "username", "P": "password"}):
+        assert expected == parse_args(args.split(" ") if args else []).__dict__
 
 
 def test_main():
-    with patch('vang.misc.basic.name',
-               'posix'), patch('vang.misc.basic.system') as mock_system, patch(
-                   'builtins.print') as mock_print:
-        main('username', 'password')
+    with patch("vang.misc.basic.name", "posix"), patch(
+        "vang.misc.basic.system"
+    ) as mock_system, patch("builtins.print") as mock_print:
+        main("username", "password")
         assert [
-            call(
-                "echo 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=\\c' | pbcopy"
-            )
+            call("echo 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=\\c' | pbcopy")
         ] == mock_system.mock_calls
         assert [
-            call(
-                "'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' copied to clipboard"
-            )
+            call("'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' copied to clipboard")
         ] == mock_print.mock_calls
-    with patch('vang.misc.basic.name',
-               'not-posix'), patch('builtins.print') as mock_print:
-        main('username', 'password')
-        assert [call('Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=')
-                ] == mock_print.mock_calls
+    with patch("vang.misc.basic.name", "not-posix"), patch(
+        "builtins.print"
+    ) as mock_print:
+        main("username", "password")
+        assert [
+            call("Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=")
+        ] == mock_print.mock_calls

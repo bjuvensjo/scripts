@@ -6,10 +6,14 @@ from requests import delete, get, post, put
 
 
 def get_page(uri, params, limit, start):
-    query = f"&{'&'.join([f'{k}={v}' for k, v in params.items()])}" if params else ''
-    response = call(f'{uri}?limit={limit}&start={start}{query}')
-    return response['size'], response['values'], response[
-        'isLastPage'], response.get('nextPageStart', -1)
+    query = f"&{'&'.join([f'{k}={v}' for k, v in params.items()])}" if params else ""
+    response = call(f"{uri}?limit={limit}&start={start}{query}")
+    return (
+        response["size"],
+        response["values"],
+        response["isLastPage"],
+        response.get("nextPageStart", -1),
+    )
 
 
 def get_all(uri, params=None, take=sys.maxsize):
@@ -27,14 +31,14 @@ def get_all(uri, params=None, take=sys.maxsize):
 
 
 def call(
-        uri,
-        request_data=None,
-        method='GET',
-        only_response_code=False,
-        rest_url=environ.get('BITBUCKET_REST_URL', None),
-        username=environ.get('BITBUCKET_USERNAME', None),
-        password=environ.get('BITBUCKET_PASSWORD', None),
-        verify_certificate=not environ.get('BITBUCKET_IGNORE_CERTIFICATE', None),
+    uri,
+    request_data=None,
+    method="GET",
+    only_response_code=False,
+    rest_url=environ.get("BITBUCKET_REST_URL", None),
+    username=environ.get("BITBUCKET_USERNAME", None),
+    password=environ.get("BITBUCKET_PASSWORD", None),
+    verify_certificate=not environ.get("BITBUCKET_IGNORE_CERTIFICATE", None),
 ):
     """Makes a REST call to Bitbucket rest api 1.0.
     Depends on three environment variables:
@@ -56,15 +60,26 @@ def call(
           the JSON response
     """
 
-    m = {'DELETE': delete,
-         'GET': get,
-         'POST': post,
-         'PUT': put,
-         }[method]
+    m = {
+        "DELETE": delete,
+        "GET": get,
+        "POST": post,
+        "PUT": put,
+    }[method]
     # print(username, password, rest_url, request_data, uri)
-    params = {'url': f'{rest_url}{uri}', 'auth': (username, password), 'verify': verify_certificate}
+    params = {
+        "url": f"{rest_url}{uri}",
+        "auth": (username, password),
+        "verify": verify_certificate,
+    }
     if request_data:
-        params['json'] = request_data
+        params["json"] = request_data
 
     response = m(**params)
-    return response.status_code if only_response_code else response.json() if response.text else response.status_code()
+    return (
+        response.status_code
+        if only_response_code
+        else response.json()
+        if response.text
+        else response.status_code()
+    )

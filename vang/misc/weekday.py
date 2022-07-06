@@ -5,18 +5,18 @@ from sys import argv
 
 def name(d):
     return [
-        'monday',
-        'tuesday',
-        'wednesday',
-        'thursday',
-        'friday',
-        'saturday',
-        'sunday',
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
     ][d - 1]
 
 
 def zeller(year, month, day):
-    """ Calculates the weekday.
+    """Calculates the weekday.
 
     :param year: e.g. 2018
     :param month: 1..12
@@ -34,10 +34,10 @@ def zeller(year, month, day):
 
 
 def parse_args(args):
-    parser = ArgumentParser(description='Prints weekday')
-    parser.add_argument('year', help='Year')
-    parser.add_argument('month', help='Month')
-    parser.add_argument('day', help='Day')
+    parser = ArgumentParser(description="Prints weekday")
+    parser.add_argument("year", help="Year")
+    parser.add_argument("month", help="Month")
+    parser.add_argument("day", help="Day")
     return parser.parse_args(args)
 
 
@@ -45,5 +45,5 @@ def main(year, month, day):
     print(name(zeller(int(year), int(month), int(day))))
 
 
-if __name__ == '__main__':  # pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
     main(**parse_args(argv[1:]).__dict__)

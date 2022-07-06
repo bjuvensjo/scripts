@@ -93,178 +93,208 @@ dependency_tree_file_content = r"""[INFO] Scanning for projects...
 """
 
 
-@pytest.mark.parametrize("dependency, expected", [
-    (
-            'org.apache.camel:camel-core:jar:2.16.0:compile',
+@pytest.mark.parametrize(
+    "dependency, expected",
+    [
+        (
+            "org.apache.camel:camel-core:jar:2.16.0:compile",
             {
-                'org.apache.camel:camel-core:jar:2.16.0:compile':
-                    {
-                        'direct': {
-                            'myorg:common.cache:jar:1.0.7', 'myorg:common.event:jar:1.0.15'
-                        },
-                        'transitive': set()
-                    }
-            },
-    ),
-    (
-            'camel-core',
-            {
-                'org.apache.camel:camel-core:jar:2.16.0:compile':
-                    {
-                        'direct': {
-                            'myorg:common.cache:jar:1.0.7', 'myorg:common.event:jar:1.0.15'
-                        },
-                        'transitive': set()
-                    }
-            },
-    ),
-    (
-            'spring-beans',
-            {
-                'org.springframework:spring-beans:jar:4.2.2.RELEASE:compile':
-                    {
-                        'direct': {
-                            'myorg:common.cache:jar:1.0.7',
-                        },
-                        'transitive': set()
-                    }
-            },
-    ),
-    (
-            'junit',
-            {
-                'junit:junit:jar:4.11:test': {
-                    'direct': {
-                        'myorg:common.event:jar:1.0.15'
+                "org.apache.camel:camel-core:jar:2.16.0:compile": {
+                    "direct": {
+                        "myorg:common.cache:jar:1.0.7",
+                        "myorg:common.event:jar:1.0.15",
                     },
-                    'transitive': set()
-                },
-                'junit:junit:jar:4.12:test': {
-                    'direct': {
-                        'myorg:common.cache:jar:1.0.7'
-                    },
-                    'transitive': set()
+                    "transitive": set(),
                 }
             },
-    ),
-    (
-            'logback',
+        ),
+        (
+            "camel-core",
             {
-                'ch.qos.logback:logback-classic:jar:1.0.13:compile': {
-                    'direct': {
-                        'myorg:common.cache:jar:1.0.7',
-                        'myorg:common.event:jar:1.0.15'
+                "org.apache.camel:camel-core:jar:2.16.0:compile": {
+                    "direct": {
+                        "myorg:common.cache:jar:1.0.7",
+                        "myorg:common.event:jar:1.0.15",
                     },
-                    'transitive': set()
-                },
-                'ch.qos.logback:logback-core:jar:1.0.13:compile': {
-                    'direct': set(),
-                    'transitive': {
-                        'myorg:common.cache:jar:1.0.7',
-                        'myorg:common.event:jar:1.0.15'
-                    }
+                    "transitive": set(),
                 }
             },
-    ),
-    (
-            'foo',
+        ),
+        (
+            "spring-beans",
+            {
+                "org.springframework:spring-beans:jar:4.2.2.RELEASE:compile": {
+                    "direct": {
+                        "myorg:common.cache:jar:1.0.7",
+                    },
+                    "transitive": set(),
+                }
+            },
+        ),
+        (
+            "junit",
+            {
+                "junit:junit:jar:4.11:test": {
+                    "direct": {"myorg:common.event:jar:1.0.15"},
+                    "transitive": set(),
+                },
+                "junit:junit:jar:4.12:test": {
+                    "direct": {"myorg:common.cache:jar:1.0.7"},
+                    "transitive": set(),
+                },
+            },
+        ),
+        (
+            "logback",
+            {
+                "ch.qos.logback:logback-classic:jar:1.0.13:compile": {
+                    "direct": {
+                        "myorg:common.cache:jar:1.0.7",
+                        "myorg:common.event:jar:1.0.15",
+                    },
+                    "transitive": set(),
+                },
+                "ch.qos.logback:logback-core:jar:1.0.13:compile": {
+                    "direct": set(),
+                    "transitive": {
+                        "myorg:common.cache:jar:1.0.7",
+                        "myorg:common.event:jar:1.0.15",
+                    },
+                },
+            },
+        ),
+        (
+            "foo",
             {},
-    ),
-])
+        ),
+    ],
+)
 def test_get_dependants(dependency, expected):
-    with patch("builtins.open", mock_open(read_data=dependency_tree_file_content), create=True):
-        dependants = get_dependants('dependency_tree_file', dependency)
+    with patch(
+        "builtins.open", mock_open(read_data=dependency_tree_file_content), create=True
+    ):
+        dependants = get_dependants("dependency_tree_file", dependency)
         assert expected == dependants
 
 
 def test_main():
-    with patch('vang.maven.get_dependants.get_dependants',
-               return_value={
-                   'ch.qos.logback:logback-classic:jar:1.0.13:compile': {
-                       'direct': {
-                           'myorg:common.cache:jar:1.0.7',
-                           'myorg:common.event:jar:1.0.15'
-                       },
-                       'transitive': set()
-                   },
-                   'ch.qos.logback:logback-core:jar:1.0.13:compile': {
-                       'direct': set(),
-                       'transitive': {
-                           'myorg:common.cache:jar:1.0.7',
-                           'myorg:common.event:jar:1.0.15'
-                       }
-                   }
-               }):
+    with patch(
+        "vang.maven.get_dependants.get_dependants",
+        return_value={
+            "ch.qos.logback:logback-classic:jar:1.0.13:compile": {
+                "direct": {
+                    "myorg:common.cache:jar:1.0.7",
+                    "myorg:common.event:jar:1.0.15",
+                },
+                "transitive": set(),
+            },
+            "ch.qos.logback:logback-core:jar:1.0.13:compile": {
+                "direct": set(),
+                "transitive": {
+                    "myorg:common.cache:jar:1.0.7",
+                    "myorg:common.event:jar:1.0.15",
+                },
+            },
+        },
+    ):
 
-        with patch('vang.maven.get_dependants.pprint') as mock_print:
-            main('dependency_tree_file', 'dependency', False, False)
-            assert [call({
-                'ch.qos.logback:logback-classic:jar:1.0.13:compile':
+        with patch("vang.maven.get_dependants.pprint") as mock_print:
+            main("dependency_tree_file", "dependency", False, False)
+            assert [
+                call(
                     {
-                        'direct': {'myorg:common.cache:jar:1.0.7', 'myorg:common.event:jar:1.0.15'},
-                        'transitive': set()
-                    },
-                'ch.qos.logback:logback-core:jar:1.0.13:compile':
-                    {
-                        'direct': set(),
-                        'transitive': {'myorg:common.cache:jar:1.0.7', 'myorg:common.event:jar:1.0.15'}
+                        "ch.qos.logback:logback-classic:jar:1.0.13:compile": {
+                            "direct": {
+                                "myorg:common.cache:jar:1.0.7",
+                                "myorg:common.event:jar:1.0.15",
+                            },
+                            "transitive": set(),
+                        },
+                        "ch.qos.logback:logback-core:jar:1.0.13:compile": {
+                            "direct": set(),
+                            "transitive": {
+                                "myorg:common.cache:jar:1.0.7",
+                                "myorg:common.event:jar:1.0.15",
+                            },
+                        },
                     }
-            })] == mock_print.mock_calls
+                )
+            ] == mock_print.mock_calls
 
-        with patch('vang.maven.get_dependants.pprint') as mock_print:
-            main('dependency_tree_file', 'dependency', True, False)
-            assert [call({
-                'ch.qos.logback:logback-classic:jar:1.0.13:compile': {'myorg:common.cache:jar:1.0.7', 'myorg:common.event:jar:1.0.15'},
-                'ch.qos.logback:logback-core:jar:1.0.13:compile': set()
-            })] == mock_print.mock_calls
+        with patch("vang.maven.get_dependants.pprint") as mock_print:
+            main("dependency_tree_file", "dependency", True, False)
+            assert [
+                call(
+                    {
+                        "ch.qos.logback:logback-classic:jar:1.0.13:compile": {
+                            "myorg:common.cache:jar:1.0.7",
+                            "myorg:common.event:jar:1.0.15",
+                        },
+                        "ch.qos.logback:logback-core:jar:1.0.13:compile": set(),
+                    }
+                )
+            ] == mock_print.mock_calls
 
-        with patch('vang.maven.get_dependants.pprint') as mock_print:
-            main('dependency_tree_file', 'dependency', False, True)
-            assert [call({
-                'ch.qos.logback:logback-classic:jar:1.0.13:compile':set(),
-                'ch.qos.logback:logback-core:jar:1.0.13:compile': {'myorg:common.cache:jar:1.0.7', 'myorg:common.event:jar:1.0.15'}
-            })] == mock_print.mock_calls
+        with patch("vang.maven.get_dependants.pprint") as mock_print:
+            main("dependency_tree_file", "dependency", False, True)
+            assert [
+                call(
+                    {
+                        "ch.qos.logback:logback-classic:jar:1.0.13:compile": set(),
+                        "ch.qos.logback:logback-core:jar:1.0.13:compile": {
+                            "myorg:common.cache:jar:1.0.7",
+                            "myorg:common.event:jar:1.0.15",
+                        },
+                    }
+                )
+            ] == mock_print.mock_calls
 
 
-@pytest.mark.parametrize("args", [
-    '',
-    'foo',
-    '-d -t',
-    'foo bar -d -t',
-])
+@pytest.mark.parametrize(
+    "args",
+    [
+        "",
+        "foo",
+        "-d -t",
+        "foo bar -d -t",
+    ],
+)
 def test_parse_args_raises(args):
     with raises(SystemExit):
-        parse_args(args.split(' ') if args else args)
+        parse_args(args.split(" ") if args else args)
 
 
-@pytest.mark.parametrize("args, expected", [
+@pytest.mark.parametrize(
+    "args, expected",
     [
-        'dtf d',
-        {
-            'dependency_tree_file': 'dtf',
-            'dependency': 'd',
-            'only_direct': False,
-            'only_transitive': False,
-        }
+        [
+            "dtf d",
+            {
+                "dependency_tree_file": "dtf",
+                "dependency": "d",
+                "only_direct": False,
+                "only_transitive": False,
+            },
+        ],
+        [
+            "dtf d -d",
+            {
+                "dependency_tree_file": "dtf",
+                "dependency": "d",
+                "only_direct": True,
+                "only_transitive": False,
+            },
+        ],
+        [
+            "dtf d -t",
+            {
+                "dependency_tree_file": "dtf",
+                "dependency": "d",
+                "only_direct": False,
+                "only_transitive": True,
+            },
+        ],
     ],
-    [
-        'dtf d -d',
-        {
-            'dependency_tree_file': 'dtf',
-            'dependency': 'd',
-            'only_direct': True,
-            'only_transitive': False,
-        }
-    ],
-    [
-        'dtf d -t',
-        {
-            'dependency_tree_file': 'dtf',
-            'dependency': 'd',
-            'only_direct': False,
-            'only_transitive': True,
-        }
-    ]
-])
+)
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(' ') if args else '').__dict__
+    assert expected == parse_args(args.split(" ") if args else "").__dict__

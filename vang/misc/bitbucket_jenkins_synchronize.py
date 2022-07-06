@@ -23,56 +23,67 @@ def young_enough(commit_datetime, max_head_commit_age):
 def complement_and_filter_repos(repos, branch_pattern, max_head_commit_age):
     def inner(r):
         branches = {}
-        for b in get_all(f'/rest/api/1.0/projects/{r["key"]}/repos/{r["name"]}/branches'):
-            branch_name = b['displayId']
+        for b in get_all(
+            f'/rest/api/1.0/projects/{r["key"]}/repos/{r["name"]}/branches'
+        ):
+            branch_name = b["displayId"]
             if matches(branch_name, branch_pattern):
-                commits = get_all(f'/rest/api/1.0/projects/{r["key"]}/repos/{r["name"]}/commits',
-                                  {'until': branch_name}, 1)
+                commits = get_all(
+                    f'/rest/api/1.0/projects/{r["key"]}/repos/{r["name"]}/commits',
+                    {"until": branch_name},
+                    1,
+                )
                 if commits:
-                    commit_datetime = datetime.fromtimestamp(commits[0]['authorTimestamp'] / 1000)
+                    commit_datetime = datetime.fromtimestamp(
+                        commits[0]["authorTimestamp"] / 1000
+                    )
                     if young_enough(commit_datetime, max_head_commit_age):
                         branches[branch_name] = commit_datetime
 
         if branches:
             r = dict(r, branches=branches)
-            logging.debug('Including repo: %s', r)
+            logging.debug("Including repo: %s", r)
             return r
 
-        logging.debug('Excluding repo: %s', r)
+        logging.debug("Excluding repo: %s", r)
         return None
 
-    for repo in pmap_unordered(
-            inner,
-            repos,
-            processes=30):
+    for repo in pmap_unordered(inner, repos, processes=30):
         if repo:
             yield repo
 
 
 def find_repos(project_pattern, repo_pattern):
     for p in get_projects():
-        key = p['key']
+        key = p["key"]
         if matches(key, project_pattern):
-            for r in get_repos(p['key']):
-                if matches(r['name'], repo_pattern):
+            for r in get_repos(p["key"]):
+                if matches(r["name"], repo_pattern):
                     repo = {
-                        'key': key,
-                        'name': r['name'],
-                        'cloneUrl': get_in(r, ['links', 'clone', 0, 'href'])
+                        "key": key,
+                        "name": r["name"],
+                        "cloneUrl": get_in(r, ["links", "clone", 0, "href"])
                         # 'cloneUrl': r['links']['clone'][0]['href'],
                     }
-                    logging.debug('Found repo: %s', repo)
+                    logging.debug("Found repo: %s", repo)
                     yield repo
 
 
-def get_repo_info(project_pattern, repo_pattern, branch_pattern, tag_pattern, max_head_commit_age, **kwargs):
+def get_repo_info(
+    project_pattern,
+    repo_pattern,
+    branch_pattern,
+    tag_pattern,
+    max_head_commit_age,
+    **kwargs,
+):
     # TODO: Add tag info
     repos = find_repos(project_pattern, repo_pattern)
 
     updated_repos = {}
     for repo in complement_and_filter_repos(repos, branch_pattern, max_head_commit_age):
-        for branch in repo['branches'].keys():
-            updated_repos[(repo['key'], repo['name'], branch)] = repo
+        for branch in repo["branches"].keys():
+            updated_repos[(repo["key"], repo["name"], branch)] = repo
     return updated_repos
 
 
@@ -80,21 +91,21 @@ def get_job_info(project_pattern, repo_pattern, branch_pattern, tag_pattern, **k
     # TODO: Add tag info
     jobs = {}
     for job in get_jobs():
-        job_name = job['name']
+        job_name = job["name"]
         try:
-            key, name, branch = job_name.split('_')  # Is branch sometimes also tag?
-            if matches(key, project_pattern) and matches(name, repo_pattern) and matches(branch, branch_pattern):
-                job = {
-                    'name': job_name,
-                    'url': job['url'],
-                    'repo': (key, name, branch)
-                }
+            key, name, branch = job_name.split("_")  # Is branch sometimes also tag?
+            if (
+                matches(key, project_pattern)
+                and matches(name, repo_pattern)
+                and matches(branch, branch_pattern)
+            ):
+                job = {"name": job_name, "url": job["url"], "repo": (key, name, branch)}
                 jobs[(key, name, branch)] = job
-                logging.debug('Including job: %s', job)
+                logging.debug("Including job: %s", job)
             else:
-                logging.debug('Excluding job: %s', job_name)
+                logging.debug("Excluding job: %s", job_name)
         except ValueError:
-            logging.debug('Excluding job: %s', job_name)
+            logging.debug("Excluding job: %s", job_name)
     return jobs
 
 
@@ -102,27 +113,27 @@ def synchronize(cfg):
     repos = get_repo_info(**cfg)
     jobs = get_job_info(**cfg)
     for job in jobs.values():
-        if job['repo'] in repos:
-            logging.info('Updating job: %s', job)
+        if job["repo"] in repos:
+            logging.info("Updating job: %s", job)
         else:
-            logging.info('Deleting job: %s', job)
+            logging.info("Deleting job: %s", job)
 
     for k, repo in repos.items():
         if k not in jobs:
-            logging.info('Creating job: %s', repo)
+            logging.info("Creating job: %s", repo)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from timeit import default_timer as timer
 
     start = timer()
 
     cfg = {
-        'project_pattern': 'ESAUTO',
-        'repo_pattern': '.*',
-        'branch_pattern': 'develop|release.*',
-        'tag_pattern': [],
-        'max_head_commit_age': 30
+        "project_pattern": "ESAUTO",
+        "repo_pattern": ".*",
+        "branch_pattern": "develop|release.*",
+        "tag_pattern": [],
+        "max_head_commit_age": 30,
     }
 
     synchronize(cfg)

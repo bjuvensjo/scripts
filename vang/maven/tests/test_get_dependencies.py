@@ -1,7 +1,11 @@
 import pytest
 from pytest import raises
 
-from vang.maven.get_dependencies import split_dependency_tree, get_dependencies, parse_args
+from vang.maven.get_dependencies import (
+    split_dependency_tree,
+    get_dependencies,
+    parse_args,
+)
 
 multi_module_dependency_tree = r"""[INFO] Scanning for projects...
 [WARNING] 
@@ -95,7 +99,8 @@ def test_split_dependency_tree():
     splits = split_dependency_tree(multi_module_dependency_tree)
     assert 3 == len(splits)
     assert [] == split_dependency_tree("foo")
-    assert r"""[INFO] myorg:common.event:jar:1.0.15
+    assert (
+        r"""[INFO] myorg:common.event:jar:1.0.15
 [INFO] +- org.apache.camel:camel-core:jar:2.16.0:compile
 [INFO] |  +- org.slf4j:slf4j-api:jar:1.6.6:compile
 [INFO] |  +- com.sun.xml.bind:jaxb-core:jar:2.2.11:compile
@@ -105,7 +110,9 @@ def test_split_dependency_tree():
 [INFO] +- junit:junit:jar:4.11:test
 [INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
 [INFO] \- org.mockito:mockito-core:jar:1.9.5:test
-[INFO]    \- org.objenesis:objenesis:jar:1.0:test""" == splits[1]
+[INFO]    \- org.objenesis:objenesis:jar:1.0:test"""
+        == splits[1]
+    )
     assert r"""[INFO] my.group:ws:pom:1.0.0-SNAPSHOT""" == splits[2]
 
 
@@ -122,61 +129,71 @@ def test_get_dependencies():
 [INFO] \- org.mockito:mockito-core:jar:1.9.5:test
 [INFO]    \- org.objenesis:objenesis:jar:1.0:test"""
     module, direct, transitive = get_dependencies(split)
-    assert 'myorg:common.event:jar:1.0.15' == module
-    assert ['ch.qos.logback:logback-classic:jar:1.0.13:compile',
-            'junit:junit:jar:4.11:test',
-            'org.apache.camel:camel-core:jar:2.16.0:compile',
-            'org.mockito:mockito-core:jar:1.9.5:test'] == direct
-    assert ['ch.qos.logback:logback-core:jar:1.0.13:compile',
-            'com.sun.xml.bind:jaxb-core:jar:2.2.11:compile',
-            'com.sun.xml.bind:jaxb-impl:jar:2.2.11:compile',
-            'org.hamcrest:hamcrest-core:jar:1.3:test',
-            'org.objenesis:objenesis:jar:1.0:test',
-            'org.slf4j:slf4j-api:jar:1.6.6:compile'] == transitive
+    assert "myorg:common.event:jar:1.0.15" == module
+    assert [
+        "ch.qos.logback:logback-classic:jar:1.0.13:compile",
+        "junit:junit:jar:4.11:test",
+        "org.apache.camel:camel-core:jar:2.16.0:compile",
+        "org.mockito:mockito-core:jar:1.9.5:test",
+    ] == direct
+    assert [
+        "ch.qos.logback:logback-core:jar:1.0.13:compile",
+        "com.sun.xml.bind:jaxb-core:jar:2.2.11:compile",
+        "com.sun.xml.bind:jaxb-impl:jar:2.2.11:compile",
+        "org.hamcrest:hamcrest-core:jar:1.3:test",
+        "org.objenesis:objenesis:jar:1.0:test",
+        "org.slf4j:slf4j-api:jar:1.6.6:compile",
+    ] == transitive
 
 
-@pytest.mark.parametrize("args", [
-    '-d -t',
-    'foo -d -t',
-])
+@pytest.mark.parametrize(
+    "args",
+    [
+        "-d -t",
+        "foo -d -t",
+    ],
+)
 def test_parse_args_raises(args):
     with raises(SystemExit):
-        parse_args(args.split(' ') if args else args)
+        parse_args(args.split(" ") if args else args)
 
 
-@pytest.mark.parametrize("args, expected", [
+@pytest.mark.parametrize(
+    "args, expected",
     [
-        '',
-        {
-            'pom_file': 'pom.xml',
-            'only_direct': False,
-            'only_transitive': False,
-        }
+        [
+            "",
+            {
+                "pom_file": "pom.xml",
+                "only_direct": False,
+                "only_transitive": False,
+            },
+        ],
+        [
+            "-p pom.xml",
+            {
+                "pom_file": "pom.xml",
+                "only_direct": False,
+                "only_transitive": False,
+            },
+        ],
+        [
+            "-p pom.xml -d",
+            {
+                "pom_file": "pom.xml",
+                "only_direct": True,
+                "only_transitive": False,
+            },
+        ],
+        [
+            "-p pom.xml -t",
+            {
+                "pom_file": "pom.xml",
+                "only_direct": False,
+                "only_transitive": True,
+            },
+        ],
     ],
-    [
-        '-p pom.xml',
-        {
-            'pom_file': 'pom.xml',
-            'only_direct': False,
-            'only_transitive': False,
-        }
-    ],
-    [
-        '-p pom.xml -d',
-        {
-            'pom_file': 'pom.xml',
-            'only_direct': True,
-            'only_transitive': False,
-        }
-    ],
-    [
-        '-p pom.xml -t',
-        {
-            'pom_file': 'pom.xml',
-            'only_direct': False,
-            'only_transitive': True,
-        }
-    ]
-])
+)
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(' ') if args else '').__dict__
+    assert expected == parse_args(args.split(" ") if args else "").__dict__

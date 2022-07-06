@@ -10,8 +10,8 @@ from vang.jenkins.copy_jobs import copy_jobs
 # that takes the from_job configuration as parameter and returns the updated configuration.
 # Will be used if no job specific replacement has been specified.
 replacements = [
-    ('old_foo', 'new_foo'),
-    ('old_bar', 'new_bar'),
+    ("old_foo", "new_foo"),
+    ("old_bar", "new_bar"),
 ]
 
 # An iterable with strings and/or
@@ -23,21 +23,21 @@ replacements = [
 # i.e. this can be used to rename the clone.
 # A third element can be used to specify job specific replacements, i.e. it overrides the default replacements.
 jobs = [
-    ('from_job_1', 'to_job_1'),
-    ('from_job_2', 'to_job_2', lambda x: x),
-    ('from_job_3', 'to_job_3', [('old_baz', 'new_baz')])
+    ("from_job_1", "to_job_1"),
+    ("from_job_2", "to_job_2", lambda x: x),
+    ("from_job_3", "to_job_3", [("old_baz", "new_baz")]),
 ]
 
 # Spec of the Jenkins instance to copy from
 from_jenkins_spec = {
-    'url': environ.get('JENKINS_REST_URL', None),
-    'username': environ['JENKINS_USERNAME'],
-    'password': environ['JENKINS_PASSWORD'],
-    'verify_certificate': not environ.get('JENKINS_IGNORE_CERTIFICATE', None),
+    "url": environ.get("JENKINS_REST_URL", None),
+    "username": environ["JENKINS_USERNAME"],
+    "password": environ["JENKINS_PASSWORD"],
+    "verify_certificate": not environ.get("JENKINS_IGNORE_CERTIFICATE", None),
 }
 
 # Spec of the Jenkins instance to copy to
-to_jenkins_spec = dict(from_jenkins_spec, url='<to_jenkins_url>')
+to_jenkins_spec = dict(from_jenkins_spec, url="<to_jenkins_url>")
 
 # Call the copy_jobs function to perform the actual replacement
 copy_jobs(jobs, from_jenkins_spec, to_jenkins_spec, replacements)

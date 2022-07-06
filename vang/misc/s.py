@@ -5,10 +5,10 @@ from sys import argv
 
 
 def get_split(s):
-    for ch in ('_', '-'):
+    for ch in ("_", "-"):
         if ch in s:
             return s.split(ch)
-    return compile('[A-Z]?[^A-Z]+').findall(s)
+    return compile("[A-Z]?[^A-Z]+").findall(s)
 
 
 def get_cases(s):
@@ -17,14 +17,14 @@ def get_cases(s):
     lower = [w.lower() for w in split]
     upper = [w.upper() for w in split]
     return [
-        ''.join([lower[0]] + capital[1:]),
-        ''.join(capital),
-        ''.join(lower),
-        ''.join(upper),
-        '_'.join(lower),
-        '_'.join(upper),
-        '-'.join(lower),
-        '-'.join(upper),
+        "".join([lower[0]] + capital[1:]),
+        "".join(capital),
+        "".join(lower),
+        "".join(upper),
+        "_".join(lower),
+        "_".join(upper),
+        "-".join(lower),
+        "-".join(upper),
     ]
 
 
@@ -34,15 +34,16 @@ def get_zipped_cases(strings):
 
 def parse_args(args):
     parser = ArgumentParser(
-        description='Prints various string representation of provided strings')
-    parser.add_argument('strings', nargs='+')
+        description="Prints various string representation of provided strings"
+    )
+    parser.add_argument("strings", nargs="+")
     return parser.parse_args(args)
 
 
 def main(strings):
     for items in get_zipped_cases(strings):
-        print(' '.join(items))
+        print(" ".join(items))
 
 
-if __name__ == '__main__':  # pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
     main(**parse_args(argv[1:]).__dict__)

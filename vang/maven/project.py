@@ -60,50 +60,49 @@ POM_TEMPLATE = """<project xmlns="http://maven.apache.org/POM/4.0.0"
 
 
 def get_pom(java_version, group_id, artifact_id, version, packaging):
-    """ Returns pom content. """
-    return POM_TEMPLATE \
-        .replace('###java_version###', java_version) \
-        .replace('###group_id###', group_id) \
-        .replace('###artifact_id###', artifact_id) \
-        .replace('###version###', version) \
-        .replace('###packaging###', packaging)
+    """Returns pom content."""
+    return (
+        POM_TEMPLATE.replace("###java_version###", java_version)
+        .replace("###group_id###", group_id)
+        .replace("###artifact_id###", artifact_id)
+        .replace("###version###", version)
+        .replace("###packaging###", packaging)
+    )
 
 
 def make_dirs(output_dir, group_id, artifact_id, packaging):
-    """ Make standard dirs of Maven project. """
+    """Make standard dirs of Maven project."""
     makedirs(output_dir)
-    if packaging in ['jar', 'war']:
-        package_path = normpath(
-            '/'.join(group_id.split('.') + artifact_id.split('.')))
+    if packaging in ["jar", "war"]:
+        package_path = normpath("/".join(group_id.split(".") + artifact_id.split(".")))
         for p in [
-            '{}/src/main/java/{}', '{}/src/main/resources/{}',
-            '{}/src/test/java/{}', '{}/src/test/resources/{}'
+            "{}/src/main/java/{}",
+            "{}/src/main/resources/{}",
+            "{}/src/test/java/{}",
+            "{}/src/test/resources/{}",
         ]:
             makedirs(normpath(p.format(output_dir, package_path)))
-        if packaging in ['war']:
-            makedirs(normpath(f'{output_dir}/src/main/webapp'))
+        if packaging in ["war"]:
+            makedirs(normpath(f"{output_dir}/src/main/webapp"))
 
 
 def make_project(output_dir, java_version, group_id, artifact_id, version, packaging):
-    """ Makes Maven project. """
+    """Makes Maven project."""
     make_dirs(output_dir, group_id, artifact_id, packaging)
     pom = get_pom(java_version, group_id, artifact_id, version, packaging)
-    with open(
-            normpath(f'{output_dir}/pom.xml'), 'wt',
-            encoding='utf-8') as pom_file:
+    with open(normpath(f"{output_dir}/pom.xml"), "wt", encoding="utf-8") as pom_file:
         pom_file.write(pom)
 
 
 def main():
-    group_id = str(input('groupId (default mygroup): ') or 'mygroup')
-    artifact_id = str(input('artifactId (default slask): ') or 'slask')
-    version = str(
-        input('version (default 1.0.0-SNAPSHOT): ') or '1.0.0-SNAPSHOT')
-    packaging = str(input('packaging (default jar): ') or 'jar')
-    java_version = str(input('javaVersion (default 11): ') or '11')
-    output_dir = normpath('/'.join(artifact_id.split('.')))
+    group_id = str(input("groupId (default mygroup): ") or "mygroup")
+    artifact_id = str(input("artifactId (default slask): ") or "slask")
+    version = str(input("version (default 1.0.0-SNAPSHOT): ") or "1.0.0-SNAPSHOT")
+    packaging = str(input("packaging (default jar): ") or "jar")
+    java_version = str(input("javaVersion (default 11): ") or "11")
+    output_dir = normpath("/".join(artifact_id.split(".")))
     make_project(output_dir, java_version, group_id, artifact_id, version, packaging)
 
 
-if __name__ == '__main__':  # pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
     main()

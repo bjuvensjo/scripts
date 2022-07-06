@@ -9,7 +9,7 @@ from vang.bitbucket.utils import get_repo_specs
 
 def delete_repo(spec):
     return spec, call(
-        f'/rest/api/1.0/projects/{spec[0]}/repos/{spec[1]}',
+        f"/rest/api/1.0/projects/{spec[0]}/repos/{spec[1]}",
         method="DELETE",
     )
 
@@ -22,24 +22,25 @@ def delete_repos(repo_specs, max_processes=10):
 def main(dirs, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
     for spec, response in delete_repos(specs):
-        print(f'{spec[0]}/{spec[1]}: {response}')
+        print(f"{spec[0]}/{spec[1]}: {response}")
 
 
 def parse_args(args):
-    parser = argparse.ArgumentParser(description='Delete Bitbucket repos')
+    parser = argparse.ArgumentParser(description="Delete Bitbucket repos")
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
-        '-d',
-        '--dirs',
-        nargs='*',
-        default=['.'],
-        help='Git directories to extract repo information from')
+        "-d",
+        "--dirs",
+        nargs="*",
+        default=["."],
+        help="Git directories to extract repo information from",
+    )
     group.add_argument(
-        '-r', '--repos', nargs='*', help='Repos, e.g. key1/repo1 key2/repo2')
-    group.add_argument(
-        '-p', '--projects', nargs='*', help='Projects, e.g. key1 key2')
+        "-r", "--repos", nargs="*", help="Repos, e.g. key1/repo1 key2/repo2"
+    )
+    group.add_argument("-p", "--projects", nargs="*", help="Projects, e.g. key1 key2")
     return parser.parse_args(args)
 
 
-if __name__ == '__main__':  # pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
     main(**parse_args(argv[1:]).__dict__)

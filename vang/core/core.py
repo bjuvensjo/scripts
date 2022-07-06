@@ -7,32 +7,49 @@ from typing import Callable, Iterable, Any, Dict, Mapping
 
 
 def create_timestamp() -> str:
-    return datetime.now().strftime('%Y%m%dT%H%M%S.%f')
+    return datetime.now().strftime("%Y%m%dT%H%M%S.%f")
 
 
 def has_match(s: str, regexps: Iterable[str]) -> bool:
     return any((match(regexp, s) for regexp in regexps))
 
 
-def is_included(name: str, excludes: Iterable[str] = None, includes: Iterable[str] = None) -> bool:
-    return not (excludes and has_match(name, excludes)) and (not includes or has_match(name, includes))
+def is_included(
+    name: str, excludes: Iterable[str] = None, includes: Iterable[str] = None
+) -> bool:
+    return not (excludes and has_match(name, excludes)) and (
+        not includes or has_match(name, includes)
+    )
 
 
-def pmap(f: Callable[[Any], Any], iterable: Iterable[Any], chunksize: int = None, processes: int = 25) -> Iterable[Any]:
+def pmap(
+    f: Callable[[Any], Any],
+    iterable: Iterable[Any],
+    chunksize: int = None,
+    processes: int = 25,
+) -> Iterable[Any]:
     with Pool(processes) as pool:
         return pool.map(f, iterable, chunksize)
 
 
-def pmap_ordered(f: Callable[[Any], Any], iterable: Iterable[Any], chunksize: int = 1, processes: int = 10) -> Iterable[
-    Any]:
+def pmap_ordered(
+    f: Callable[[Any], Any],
+    iterable: Iterable[Any],
+    chunksize: int = 1,
+    processes: int = 10,
+) -> Iterable[Any]:
     with Pool(processes=processes) as pool:
         completed_processes = pool.map(f, iterable, chunksize=chunksize)
         for cp in completed_processes:
             yield cp
 
 
-def pmap_unordered(f: Callable[[Any], Any], iterable: Iterable[Any], chunksize: int = 1, processes: int = 10) -> \
-        Iterable[Any]:
+def pmap_unordered(
+    f: Callable[[Any], Any],
+    iterable: Iterable[Any],
+    chunksize: int = 1,
+    processes: int = 10,
+) -> Iterable[Any]:
     with Pool(processes=processes) as pool:
         completed_processes = pool.imap_unordered(f, iterable, chunksize=chunksize)
         for cp in completed_processes:

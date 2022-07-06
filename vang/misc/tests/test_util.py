@@ -14,14 +14,8 @@ def test_chunks():
 
 
 def test_thread_first():
-    assert thread_first('a',
-                        [add, 'b'],
-                        [lambda x: x],
-                        [add, 'c']) == 'abc'
+    assert thread_first("a", [add, "b"], [lambda x: x], [add, "c"]) == "abc"
 
 
 def test_thread_last():
-    assert thread_last('a',
-                       [add, 'b'],
-                       [lambda x: x],
-                       [add, 'c']) == 'cba'
+    assert thread_last("a", [add, "b"], [lambda x: x], [add, "c"]) == "cba"

@@ -6,15 +6,15 @@ from vang.tfs.api import call
 
 
 def delete_repo(repo):
-    organisation, project, name = repo.split('/')
+    organisation, project, name = repo.split("/")
     repo_id = call(
-        f'/{organisation}/{project}/_apis/git/repositories/{name}?api-version=3.2',
-        method='GET',
-    )['id']
+        f"/{organisation}/{project}/_apis/git/repositories/{name}?api-version=3.2",
+        method="GET",
+    )["id"]
     return call(
-        f'/{organisation}/{project}/_apis/git/repositories/{repo_id}?api-version=3.2',
-        method='DELETE',
-        only_response_code=True
+        f"/{organisation}/{project}/_apis/git/repositories/{repo_id}?api-version=3.2",
+        method="DELETE",
+        only_response_code=True,
     )
 
 
@@ -24,12 +24,12 @@ def main(repo):
 
 
 def parse_args(args):
-    parser = argparse.ArgumentParser(description='Delete TFS repository')
+    parser = argparse.ArgumentParser(description="Delete TFS repository")
     parser.add_argument(
-        'repo',
-        help='The TFS repository to delete, e.g. organisation/project/repo1')
+        "repo", help="The TFS repository to delete, e.g. organisation/project/repo1"
+    )
     return parser.parse_args(args)
 
 
-if __name__ == '__main__':  # pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
     main(**parse_args(argv[1:]).__dict__)

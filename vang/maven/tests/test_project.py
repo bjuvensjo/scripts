@@ -61,80 +61,88 @@ def test_get_pom():
     </dependencies>   
 </project>
 """
-    print(get_pom('1.8', 'group_id', 'artifact_id', 'version', 'packaging'))
-    assert expected == get_pom('1.8', 'group_id', 'artifact_id', 'version', 'packaging')
+    print(get_pom("1.8", "group_id", "artifact_id", "version", "packaging"))
+    assert expected == get_pom("1.8", "group_id", "artifact_id", "version", "packaging")
 
 
-@pytest.mark.parametrize("packaging, expected", [
-    ('jar', [
-        call('output_dir'),
-        call('output_dir/src/main/java/group_id/artifact_id'),
-        call('output_dir/src/main/resources/group_id/artifact_id'),
-        call('output_dir/src/test/java/group_id/artifact_id'),
-        call('output_dir/src/test/resources/group_id/artifact_id')
-    ]),
-    ('war', [
-        call('output_dir'),
-        call('output_dir/src/main/java/group_id/artifact_id'),
-        call('output_dir/src/main/resources/group_id/artifact_id'),
-        call('output_dir/src/test/java/group_id/artifact_id'),
-        call('output_dir/src/test/resources/group_id/artifact_id'),
-        call('output_dir/src/main/webapp')
-    ]),
-])
+@pytest.mark.parametrize(
+    "packaging, expected",
+    [
+        (
+            "jar",
+            [
+                call("output_dir"),
+                call("output_dir/src/main/java/group_id/artifact_id"),
+                call("output_dir/src/main/resources/group_id/artifact_id"),
+                call("output_dir/src/test/java/group_id/artifact_id"),
+                call("output_dir/src/test/resources/group_id/artifact_id"),
+            ],
+        ),
+        (
+            "war",
+            [
+                call("output_dir"),
+                call("output_dir/src/main/java/group_id/artifact_id"),
+                call("output_dir/src/main/resources/group_id/artifact_id"),
+                call("output_dir/src/test/java/group_id/artifact_id"),
+                call("output_dir/src/test/resources/group_id/artifact_id"),
+                call("output_dir/src/main/webapp"),
+            ],
+        ),
+    ],
+)
 def test_make_dirs(packaging, expected):
-    with patch('vang.maven.project.makedirs') as mock_makedirs:
-        make_dirs('output_dir', 'group_id', 'artifact_id', packaging)
+    with patch("vang.maven.project.makedirs") as mock_makedirs:
+        make_dirs("output_dir", "group_id", "artifact_id", packaging)
         assert expected == mock_makedirs.mock_calls
 
 
 def test_make_project():
-    with patch('vang.maven.project.make_dirs') as mock_make_dirs:
-        with patch(
-                'vang.maven.project.get_pom',
-                return_value='pom') as mock_get_pom:
-            with patch('vang.maven.project.open') as mock_open:
+    with patch("vang.maven.project.make_dirs") as mock_make_dirs:
+        with patch("vang.maven.project.get_pom", return_value="pom") as mock_get_pom:
+            with patch("vang.maven.project.open") as mock_open:
                 make_project(
-                    'output_dir',
-                    '1.8',
-                    'group_id',
-                    'artifact_id',
-                    'version',
-                    'packaging',
+                    "output_dir",
+                    "1.8",
+                    "group_id",
+                    "artifact_id",
+                    "version",
+                    "packaging",
                 )
                 assert [
-                           call(
-                               'output_dir',
-                               'group_id',
-                               'artifact_id',
-                               'packaging',
-                           )
-                       ] == mock_make_dirs.mock_calls
+                    call(
+                        "output_dir",
+                        "group_id",
+                        "artifact_id",
+                        "packaging",
+                    )
+                ] == mock_make_dirs.mock_calls
                 assert [
-                           call(
-                               '1.8',
-                               'group_id',
-                               'artifact_id',
-                               'version',
-                               'packaging',
-                           )
-                       ] == mock_get_pom.mock_calls
+                    call(
+                        "1.8",
+                        "group_id",
+                        "artifact_id",
+                        "version",
+                        "packaging",
+                    )
+                ] == mock_get_pom.mock_calls
                 assert [
-                           call('output_dir/pom.xml', 'wt', encoding='utf-8'),
-                           call().__enter__(),
-                           call().__enter__().write('pom'),
-                           call().__exit__(None, None, None),
-                       ] == mock_open.mock_calls
+                    call("output_dir/pom.xml", "wt", encoding="utf-8"),
+                    call().__enter__(),
+                    call().__enter__().write("pom"),
+                    call().__exit__(None, None, None),
+                ] == mock_open.mock_calls
 
 
-@pytest.mark.parametrize("input, expected", [
-    ('', [call('slask', '11', 'mygroup', 'slask', '1.0.0-SNAPSHOT', 'jar')]),
-    ('input', [call('input', 'input', 'input', 'input', 'input', 'input')]),
-])
+@pytest.mark.parametrize(
+    "input, expected",
+    [
+        ("", [call("slask", "11", "mygroup", "slask", "1.0.0-SNAPSHOT", "jar")]),
+        ("input", [call("input", "input", "input", "input", "input", "input")]),
+    ],
+)
 def test_main(input, expected):
-    with patch(
-            'vang.maven.project.input',
-            return_value=input) as mock_make_project:
-        with patch('vang.maven.project.make_project') as mock_make_project:
+    with patch("vang.maven.project.input", return_value=input) as mock_make_project:
+        with patch("vang.maven.project.make_project") as mock_make_project:
             main()
             assert expected == mock_make_project.mock_calls

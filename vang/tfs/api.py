@@ -6,12 +6,12 @@ from requests import delete, get, post, put
 
 
 def call(
-        uri,
-        request_data=None,
-        method='GET',
-        only_response_code=False,
-        rest_url=environ.get('TFS_REST_URL', None),
-        token=environ.get('TFS_TOKEN', None),
+    uri,
+    request_data=None,
+    method="GET",
+    only_response_code=False,
+    rest_url=environ.get("TFS_REST_URL", None),
+    token=environ.get("TFS_TOKEN", None),
 ):
     """Makes a REST call to TFS rest api.
     May use three environment variables:
@@ -29,16 +29,16 @@ def call(
     Return:
           the JSON response
     """
-    return call_url(f'{rest_url}{uri}', request_data, method, only_response_code, token)
+    return call_url(f"{rest_url}{uri}", request_data, method, only_response_code, token)
 
 
 def call_url(
-        url,
-        request_data=None,
-        method='GET',
-        only_response_code=False,
-        token=environ.get('TFS_TOKEN', None),
-        verify_certificate=False,
+    url,
+    request_data=None,
+    method="GET",
+    only_response_code=False,
+    token=environ.get("TFS_TOKEN", None),
+    verify_certificate=False,
 ):
     """Makes a REST call to TFS rest api.
     May use three environment variables:
@@ -55,15 +55,22 @@ def call_url(
     Return:
           the JSON response
     """
-    m = {'DELETE': delete,
-         'GET': get,
-         'POST': post,
-         'PUT': put,
-         }[method]
+    m = {
+        "DELETE": delete,
+        "GET": get,
+        "POST": post,
+        "PUT": put,
+    }[method]
 
-    params = {'url': url, 'auth': ('', token), 'verify': verify_certificate}
+    params = {"url": url, "auth": ("", token), "verify": verify_certificate}
     if request_data:
-        params['json'] = request_data
+        params["json"] = request_data
 
     response = m(**params)
-    return response.status_code if only_response_code else response.json() if response.text else response.status_code()
+    return (
+        response.status_code
+        if only_response_code
+        else response.json()
+        if response.text
+        else response.status_code()
+    )

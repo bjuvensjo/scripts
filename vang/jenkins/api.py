@@ -6,14 +6,14 @@ from requests import delete, get, post, put
 
 
 def call(
-        uri,
-        request_data=None,
-        method='GET',
-        only_response_code=False,
-        rest_url=environ.get('JENKINS_REST_URL', None),
-        username=environ.get('JENKINS_USERNAME', None),
-        password=environ.get('JENKINS_PASSWORD', None),
-        verify_certificate=not environ.get('JENKINS_IGNORE_CERTIFICATE', None),
+    uri,
+    request_data=None,
+    method="GET",
+    only_response_code=False,
+    rest_url=environ.get("JENKINS_REST_URL", None),
+    username=environ.get("JENKINS_USERNAME", None),
+    password=environ.get("JENKINS_PASSWORD", None),
+    verify_certificate=not environ.get("JENKINS_IGNORE_CERTIFICATE", None),
 ):
     """Makes a REST call to Jenkins rest api.
     May use three environment variables:
@@ -34,28 +34,42 @@ def call(
     Return:
           the response
     """
-    return call_url(f'{rest_url}{uri}', request_data, method, only_response_code, username, password,
-                    verify_certificate)
+    return call_url(
+        f"{rest_url}{uri}",
+        request_data,
+        method,
+        only_response_code,
+        username,
+        password,
+        verify_certificate,
+    )
 
 
 def call_url(
-        url,
-        request_data=None,
-        method='GET',
-        only_response_code=False,
-        username=environ.get('JENKINS_USERNAME', None),
-        password=environ.get('JENKINS_PASSWORD', None),
-        verify_certificate=True,
+    url,
+    request_data=None,
+    method="GET",
+    only_response_code=False,
+    username=environ.get("JENKINS_USERNAME", None),
+    password=environ.get("JENKINS_PASSWORD", None),
+    verify_certificate=True,
 ):
-    m = {'DELETE': delete,
-         'GET': get,
-         'POST': post,
-         'PUT': put,
-         }[method]
+    m = {
+        "DELETE": delete,
+        "GET": get,
+        "POST": post,
+        "PUT": put,
+    }[method]
 
-    params = {'url': url, 'auth': (username, password), 'verify': verify_certificate}
+    params = {"url": url, "auth": (username, password), "verify": verify_certificate}
     if request_data:
-        params['json'] = request_data
+        params["json"] = request_data
 
     response = m(**params)
-    return response.status_code if only_response_code else response.json() if response.text else response.status_code()
+    return (
+        response.status_code
+        if only_response_code
+        else response.json()
+        if response.text
+        else response.status_code()
+    )

@@ -11,86 +11,90 @@ from vang.jenkins.get_jobs import parse_args
 
 
 def test_map_color():
-    assert SUCCESS == map_color('blue')
-    assert NOT_BUILT == map_color('notbuilt')
-    assert FAILURE == map_color('red')
-    assert UNKNOWN == map_color('')
-    assert UNKNOWN == map_color('x')
+    assert SUCCESS == map_color("blue")
+    assert NOT_BUILT == map_color("notbuilt")
+    assert FAILURE == map_color("red")
+    assert UNKNOWN == map_color("")
+    assert UNKNOWN == map_color("x")
 
 
-@pytest.mark.parametrize("statuses, only_names, expected", [
-    ([SUCCESS, FAILURE], False, [
-        {
-            'color': 'blue',
-            'name': 'success'
-        },
-        {
-            'color': 'red',
-            'name': 'failure'
-        },
-    ]),
-    ([SUCCESS, FAILURE], True, ['success', 'failure']),
-    ([SUCCESS], True, ['success']),
-    ([FAILURE], True, ['failure']),
-])
-@patch('vang.jenkins.get_jobs.call', autospec=True)
+@pytest.mark.parametrize(
+    "statuses, only_names, expected",
+    [
+        (
+            [SUCCESS, FAILURE],
+            False,
+            [
+                {"color": "blue", "name": "success"},
+                {"color": "red", "name": "failure"},
+            ],
+        ),
+        ([SUCCESS, FAILURE], True, ["success", "failure"]),
+        ([SUCCESS], True, ["success"]),
+        ([FAILURE], True, ["failure"]),
+    ],
+)
+@patch("vang.jenkins.get_jobs.call", autospec=True)
 def test_get_jobs(mock_call, statuses, only_names, expected):
     mock_call.return_value = {
-        'jobs': [{
-            'name': 'success',
-            'color': 'blue'
-        }, {
-            'name': 'failure',
-            'color': 'red'
-        }]
+        "jobs": [
+            {"name": "success", "color": "blue"},
+            {"name": "failure", "color": "red"},
+        ]
     }
 
     assert expected == get_jobs(statuses, only_names)
 
 
-@pytest.mark.parametrize("args", [
-    '1',
-    '-f f -s s',
-])
+@pytest.mark.parametrize(
+    "args",
+    [
+        "1",
+        "-f f -s s",
+    ],
+)
 def test_parse_args_raises(args):
     with raises(SystemExit):
-        parse_args(args.split(' ') if args else args)
+        parse_args(args.split(" ") if args else args)
 
 
-@pytest.mark.parametrize("args, expected", [
+@pytest.mark.parametrize(
+    "args, expected",
     [
-        '',
-        {
-            'only_failures': False,
-            'only_names': False,
-            'only_successes': False,
-            'only_not_built': False,
-            'only_unknown': False,
-            'view': None
-        }
+        [
+            "",
+            {
+                "only_failures": False,
+                "only_names": False,
+                "only_successes": False,
+                "only_not_built": False,
+                "only_unknown": False,
+                "view": None,
+            },
+        ],
+        [
+            "-n -f",
+            {
+                "only_failures": True,
+                "only_names": True,
+                "only_successes": False,
+                "only_not_built": False,
+                "only_unknown": False,
+                "view": None,
+            },
+        ],
+        [
+            "-n -s -v MyView",
+            {
+                "only_failures": False,
+                "only_names": True,
+                "only_successes": True,
+                "only_not_built": False,
+                "only_unknown": False,
+                "view": "MyView",
+            },
+        ],
     ],
-    [
-        '-n -f',
-        {
-            'only_failures': True,
-            'only_names': True,
-            'only_successes': False,
-            'only_not_built': False,
-            'only_unknown': False,
-            'view': None
-        }
-    ],
-    [
-        '-n -s -v MyView',
-        {
-            'only_failures': False,
-            'only_names': True,
-            'only_successes': True,
-            'only_not_built': False,
-            'only_unknown': False,
-            'view': 'MyView'
-        }
-    ],
-])
+)
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(' ') if args else '').__dict__
+    assert expected == parse_args(args.split(" ") if args else "").__dict__

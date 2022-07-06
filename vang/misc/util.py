@@ -3,9 +3,9 @@ from functools import reduce
 
 
 def chunks(l, n):
-    """ Yield successive n-sized chunks from l. """
+    """Yield successive n-sized chunks from l."""
     for i in range(0, len(l), n):
-        yield l[i:i + n]
+        yield l[i : i + n]
 
 
 def thread_first(arg, *partials):
@@ -26,7 +26,9 @@ def thread_first(arg, *partials):
                 (add, 'y'))
     > 'axcy'
     """
-    return reduce(lambda mem, p: p[0](mem, *p[1:]) if len(p) > 1 else p[0](mem), partials, arg)
+    return reduce(
+        lambda mem, p: p[0](mem, *p[1:]) if len(p) > 1 else p[0](mem), partials, arg
+    )
 
 
 def thread_last(arg, *partials):
@@ -40,4 +42,6 @@ def thread_last(arg, *partials):
                 [add, 'c'])
     > 'cba'
     """
-    return reduce(lambda mem, p: p[0](*p[1:], mem) if len(p) > 1 else p[0](mem), partials, arg)
+    return reduce(
+        lambda mem, p: p[0](*p[1:], mem) if len(p) > 1 else p[0](mem), partials, arg
+    )

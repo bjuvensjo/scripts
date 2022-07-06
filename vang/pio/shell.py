@@ -11,11 +11,13 @@ from vang.core.core import pmap_unordered
 log = logging.getLogger(__name__)
 
 
-def run_command(command: str,
-                return_output: bool = False,
-                cwd: str = None,
-                check: bool = True,
-                timeout: int = None) -> Tuple[int, Union[str, int]]:
+def run_command(
+    command: str,
+    return_output: bool = False,
+    cwd: str = None,
+    check: bool = True,
+    timeout: int = None,
+) -> Tuple[int, Union[str, int]]:
     cp = run(
         command,
         cwd=cwd,
@@ -25,12 +27,17 @@ def run_command(command: str,
         timeout=timeout,
         shell=True,
     )
-    return (cp.returncode,
-            cp.stdout.decode().strip()) if return_output else cp.returncode
+    return (
+        (cp.returncode, cp.stdout.decode().strip()) if return_output else cp.returncode
+    )
 
 
-def run_commands(commands_and_cwds: Iterable[Iterable[str]], max_processes: int = 10, check: bool = True,
-                 timeout: int = None) -> Iterable[Any]:
+def run_commands(
+    commands_and_cwds: Iterable[Iterable[str]],
+    max_processes: int = 10,
+    check: bool = True,
+    timeout: int = None,
+) -> Iterable[Any]:
     """
     Runs commands in parallel.
 
@@ -58,4 +65,5 @@ def run_commands(commands_and_cwds: Iterable[Iterable[str]], max_processes: int 
             raise e
 
     yield from pmap_unordered(
-        f, commands_and_cwds, processes=max_processes, chunksize=1)
+        f, commands_and_cwds, processes=max_processes, chunksize=1
+    )
