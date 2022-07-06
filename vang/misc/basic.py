@@ -31,19 +31,15 @@ def parse_args(args):
     parser = ArgumentParser(
         description="Prints and place in clipboard basic authentication header"
     )
-    # parser.add_argument(
-    #     '-u', '--username', help='Username', default=environ['U'])
-    # parser.add_argument(
-    #     '-p', '--password', help='Password', default=environ['P'])
-    parser.add_argument("-u", "--username", help="Username")
-    parser.add_argument("-p", "--password", help="Password")
+    parser.add_argument("username", help="Username")
+    parser.add_argument("password", help="Password")
     return parser.parse_args(args)
 
 
 def main(username, password):
     basic_auth_header = get_basic_auth_header(username, password)
     if name == "posix":
-        system(f"echo '{basic_auth_header}\c' | pbcopy")
+        system(f"echo '{basic_auth_header}\\c' | pbcopy")
         print(f"'{basic_auth_header}' copied to clipboard")
     else:
         print(basic_auth_header)

@@ -1,4 +1,3 @@
-from os import environ
 from unittest.mock import call, patch
 
 from pytest import raises
@@ -28,18 +27,15 @@ def test_get_basic_auth_header():
     ],
 )
 def test_parse_args_raises(args):
-    environ["U"] = "U"
-    environ["P"] = "P"
     with raises(SystemExit):
         parse_args(args.split(" ") if args else "")
 
 
 @pytest.mark.parametrize(
-    "args, expected", [["-u u -p p", {"password": "p", "username": "u"}]]
+    "args, expected", [["foo bar", {"password": "bar", "username": "foo"}]]
 )
 def test_parse_args_valid(args, expected):
-    with patch("vang.misc.basic.environ", {"U": "username", "P": "password"}):
-        assert expected == parse_args(args.split(" ") if args else []).__dict__
+    assert expected == parse_args(args.split(" ") if args else []).__dict__
 
 
 def test_main():
