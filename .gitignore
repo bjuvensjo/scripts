@@ -19,3 +19,5 @@ README.html
 .coverage
 htmlcov/
 work_dir
+.coverage*
+.vscode/
