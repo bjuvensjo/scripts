@@ -78,8 +78,10 @@ Miscellaneous scripts
     ln -s ~/git/scripts/vang/tfs/get_repos.py ~/bin/tfs-get-repos
 
 
-## Work on it
+## Develop
 
-1. Create a virtual environment
+### Using conda
 
-    conda create -n scripts python=3.10 black flake8 jedi more-itertools pytest pytest-cov requests twine wheel yapf
+    conda create -n scripts python=3.10 
+    conda activate scripts
+	pip install -r requirements.txt
