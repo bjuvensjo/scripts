@@ -17,6 +17,7 @@ README.html
 /dist
 **/*egg-info
 .coverage
+env/
 htmlcov/
 work_dir
 .coverage*
