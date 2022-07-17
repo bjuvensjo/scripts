@@ -11,17 +11,6 @@ from vang.pio.rsr import _replace_in_file, _in
 def file_content_replace_function(line: str, old: str, new: str) -> str:
     line = line.replace(old, new)
     line = line.replace(old.replace(".", sep), new.replace(".", sep))
-
-    # line = line.replace(f'<groupId>{old}</groupId>', f'<groupId>{new}</groupId>')
-    # line = line.replace(f'"{old}', f'"{new}')
-    # line = line.replace('{' + old, '{' + new)
-    # line = line.replace('<' + old, '<' + new)
-    # line = line.replace('=' + old, '=' + new)
-    # line = line.replace("='" + old, "='" + new)
-    # line = line.replace(old.replace('.', sep), new.replace('.', sep))
-    # line = sub(f'^package +{old}', f'package {new}', line)
-    # line = sub(f'^import +{old}', f'import {new}', line)
-    # line = sub(f'^import +static +{old}', f'import static {new}', line)
     return line
 
 
@@ -57,13 +46,13 @@ def _regroup(root: str, excludes: Iterable[str], old: str, new: str) -> None:
                     rmdir(join(dir_path, dir_name))
 
 
-def regroup(old: str, new: str, dirs: Iterable[str]) -> None:
+def do_regroup(old: str, new: str, dirs: Iterable[str]) -> None:
     for d in dirs:
         _regroup(d, [".git", ".gitignore", "target"], old, new)
 
 
-def main(old: str, new: str, dirs: Iterable[str]) -> None:
-    regroup(old, new, dirs)
+def regroup(old: str, new: str, dirs: Iterable[str]) -> None:
+    do_regroup(old, new, dirs)
 
 
 def parse_args(args):
@@ -76,5 +65,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    regroup(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

@@ -92,21 +92,14 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(dirs=(".",), excluded=(), included=(".*",)):
+def wc(dirs=(".",), excluded=(), included=(".*",)):
     result = count_all(dirs, excluded=excluded, included=included)
     pprint(result)
 
 
-if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+def main() -> None:  # pragma: no cover
+    wc(**parse_args(argv[1:]).__dict__)
 
-# code_dirs = ['/Users/magnus/git/rsimulator/rsimulator-camel-direct',
-#              '/Users/magnus/git/rsimulator/rsimulator-core',
-#              '/Users/magnus/git/rsimulator/rsimulator-cxf-rt-transport']
-# code_dirs = ['/Users/magnus/git/rsimulator']
-#
-# result = count_all(
-#     code_dirs,
-#     # excluded=('.*Test\..*', '.*IT\..*', 'test.*'),
-#     included=('.*\.groovy', '.*\.java', '.*\.kt', '.*\.py', 'Jenkinsfile'))
-# pprint(result)
+
+if __name__ == "__main__":  # pragma: no cover
+    main()

@@ -3,7 +3,7 @@ from unittest.mock import call, patch
 import pytest
 
 from vang.maven.project import get_pom
-from vang.maven.project import main
+from vang.maven.project import project
 from vang.maven.project import make_dirs
 from vang.maven.project import make_project
 
@@ -62,7 +62,7 @@ def test_get_pom():
 </project>
 """
     print(get_pom("1.8", "group_id", "artifact_id", "version", "packaging"))
-    assert expected == get_pom("1.8", "group_id", "artifact_id", "version", "packaging")
+    assert get_pom("1.8", "group_id", "artifact_id", "version", "packaging") == expected
 
 
 @pytest.mark.parametrize(
@@ -94,7 +94,7 @@ def test_get_pom():
 def test_make_dirs(packaging, expected):
     with patch("vang.maven.project.makedirs") as mock_makedirs:
         make_dirs("output_dir", "group_id", "artifact_id", packaging)
-        assert expected == mock_makedirs.mock_calls
+        assert mock_makedirs.mock_calls == expected
 
 
 def test_make_project():
@@ -109,15 +109,15 @@ def test_make_project():
                     "version",
                     "packaging",
                 )
-                assert [
+                assert mock_make_dirs.mock_calls == [
                     call(
                         "output_dir",
                         "group_id",
                         "artifact_id",
                         "packaging",
                     )
-                ] == mock_make_dirs.mock_calls
-                assert [
+                ]
+                assert mock_get_pom.mock_calls == [
                     call(
                         "1.8",
                         "group_id",
@@ -125,13 +125,13 @@ def test_make_project():
                         "version",
                         "packaging",
                     )
-                ] == mock_get_pom.mock_calls
-                assert [
+                ]
+                assert mock_open.mock_calls == [
                     call("output_dir/pom.xml", "wt", encoding="utf-8"),
                     call().__enter__(),
                     call().__enter__().write("pom"),
                     call().__exit__(None, None, None),
-                ] == mock_open.mock_calls
+                ]
 
 
 @pytest.mark.parametrize(
@@ -141,8 +141,8 @@ def test_make_project():
         ("input", [call("input", "input", "input", "input", "input", "input")]),
     ],
 )
-def test_main(input, expected):
+def test_project(input, expected):
     with patch("vang.maven.project.input", return_value=input) as mock_make_project:
         with patch("vang.maven.project.make_project") as mock_make_project:
-            main()
-            assert expected == mock_make_project.mock_calls
+            project()
+            assert mock_make_project.mock_calls == expected

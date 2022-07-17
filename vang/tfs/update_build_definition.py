@@ -5,11 +5,11 @@ from sys import argv
 
 from vang.tfs.api import call_url
 from vang.tfs.definition_utils import get_definition, get_definition_name
-from vang.tfs.list_build_definitions import list_build_definitions
+from vang.tfs.list_build_definitions import do_list_build_definitions
 
 
 def get_current_definition(organisation, project, definition_name):
-    return list_build_definitions(
+    return do_list_build_definitions(
         projects=(f"{organisation}/{project}",), filter_name=definition_name
     )[definition_name]
 
@@ -41,7 +41,7 @@ def get_build_definition(
     )
 
 
-def update_build_definition(definition_url, build_definition):
+def do_update_build_definition(definition_url, build_definition):
     return call_url(
         f"{definition_url}&api-version=3.2",
         request_data=build_definition,
@@ -50,7 +50,7 @@ def update_build_definition(definition_url, build_definition):
     )
 
 
-def main(project, repo, branch, template, comment=None):
+def update_build_definition(project, repo, branch, template, comment=None):
     organisation, project = project.split("/")
     definition_name = get_definition_name(project, repo, branch)
     definition = get_current_definition(organisation, project, definition_name)
@@ -74,7 +74,7 @@ def main(project, repo, branch, template, comment=None):
         )
     )
 
-    response = update_build_definition(
+    response = do_update_build_definition(
         definition_url,
         get_build_definition(
             template,
@@ -108,5 +108,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    update_build_definition(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

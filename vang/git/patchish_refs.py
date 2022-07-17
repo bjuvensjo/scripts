@@ -45,9 +45,9 @@ def get_unpatched_refs(patchs_refs, applied_refs):
 
 
 def is_valid(patchs_refs, applied_refs):
-    return all([p == a for p, a in zip(patchs_refs, applied_refs)]) and not len(
+    return all([p == a for p, a in zip(patchs_refs, applied_refs)]) and len(
         applied_refs
-    ) > len(patchs_refs)
+    ) <= len(patchs_refs)
 
 
 def main(patch_repo, ref_pattern, apply_repo):
@@ -86,20 +86,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-# rm -rf sign/patch; rm -rf lf-sign; md lf-sign; cd lf-sign; git init
-# main(
-#     '/Users/ei4577/slask/slask/PCS1806/sign',
-#     'release.*',
-#     '/Users/ei4577/slask/slask/PCS1806/lf-sign',
-# )
-# rm -rf lf-process.mortgage; md lf-process.mortgage; cd lf-process.mortgage; git init
 the_applied_patches = main(
     "/Users/ei4577/slask/slask/PCS1806/process.mortgage",
     "release.*",
     "/Users/ei4577/slask/slask/PCS1806/lf-process.mortgage",
 )
 pprint(the_applied_patches)
-
-# if __name__ == '__main__':  # pragma: no cover
-#     args = parse_args(argv[1:])
-#     main(args.patch_repo, args.ref_pattern, args.output, args.apply_repo)

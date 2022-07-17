@@ -7,7 +7,7 @@ from sys import argv
 from vang.tfs.api import call
 
 
-def create_repo(repo):
+def do_create_repo(repo):
     organisation, project, name = repo.split("/")
     return call(
         f"/{organisation}/{project}/_apis/git/repositories?api-version=3.2",
@@ -16,8 +16,8 @@ def create_repo(repo):
     )
 
 
-def main(repo):
-    response = create_repo(repo)
+def create_repo(repo):
+    response = do_create_repo(repo)
     commands = (
         f'    git remote add origin {response["remoteUrl"]}\n'
         "    git push -u origin develop"
@@ -28,7 +28,7 @@ def main(repo):
     )
     print(commands)
     if os_name == "posix":
-        system(f'echo "{commands}\c" | pbcopy')
+        system(f'echo "{commands}\\c" | pbcopy')
         print("(The commands are copied to the clipboard)")
 
 
@@ -40,5 +40,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    create_repo(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

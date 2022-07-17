@@ -9,5 +9,5 @@ from vang.nexus3.upload import read_file
     read_data=b"Nobody inspects the spammish repetition",
 )
 def test_read_file(mock_file):
-    assert b"Nobody inspects the spammish repetition" == read_file("file_path")
+    assert read_file("file_path") == b"Nobody inspects the spammish repetition"
     mock_file.assert_called_with("file_path", "rb")

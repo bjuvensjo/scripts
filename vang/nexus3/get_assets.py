@@ -19,7 +19,7 @@ def get_assets_page(repository, url, username, password, continuation_token=None
     return response.json()
 
 
-def get_assets(repository, url, username, password):
+def do_get_assets(repository, url, username, password):
     assets_page = get_assets_page(repository, url, username, password)
     continuation_token = assets_page["continuationToken"]
     items = assets_page["items"]
@@ -56,9 +56,13 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(repository, url, username, password):
-    pprint(get_assets(repository, url, username, password))
+def get_assets(repository, url, username, password):
+    pprint(do_get_assets(repository, url, username, password))
+
+
+def main() -> None:  # pragma: no cover
+    get_assets(**parse_args(argv[1:]).__dict__)
 
 
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

@@ -8,14 +8,14 @@ from vang.bitbucket.utils import get_repo_specs
 
 @patch("vang.bitbucket.utils.run_command", return_value=(0, "develop"), autospec=True)
 def test_get_branch(mock_run_command):
-    assert "develop" == get_branch("clone_dir/.git")
-    assert [
+    assert get_branch("clone_dir/.git") == "develop"
+    assert mock_run_command.mock_calls == [
         call(
             "git rev-parse --abbrev-ref HEAD",
             True,
             "clone_dir/.git",
         )
-    ] == mock_run_command.mock_calls
+    ]
 
 
 @patch(
@@ -28,9 +28,9 @@ def test_get_branch(mock_run_command):
     autospec=True,
 )
 def test_get_clone_url(mock_run_command):
-    assert "http://myorg/stash/scm/project/repo.git" == get_clone_url("clone_dir/.git")
-    assert "http://myorg/stash/scm/project/repo.git" == get_clone_url("clone_dir")
-    assert [
+    assert get_clone_url("clone_dir/.git") == "http://myorg/stash/scm/project/repo.git"
+    assert get_clone_url("clone_dir") == "http://myorg/stash/scm/project/repo.git"
+    assert mock_run_command.mock_calls == [
         call(
             "git --git-dir clone_dir/.git remote get-url origin",
             True,
@@ -39,7 +39,7 @@ def test_get_clone_url(mock_run_command):
         ),
         call("git --git-dir clone_dir remote get-url origin", True, "clone_dir", False),
         call("git --git-dir clone_dir/.git remote get-url origin", True, "clone_dir"),
-    ] == mock_run_command.mock_calls
+    ]
 
 
 @patch(
@@ -48,8 +48,8 @@ def test_get_clone_url(mock_run_command):
     autospec=True,
 )
 def test_get_project_and_repo(mock_get_clone_url):
-    assert ("PROJECT", "repo") == get_project_and_repo("clone_dir")
-    assert [call("clone_dir")] == mock_get_clone_url.mock_calls
+    assert get_project_and_repo("clone_dir") == ("PROJECT", "repo")
+    assert mock_get_clone_url.mock_calls == [call("clone_dir")]
 
 
 @patch(
@@ -63,27 +63,27 @@ def test_get_project_and_repo(mock_get_clone_url):
     autospec=True,
 )
 def test_get_repo_specs(mock_get_all_repos, mock_get_project_and_repo):
-    assert [("PROJECT", "r1"), ("PROJECT", "r2")] == list(
-        get_repo_specs(["PROJECT/r1", "PROJECT/r2"])
-    )
-
-    assert [("PROJECT", "r1"), ("PROJECT", "r2")] == list(
-        get_repo_specs(repos=["PROJECT/r1", "PROJECT/r2"])
-    )
-
-    assert [("PROJECT", "r1"), ("PROJECT", "r2")] == list(
-        get_repo_specs(projects=["PROJECT"])
-    )
-
-    assert [
+    assert list(get_repo_specs(["PROJECT/r1", "PROJECT/r2"])) == [
+        ("PROJECT", "r1"),
+        ("PROJECT", "r2"),
+    ]
+    assert list(get_repo_specs(repos=["PROJECT/r1", "PROJECT/r2"])) == [
+        ("PROJECT", "r1"),
+        ("PROJECT", "r2"),
+    ]
+    assert list(get_repo_specs(projects=["PROJECT"])) == [
+        ("PROJECT", "r1"),
+        ("PROJECT", "r2"),
+    ]
+    assert mock_get_all_repos.mock_calls == [
         call(
             ["PROJECT"],
             max_processes=10,
             only_spec=True,
         )
-    ] == mock_get_all_repos.mock_calls
-
-    assert [
+    ]
+    assert mock_get_project_and_repo.mock_calls == [ call("PROJECT/r1"), call("PROJECT/r2"), ] 
+    assert mock_get_project_and_repo.mock_calls == [
         call("PROJECT/r1"),
         call("PROJECT/r2"),
-    ] == mock_get_project_and_repo.mock_calls
+    ]

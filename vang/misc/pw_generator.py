@@ -76,6 +76,10 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-if __name__ == "__main__":
+def main() -> None:  # pragma: no cover
     the_args = {k: v for (k, v) in parse_args(argv[1:]).__dict__.items() if v}
     print(generate_random_password(**the_args))
+
+
+if __name__ == "__main__":  # pragma: no cover
+    main()

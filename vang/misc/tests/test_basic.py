@@ -4,19 +4,20 @@ from pytest import raises
 
 from vang.misc.basic import get_basic_auth
 from vang.misc.basic import get_basic_auth_header
-from vang.misc.basic import main
+from vang.misc.basic import basic
 from vang.misc.basic import parse_args
 
 import pytest
 
 
 def test_get_basic_auth():
-    assert "Basic dXNlcm5hbWU6cGFzc3dvcmQ=" == get_basic_auth("username", "password")
+    assert get_basic_auth("username", "password") == "Basic dXNlcm5hbWU6cGFzc3dvcmQ="
 
 
 def test_get_basic_auth_header():
-    assert "Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=" == get_basic_auth_header(
-        "username", "password"
+    assert (
+        get_basic_auth_header("username", "password")
+        == "Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ="
     )
 
 
@@ -35,24 +36,24 @@ def test_parse_args_raises(args):
     "args, expected", [["foo bar", {"password": "bar", "username": "foo"}]]
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else []).__dict__
+    assert parse_args(args.split(" ") if args else []).__dict__ == expected
 
 
-def test_main():
+def test_basic():
     with patch("vang.misc.basic.name", "posix"), patch(
         "vang.misc.basic.system"
     ) as mock_system, patch("builtins.print") as mock_print:
-        main("username", "password")
-        assert [
+        basic("username", "password")
+        assert mock_system.mock_calls == [
             call("echo 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=\\c' | pbcopy")
-        ] == mock_system.mock_calls
-        assert [
+        ]
+        assert mock_print.mock_calls == [
             call("'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' copied to clipboard")
-        ] == mock_print.mock_calls
+        ]
     with patch("vang.misc.basic.name", "not-posix"), patch(
         "builtins.print"
     ) as mock_print:
-        main("username", "password")
-        assert [
+        basic("username", "password")
+        assert mock_print.mock_calls == [
             call("Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=")
-        ] == mock_print.mock_calls
+        ]

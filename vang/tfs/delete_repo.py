@@ -5,7 +5,7 @@ from sys import argv
 from vang.tfs.api import call
 
 
-def delete_repo(repo):
+def do_delete_repo(repo):
     organisation, project, name = repo.split("/")
     repo_id = call(
         f"/{organisation}/{project}/_apis/git/repositories/{name}?api-version=3.2",
@@ -18,8 +18,8 @@ def delete_repo(repo):
     )
 
 
-def main(repo):
-    response = delete_repo(repo)
+def delete_repo(repo):
+    response = do_delete_repo(repo)
     print(response)
 
 
@@ -31,5 +31,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    delete_repo(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

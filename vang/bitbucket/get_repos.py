@@ -7,7 +7,7 @@ from vang.bitbucket.api import get_all
 from vang.core.core import pmap_unordered
 
 
-def get_repos(project, only_name=False, only_spec=False):
+def do_get_repos(project, only_name=False, only_spec=False):
     for value in get_all(f"/rest/api/1.0/projects/{project}/repos"):
         if only_name:
             yield value["slug"]
@@ -20,14 +20,14 @@ def get_repos(project, only_name=False, only_spec=False):
 def get_all_repos(projects, max_processes=10, only_name=False, only_spec=False):
     return itertools.chain.from_iterable(
         pmap_unordered(
-            lambda p: get_repos(p, only_name, only_spec),
+            lambda p: do_get_repos(p, only_name, only_spec),
             projects,
             processes=max_processes,
         )
     )
 
 
-def main(projects, name, repo_specs):
+def get_repos(projects, name, repo_specs):
     for repo in get_all_repos(projects, only_name=name, only_spec=repo_specs):
         if repo_specs:
             print(f"{repo[0]}/{repo[1]}")
@@ -46,5 +46,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    get_repos(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

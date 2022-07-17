@@ -7,7 +7,7 @@ from sys import argv
 from vang.pio.shell import run_command
 
 
-def switch_settings(ending):
+def do_switch_settings(ending):
     source = f'{environ["HOME"]}/.m2/settings_{ending}.xml'
     if not exists(source):
         raise ValueError(f"{source} does not exist")
@@ -15,9 +15,9 @@ def switch_settings(ending):
     return run_command(f"ln -sf {source} {target}", True)
 
 
-def main(ending):
+def switch_settings(ending):
     if name == "posix":
-        rc, output = switch_settings(ending)
+        rc, output = do_switch_settings(ending)
         print(output)
     else:
         print("Platform not supported. Please implement, and make a pull request.")
@@ -34,4 +34,4 @@ def parse_args(args):
 
 
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    switch_settings(**parse_args(argv[1:]).__dict__)

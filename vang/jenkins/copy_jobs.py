@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from vang.jenkins.copy_job import copy_job
+from vang.jenkins.copy_job import do_copy_job
 
 
 def copy_jobs(jobs, from_jenkins_spec, to_jenkins_spec, replacements=[], verbose=False):
@@ -25,7 +25,7 @@ def copy_jobs(jobs, from_jenkins_spec, to_jenkins_spec, replacements=[], verbose
                     "job must be a string, a pair of strings or a pair of string and a callable"
                 )
 
-            response = copy_job(
+            response = do_copy_job(
                 from_name, to_name, from_jenkins_spec, to_jenkins_spec, job_replacements
             )
             response_code = response["response_code"]

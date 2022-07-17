@@ -19,7 +19,7 @@ def download(output_file, url, username, password):
         f.write(get(url, auth=(username, password)).content)
 
 
-def main(
+def download_latest_snapshot(
     output_dir,
     nexus_url,
     repo,
@@ -57,5 +57,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-if __name__ == "__main__":
-    main(**parse_args(argv[1:]).__dict__)
+def main() -> None:  # pragma: no cover
+    download_latest_snapshot(**parse_args(argv[1:]).__dict__)
+
+
+if __name__ == "__main__":  # pragma: no cover
+    main()

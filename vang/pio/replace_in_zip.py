@@ -35,7 +35,9 @@ def update_zip(
             z.writestr(name, updated_content)
 
 
-def main(original_zip, updated_zip, replacements, encoding="utf-8", verbose=False):
+def replace_in_zip(
+    original_zip, updated_zip, replacements, encoding="utf-8", verbose=False
+):
     # make a dict of replacements list
     d = dict(zip(replacements[::2], replacements[1::2]))
     update_zip(original_zip, updated_zip, d, encoding, verbose)
@@ -61,9 +63,13 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-if __name__ == "__main__":
+def main() -> None:  # pragma: no cover
     """
     Example:
     ./replace_in_zip.py original.zip updated.zip old1 new1 old2 new2 oldN newN
     """
-    main(**parse_args(argv[1:]).__dict__)
+    replace_in_zip(**parse_args(argv[1:]).__dict__)
+
+
+if __name__ == "__main__":  # pragma: no cover
+    main()

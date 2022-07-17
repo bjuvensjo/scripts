@@ -2,14 +2,14 @@
 import argparse
 from sys import argv
 
-from vang.bitbucket.get_branches import get_branches
+from vang.bitbucket.get_branches import do_get_branches
 from vang.bitbucket.utils import get_repo_specs
 
 
 def has_branch(repo_specs, branch):
     for spec in repo_specs:
         branches = [
-            b["displayId"] for spec, bs in get_branches((spec,), branch) for b in bs
+            b["displayId"] for spec, bs in do_get_branches((spec,), branch) for b in bs
         ]
         yield spec, branch in branches
 

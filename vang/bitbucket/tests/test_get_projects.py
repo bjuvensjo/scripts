@@ -3,8 +3,8 @@ from unittest.mock import call, patch
 import pytest
 from pytest import raises
 
+from vang.bitbucket.get_projects import do_get_projects
 from vang.bitbucket.get_projects import get_projects
-from vang.bitbucket.get_projects import main
 from vang.bitbucket.get_projects import parse_args
 
 
@@ -14,9 +14,9 @@ def projects():
 
 
 @patch("vang.bitbucket.get_projects.get_all")
-def test_get_projects(mock_get_all, projects):
+def test_do_get_projects(mock_get_all, projects):
     mock_get_all.return_value = projects
-    assert all([x == y for x, y in zip(projects, get_projects())])
+    assert all([x == y for x, y in zip(projects, do_get_projects())])
 
 
 @pytest.mark.parametrize(
@@ -27,11 +27,11 @@ def test_get_projects(mock_get_all, projects):
     ],
 )
 @patch("vang.bitbucket.get_projects.print")
-@patch("vang.bitbucket.get_projects.get_projects", autospec=True)
-def test_main(mock_get_projects, mock_print, key, expected, projects):
-    mock_get_projects.return_value = projects
-    main(key)
-    assert [call(expected)] == mock_print.mock_calls[:1]
+@patch("vang.bitbucket.get_projects.do_get_projects", autospec=True)
+def test_get_projects(mock_do_get_projects, mock_print, key, expected, projects):
+    mock_do_get_projects.return_value = projects
+    get_projects(key)
+    assert mock_print.mock_calls[:1] == [call(expected)]
 
 
 @pytest.mark.parametrize(
@@ -64,4 +64,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

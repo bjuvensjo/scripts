@@ -23,7 +23,7 @@ def enable_web_hook(repo_specs, url, max_processes=10):
         return pool.starmap(enable_repo_web_hook, product(repo_specs, [url]))
 
 
-def main(url, dirs, repos=None, projects=None):
+def enable_web_hooks(url, dirs, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
     for spec, response in enable_web_hook(specs, url):
         print(
@@ -54,5 +54,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    enable_web_hooks(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

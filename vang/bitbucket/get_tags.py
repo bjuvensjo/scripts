@@ -8,43 +8,24 @@ from vang.bitbucket.api import get_all
 from vang.bitbucket.utils import get_repo_specs
 
 
-# def get_tags_page(spec, tag, limit, start, order_by='MODIFICATION'):
-#     response = call(
-#         f'/rest/api/1.0/projects/{spec[0]}/repos/{spec[1]}/tags?'
-#         f'filterText={tag}&limit={limit}&start={start}&orderBy={order_by}')
-#     return response['size'], response['values'], response[
-#         'isLastPage'], response.get('nextPageStart', -1)
-
-
 def get_all_tags(spec, tag="", order_by="MODIFICATION"):
     for t in get_all(
         f"/rest/api/1.0/projects/{spec[0]}/repos/{spec[1]}/tags",
         {"filterText": tag, "orderBy": order_by} if tag else {"orderBy": order_by},
     ):
         yield spec, t
-    # limit = 25
-    # start = 0
-    # is_last_page = False
-    #
-    # while not is_last_page:
-    #     size, values, is_last_page, start = get_tags_page(
-    #         spec, tag, limit, start)
-    #
-    #     if size:
-    #         for value in values:
-    #             yield spec, value
 
 
-def get_tags(specs, tag="", max_processes=10):
+def do_get_tags(specs, tag="", max_processes=10):
     with Pool(processes=max_processes) as pool:
         return itertools.chain.from_iterable(
             pool.map(lambda s: get_all_tags(s, tag), specs)
         )
 
 
-def main(tag="", name=False, dirs=None, repos=None, projects=None):
+def get_tags(tag="", name=False, dirs=None, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
-    for spec, response in get_tags(specs, tag):
+    for spec, response in do_get_tags(specs, tag):
         if name:
             print(response["displayId"])
         else:
@@ -70,5 +51,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    get_tags(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

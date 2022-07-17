@@ -3,7 +3,7 @@ from unittest.mock import patch, mock_open, call
 import pytest
 from pytest import raises
 
-from vang.maven.get_dependants import get_dependants, main, parse_args
+from vang.maven.get_dependants import do_get_dependants, get_dependants, parse_args
 
 dependency_tree_file_content = r"""[INFO] Scanning for projects...
 [WARNING] 
@@ -169,17 +169,17 @@ dependency_tree_file_content = r"""[INFO] Scanning for projects...
         ),
     ],
 )
-def test_get_dependants(dependency, expected):
+def test_do_get_dependants(dependency, expected):
     with patch(
         "builtins.open", mock_open(read_data=dependency_tree_file_content), create=True
     ):
-        dependants = get_dependants("dependency_tree_file", dependency)
-        assert expected == dependants
+        dependants = do_get_dependants("dependency_tree_file", dependency)
+        assert dependants == expected
 
 
-def test_main():
+def test_get_dependants():
     with patch(
-        "vang.maven.get_dependants.get_dependants",
+        "vang.maven.get_dependants.do_get_dependants",
         return_value={
             "ch.qos.logback:logback-classic:jar:1.0.13:compile": {
                 "direct": {
@@ -199,8 +199,8 @@ def test_main():
     ):
 
         with patch("vang.maven.get_dependants.pprint") as mock_print:
-            main("dependency_tree_file", "dependency", False, False)
-            assert [
+            get_dependants("dependency_tree_file", "dependency", False, False)
+            assert mock_print.mock_calls == [
                 call(
                     {
                         "ch.qos.logback:logback-classic:jar:1.0.13:compile": {
@@ -219,11 +219,11 @@ def test_main():
                         },
                     }
                 )
-            ] == mock_print.mock_calls
+            ]
 
         with patch("vang.maven.get_dependants.pprint") as mock_print:
-            main("dependency_tree_file", "dependency", True, False)
-            assert [
+            get_dependants("dependency_tree_file", "dependency", True, False)
+            assert mock_print.mock_calls == [
                 call(
                     {
                         "ch.qos.logback:logback-classic:jar:1.0.13:compile": {
@@ -233,11 +233,11 @@ def test_main():
                         "ch.qos.logback:logback-core:jar:1.0.13:compile": set(),
                     }
                 )
-            ] == mock_print.mock_calls
+            ]
 
         with patch("vang.maven.get_dependants.pprint") as mock_print:
-            main("dependency_tree_file", "dependency", False, True)
-            assert [
+            get_dependants("dependency_tree_file", "dependency", False, True)
+            assert mock_print.mock_calls == [
                 call(
                     {
                         "ch.qos.logback:logback-classic:jar:1.0.13:compile": set(),
@@ -247,7 +247,7 @@ def test_main():
                         },
                     }
                 )
-            ] == mock_print.mock_calls
+            ]
 
 
 @pytest.mark.parametrize(
@@ -297,4 +297,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

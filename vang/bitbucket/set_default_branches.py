@@ -23,7 +23,7 @@ def set_default_branch(repo_specs, branch, max_processes=10):
         return pool.starmap(set_repo_default_branch, product(repo_specs, [branch]))
 
 
-def main(branch, dirs=None, repos=None, projects=None):
+def set_default_branches(branch, dirs=None, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
     for spec, response in set_default_branch(specs, branch):
         print(f"{spec[0]}/{spec[1]}: {response}")
@@ -50,5 +50,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    set_default_branches(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

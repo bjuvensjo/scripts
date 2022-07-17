@@ -5,15 +5,15 @@ from json import dumps
 from sys import argv
 
 from vang.tfs.api import call_url
-from vang.tfs.list_build_definitions import list_build_definitions
+from vang.tfs.list_build_definitions import do_list_build_definitions
 
 
-def get_build_definitions(
+def do_get_build_definitions(
     organisations=None,
     projects=None,
     filter_name=None,
 ):
-    build_definitions_dict = list_build_definitions(
+    build_definitions_dict = do_list_build_definitions(
         organisations, projects, filter_name
     )
     return {
@@ -22,8 +22,10 @@ def get_build_definitions(
     }
 
 
-def main(organisations, projects, filter_name=None, format_output=False):
-    for name, definition in get_build_definitions(
+def get_build_definitions(
+    organisations, projects, filter_name=None, format_output=False
+):
+    for name, definition in do_get_build_definitions(
         organisations, projects, filter_name
     ).items():
         json = dumps(definition, indent=4) if format_output else dumps(definition)
@@ -54,5 +56,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    get_build_definitions(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

@@ -27,14 +27,16 @@ def branches_fixture():
     ]
 
 
-@patch("vang.bitbucket.has_branch.get_branches")
+@patch("vang.bitbucket.has_branch.do_get_branches")
 def test_has_branch(mock_call, branches_fixture):
     mock_call.return_value = branches_fixture
-    assert [(["project_key", "repo_slug"], True)] * 2 == list(
-        has_branch([["project_key", "repo_slug"]] * 2, "develop")
+    assert (
+        list(has_branch([["project_key", "repo_slug"]] * 2, "develop"))
+        == [(["project_key", "repo_slug"], True)] * 2
     )
-    assert [(["project_key", "repo_slug"], False)] * 2 == list(
-        has_branch([["project_key", "repo_slug"]] * 2, "not_develop")
+    assert (
+        list(has_branch([["project_key", "repo_slug"]] * 2, "not_develop"))
+        == [(["project_key", "repo_slug"], False)] * 2
     )
 
 
@@ -66,9 +68,9 @@ def test_has_branch(mock_call, branches_fixture):
 )
 @patch("vang.bitbucket.has_branch.print")
 @patch("vang.bitbucket.has_branch.get_repo_specs")
-@patch("vang.bitbucket.has_branch.get_branches")
+@patch("vang.bitbucket.has_branch.do_get_branches")
 def test_main(
-    mock_get_branches,
+    mock_do_get_branches,
     mock_get_repo_specs,
     mock_print,
     branch,
@@ -77,11 +79,11 @@ def test_main(
     expected,
     branches_fixture,
 ):
-    mock_get_branches.return_value = branches_fixture
+    mock_do_get_branches.return_value = branches_fixture
     mock_get_repo_specs.return_value = [("project_key", "repo_slug")] * 2
     main(branch, only_has, only_not_has, projects=["project_key"])
-    assert [call(None, None, ["project_key"])] == mock_get_repo_specs.mock_calls
-    assert expected == mock_print.mock_calls
+    assert mock_get_repo_specs.mock_calls == [call(None, None, ["project_key"])]
+    assert mock_print.mock_calls == expected
 
 
 @pytest.mark.parametrize(
@@ -172,4 +174,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

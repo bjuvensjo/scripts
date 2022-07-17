@@ -11,7 +11,7 @@ def read_file(file_path):  # pragma: no cover
         return f.read()
 
 
-def upload(file_path, repository, repository_path, url, username, password):
+def do_upload(file_path, repository, repository_path, url, username, password):
     url = f"{url}/repository/{repository}/{repository_path}"
     data = read_file(file_path)
     headers = {"Content-Type": "application/octet-stream"}
@@ -50,9 +50,13 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(file_path, repository, repository_path, url, username, password):
-    print(upload(file_path, repository, repository_path, url, username, password))
+def upload(file_path, repository, repository_path, url, username, password):
+    print(do_upload(file_path, repository, repository_path, url, username, password))
+
+
+def main() -> None:  # pragma: no cover
+    upload(**parse_args(argv[1:]).__dict__)
 
 
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

@@ -22,13 +22,9 @@ def get_artifacts(repo_dir, endings=("pom", "jar"), snapshots=False):
     )
 
 
-def main(repo_dir, endings=("pom", "jar"), snapshots=False):
+def list_repo(repo_dir, endings=("pom", "jar"), snapshots=False):
     for artifact in get_artifacts(repo_dir, endings, snapshots):
         split = artifact.split("/")
-        # <groupId>se.lf.csl</groupId>
-        # <artifactId>xml.ws</artifactId>
-        # <version>1.0.0-SNAPSHOT</version>
-
         print(
             f"""<dependency>
     <groupId>{".".join(split[:-2])}</groupId>
@@ -36,12 +32,6 @@ def main(repo_dir, endings=("pom", "jar"), snapshots=False):
     <version>{split[-1]}</version>
 </dependency>"""
         )
-
-    # print(
-    #     f'groupId: {".".join(split[:-2])},',
-    #     f'artifactId: {split[-2]},',
-    #     f'version: {split[-1]}',
-    # )
 
 
 def parse_args(args):
@@ -53,5 +43,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    list_repo(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

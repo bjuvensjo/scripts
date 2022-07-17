@@ -4,10 +4,10 @@ from datetime import datetime
 from re import fullmatch
 
 from vang.bitbucket.api import get_all
-from vang.bitbucket.get_projects import get_projects
-from vang.bitbucket.get_repos import get_repos
+from vang.bitbucket.get_projects import do_get_projects
+from vang.bitbucket.get_repos import do_get_repos
 from vang.core.core import pmap_unordered, get_in
-from vang.jenkins.get_jobs import get_jobs
+from vang.jenkins.get_jobs import do_get_jobs
 
 logging.basicConfig(level=logging.INFO)
 
@@ -54,10 +54,10 @@ def complement_and_filter_repos(repos, branch_pattern, max_head_commit_age):
 
 
 def find_repos(project_pattern, repo_pattern):
-    for p in get_projects():
+    for p in do_get_projects():
         key = p["key"]
         if matches(key, project_pattern):
-            for r in get_repos(p["key"]):
+            for r in do_get_repos(p["key"]):
                 if matches(r["name"], repo_pattern):
                     repo = {
                         "key": key,
@@ -90,7 +90,7 @@ def get_repo_info(
 def get_job_info(project_pattern, repo_pattern, branch_pattern, tag_pattern, **kwargs):
     # TODO: Add tag info
     jobs = {}
-    for job in get_jobs():
+    for job in do_get_jobs():
         job_name = job["name"]
         try:
             key, name, branch = job_name.split("_")  # Is branch sometimes also tag?

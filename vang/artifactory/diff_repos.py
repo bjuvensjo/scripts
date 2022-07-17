@@ -64,14 +64,14 @@ def diff(
         )
 
 
-def diff_repos(repo_specs, excludes=(".*maven-metadata.xml",), only_keys=True):
+def do_diff_repos(repo_specs, excludes=(".*maven-metadata.xml",), only_keys=True):
     a_repo_content, b_repo_content = list(
         pmap_ordered(lambda spec: get_repo_content(**spec), repo_specs, processes=2)
     )
     return diff(a_repo_content["files"], b_repo_content["files"], excludes, only_keys)
 
 
-def main(
+def diff_repos(
     a_repo_key,
     a_artifactory_url,
     a_artifactory_username,
@@ -95,7 +95,7 @@ def main(
             "password": b_artifactory_password,
         },
     )
-    a_only_keys, b_only_keys = diff_repos(specs)
+    a_only_keys, b_only_keys = do_diff_repos(specs)
 
     if a_only_keys:
         print("### Only in a ###")
@@ -119,5 +119,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    diff_repos(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

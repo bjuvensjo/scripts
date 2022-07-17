@@ -7,7 +7,7 @@ from zipfile import ZipFile
 from requests import get
 
 
-def download(
+def do_download(
     output_file: Union[str, bytes, int], url: str, username: str, password: str
 ) -> None:
     with open(output_file, "wb") as f:
@@ -19,14 +19,14 @@ def extract_zip(zip_file):
         z.extractall()
 
 
-def main(
+def download(
     output_file: Union[str, bytes, int],
     url: str,
     username: str,
     password: str,
     extract: bool,
 ) -> None:
-    download(output_file, url, username, password)
+    do_download(output_file, url, username, password)
     if extract:
         extract_zip(output_file)
 
@@ -51,5 +51,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-if __name__ == "__main__":
-    main(**parse_args(argv[1:]).__dict__)
+def main() -> None:  # pragma: no cover
+    download(**parse_args(argv[1:]).__dict__)
+
+
+if __name__ == "__main__":  # pragma: no cover
+    main()

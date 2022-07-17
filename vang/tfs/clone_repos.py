@@ -7,8 +7,8 @@ from os import makedirs
 from sys import argv
 
 from vang.pio.shell import run_commands
-from vang.tfs.get_projects import get_projects
-from vang.tfs.get_repos import get_repos
+from vang.tfs.get_projects import do_get_projects
+from vang.tfs.get_repos import do_get_repos
 
 
 def clone(commands, root_dir):
@@ -29,15 +29,15 @@ def get_clone_specs(projects, flat):
             repo[1]["remoteUrl"],
             repo[1]["name"] if flat else f'{repo[0]}/{repo[1]["name"]}',
         )
-        for repo in get_repos(projects=projects)
+        for repo in do_get_repos(projects=projects)
     ]
 
 
-def clone_repos(
+def do_clone_repos(
     root_dir, organisations=None, projects=None, repos=None, branch=None, flat=False
 ):
     if organisations:
-        projects = get_projects(organisations, project_specs=True)
+        projects = do_get_projects(organisations, project_specs=True)
     elif repos:
         projects = set(["/".join(r.split("/")[:2]) for r in repos])
 
@@ -83,8 +83,8 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(clone_dir, organisations, projects, repos, branch, flat):
-    for a_repo in clone_repos(
+def clone_repos(clone_dir, organisations, projects, repos, branch, flat):
+    for a_repo in do_clone_repos(
         clone_dir,
         organisations,
         projects,
@@ -95,5 +95,9 @@ def main(clone_dir, organisations, projects, repos, branch, flat):
         print(a_repo[1])
 
 
+def main() -> None:  # pragma: no cover
+    clone_repos(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

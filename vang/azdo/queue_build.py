@@ -1,21 +1,20 @@
 #!/usr/bin/env python3
-import argparse
 import logging
 from json import loads
-from os import environ
 from os.path import basename
 from sys import argv
 from typing import Dict, Tuple
 
-from requests import post, get
+from requests import get, post
+from rich import print
+from vang.azdo.util import get_parser
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(basename(__file__))
 
-base_url = "https://dev.azure.com"
-
 
 def get_definition_id(
+    azure_devops_url: str,
     token: str,
     organization: str,
     project: str,
@@ -23,7 +22,7 @@ def get_definition_id(
     verify_certificate: bool = True,
     api_version: str = "6.1-preview.7",
 ):
-    url = f"{base_url}/{organization}/{project}/_apis/build/definitions?name={build_definition_name}&api-version={api_version}"
+    url = f"{azure_devops_url}/{organization}/{project}/_apis/build/definitions?name={build_definition_name}&api-version={api_version}"
     params = {"url": url, "auth": ("", token), "verify": verify_certificate}
     logger.info(f'params: {str(params).replace(token, "***")}')
     response = get(**params)
@@ -37,7 +36,8 @@ def create_json(definition_id: int, branch: str) -> Dict:
     return {"definition": {"id": definition_id}, "sourceBranch": f"refs/heads/{branch}"}
 
 
-def queue_build(
+def do_queue_build(
+    azure_devops_url: str,
     token: str,
     organization: str,
     project: str,
@@ -47,9 +47,14 @@ def queue_build(
     api_version: str = "6.1-preview.6",
 ) -> Tuple[int, Dict]:
     definition_id = get_definition_id(
-        token, organization, project, build_definition_name, verify_certificate
+        azure_devops_url,
+        token,
+        organization,
+        project,
+        build_definition_name,
+        verify_certificate,
     )
-    url = f"{base_url}/{organization}/{project}/_apis/build/builds?api-version={api_version}"
+    url = f"{azure_devops_url}/{organization}/{project}/_apis/build/builds?api-version={api_version}"
     params = {
         "json": create_json(definition_id, branch),
         "url": url,
@@ -64,53 +69,44 @@ def queue_build(
     return response.status_code, loads(response.text)
 
 
-def parse_args(args):  # pragma: no cover
-    parser = argparse.ArgumentParser(description="Queue a build")
+def parse_args(args):
+    parser = get_parser("Queue a build")
     parser.add_argument(
-        "--token",
-        default=environ.get("AZDO_TOKEN", ""),
-        help="The Azure DevOps authorisation token",
+        "build_definition_name",
+        help="The Azure DevOps build definition name to queue",
     )
     parser.add_argument(
-        "--organisation",
-        default=environ.get("AZDO_ORGANISATION", ""),
-        help="The Azure DevOps organisation",
-    )
-    parser.add_argument(
-        "--project",
-        default=environ.get("AZDO_PROJECT", ""),
-        help="The Azure DevOps project",
-    )
-    parser.add_argument(
-        "build_definition_name", help="The Azure DevOps build definition name to queue"
-    )
-    parser.add_argument("branch", help="The Azure DevOps repo branch to build")
-    parser.add_argument(
-        "-au",
-        "--azure_devops_url",
-        default="https://dev.azure.com",
-        help="The Azure DevOps REST API base url",
+        "branch",
+        help="The Azure DevOps repo branch to build",
     )
 
     return parser.parse_args(args)
 
 
-def main(
+def queue_build(
+    azure_devops_url: str,
     token: str,
     organisation: str,
     project: str,
     build_definition_name: str,
     branch: str,
-    azure_devops_url: str,
-) -> None:  # pragma: no cover
-    global base_url
-    base_url = azure_devops_url
-
-    status_code, build = queue_build(
-        token, organisation, project, build_definition_name, branch
+    verify_certificate: bool,
+) -> None:
+    status_code, _ = do_queue_build(
+        azure_devops_url,
+        token,
+        organisation,
+        project,
+        build_definition_name,
+        branch,
+        verify_certificate,
     )
     print(status_code)
 
 
+def main() -> None:  # pragma: no cover
+    queue_build(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

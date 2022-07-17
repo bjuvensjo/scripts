@@ -1,9 +1,8 @@
 from pytest import raises
 
-from unittest.mock import call, patch, mock_open
+from unittest.mock import call, patch
 
-from vang.artifactory.delete import delete_maven_artifact
-from vang.artifactory.delete import main
+from vang.artifactory.delete import delete, delete_maven_artifact
 from vang.artifactory.delete import parse_args
 
 import pytest
@@ -30,18 +29,19 @@ def test_delete_maven_artifact(
     mock_get_artifact_base_uri.return_value = "base_uri"
     mock_call.return_value = '"response"'
 
-    assert ['"response"', '"response"'] == list(
-        delete_maven_artifact("repository", ["d1", "d2"])
-    )
+    assert list(delete_maven_artifact("repository", ["d1", "d2"])) == [
+        '"response"',
+        '"response"',
+    ]
 
 
 @patch("vang.artifactory.delete.print")
 @patch("vang.artifactory.delete.delete_maven_artifact")
-def test_main(mock_delete_maven_artifact, mock_print):
+def test_delete(mock_delete_maven_artifact, mock_print):
     mock_delete_maven_artifact.return_value = ['"response"']
-    main("repository", ["d1", "d2"])
-    assert [call("repository", ["d1", "d2"])] == mock_delete_maven_artifact.mock_calls
-    assert [call('"response"')] == mock_print.mock_calls
+    delete("repository", ["d1", "d2"])
+    assert mock_delete_maven_artifact.mock_calls == [call("repository", ["d1", "d2"])]
+    assert mock_print.mock_calls == [call('"response"')]
 
 
 @pytest.mark.parametrize(
@@ -76,4 +76,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

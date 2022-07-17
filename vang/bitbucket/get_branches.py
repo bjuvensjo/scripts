@@ -7,7 +7,7 @@ from vang.bitbucket.utils import get_repo_specs
 from vang.core.core import pmap_unordered
 
 
-def get_branches(repo_specs, branch="", max_processes=10):
+def do_get_branches(repo_specs, branch="", max_processes=10):
     return pmap_unordered(
         lambda s: (
             s,
@@ -21,9 +21,9 @@ def get_branches(repo_specs, branch="", max_processes=10):
     )
 
 
-def main(branch="", name=False, dirs=None, repos=None, projects=None):
+def get_branches(branch="", name=False, dirs=None, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
-    for spec, branches in get_branches(specs, branch):
+    for spec, branches in do_get_branches(specs, branch):
         for b in branches:
             if name:
                 print(b["displayId"])
@@ -54,5 +54,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    get_branches(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

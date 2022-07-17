@@ -5,8 +5,8 @@ from functools import partial
 from multiprocessing.dummy import Pool
 from traceback import print_exc
 
-import vang.bitbucket.clone_repos as clone_repos
-from vang.bitbucket.create_repo import create_repo
+from vang.bitbucket.clone_repos import clone_repos
+from vang.bitbucket.create_repo import do_create_repo
 from vang.bitbucket.set_default_branches import set_repo_default_branch
 from vang.pio.command_all import get_work_dirs
 from vang.pio.shell import run_command
@@ -28,7 +28,7 @@ def fork_repo(fork_project, branches, git_dir):
             + repo
             + ".git"
         )
-        create_repo(fork_project, repo)
+        do_create_repo(fork_project, repo)
         run_command(
             f"git remote set-url origin {new_origin}", return_output=True, cwd=git_dir
         )
@@ -44,17 +44,13 @@ def fork_repo(fork_project, branches, git_dir):
         print_exc(file=sys.stdout)
 
 
-def fork_repos(
+def fork_repos_git(
     fork_project, branches, work_dir=".", repos=None, projects=None, max_processes=10
 ):
-    clone_repos.main(work_dir, projects, repos, branch=branches[0], flat=True)
+    clone_repos(work_dir, projects, repos, branch=branches[0], flat=True)
     git_dirs = get_work_dirs(".git/", work_dir)
     with Pool(processes=max_processes) as pool:
         pool.map(partial(fork_repo, fork_project, branches), git_dirs)
-
-
-def main(fork_project, branches, work_dir=".", repos=None, projects=None):
-    fork_repos(fork_project, branches, work_dir, repos, projects)
 
 
 def parse_args(args):
@@ -89,5 +85,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    fork_repos_git(**parse_args(sys.argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(sys.argv[1:]).__dict__)
+    main()

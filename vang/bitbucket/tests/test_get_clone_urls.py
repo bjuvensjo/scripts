@@ -3,8 +3,8 @@ from unittest.mock import call, patch
 import pytest
 from pytest import raises
 
+from vang.bitbucket.get_clone_urls import do_get_clone_urls
 from vang.bitbucket.get_clone_urls import get_clone_urls
-from vang.bitbucket.get_clone_urls import main
 from vang.bitbucket.get_clone_urls import parse_args
 
 
@@ -98,7 +98,7 @@ def repos_fixture():
     ],
 )
 @patch("vang.bitbucket.get_clone_urls.get_all_repos", autospec=True)
-def test_get_clone_urls(
+def test_do_get_clone_urls(
     mock_get_all_repos,
     command,
     branch,
@@ -107,17 +107,20 @@ def test_get_clone_urls(
     repos_fixture,
 ):
     mock_get_all_repos.return_value = repos_fixture
-    assert expected == list(
-        get_clone_urls(
-            ["project_key"] * 2,
-            command,
-            branch,
-            flat,
+    assert (
+        list(
+            do_get_clone_urls(
+                ["project_key"] * 2,
+                command,
+                branch,
+                flat,
+            )
         )
+        == expected
     )
-    assert [
+    assert mock_get_all_repos.mock_calls == [
         call(["project_key", "project_key"]),
-    ] == mock_get_all_repos.mock_calls
+    ]
 
 
 @pytest.mark.parametrize(
@@ -160,7 +163,7 @@ def test_get_clone_urls(
 )
 @patch("vang.bitbucket.get_clone_urls.print")
 @patch("vang.bitbucket.get_clone_urls.get_all_repos", autospec=True)
-def test_main(
+def test_get_clone_urls(
     mock_get_all_repos,
     mock_print,
     command,
@@ -170,8 +173,8 @@ def test_main(
     repos_fixture,
 ):
     mock_get_all_repos.return_value = repos_fixture
-    main(["project_key"] * 2, command, branch, flat)
-    assert expected == mock_print.mock_calls
+    get_clone_urls(["project_key"] * 2, command, branch, flat)
+    assert mock_print.mock_calls == expected
 
 
 @pytest.mark.parametrize(
@@ -204,4 +207,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

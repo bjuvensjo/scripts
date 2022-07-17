@@ -19,7 +19,7 @@ def get_components_page(repository, url, username, password, continuation_token=
     return response.json()
 
 
-def get_components(repository, url, username, password):
+def do_get_components(repository, url, username, password):
     components_page = get_components_page(repository, url, username, password)
     continuation_token = components_page["continuationToken"]
     items = components_page["items"]
@@ -56,9 +56,13 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(repository, url, username, password):
-    pprint(get_components(repository, url, username, password))
+def get_components(repository, url, username, password):
+    pprint(do_get_components(repository, url, username, password))
+
+
+def main() -> None:  # pragma: no cover
+    get_components(**parse_args(argv[1:]).__dict__)
 
 
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

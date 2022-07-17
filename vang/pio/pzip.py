@@ -56,7 +56,7 @@ def load_config(config):
         return loads(cfg.read())
 
 
-def pzip(config):
+def do_pzip(config):
     cfg = load_config(config)
     the_entries = get_entries(cfg["dirs"])
     the_zip_file = create_zip(the_entries, cfg["output_file"])
@@ -89,10 +89,14 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(config):
-    zip_file, entries = pzip(config)
+def pzip(config):
+    zip_file, entries = do_pzip(config)
     print(f"Zip file: {zip_file}")
 
 
+def main() -> None:  # pragma: no cover
+    pzip(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

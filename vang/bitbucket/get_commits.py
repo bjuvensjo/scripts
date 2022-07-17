@@ -31,7 +31,9 @@ def get_branch_commits(
     )
 
 
-def get_commits(repo_specs, branches=tuple([""]), take=sys.maxsize, max_processes=10):
+def do_get_commits(
+    repo_specs, branches=tuple([""]), take=sys.maxsize, max_processes=10
+):
     return pmap_unordered(
         lambda s: list(
             [
@@ -56,9 +58,9 @@ def get_commits(repo_specs, branches=tuple([""]), take=sys.maxsize, max_processe
     )
 
 
-def main(take, branches, sha=False, dirs=None, repos=None, projects=None):
+def get_commits(take, branches, sha=False, dirs=None, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
-    for spec, commits in get_commits(specs, branches, take=take):
+    for spec, commits in do_get_commits(specs, branches, take=take):
         if sha:
             for b, cs in commits:
                 for c in cs:
@@ -98,5 +100,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    get_commits(**parse_args(sys.argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(sys.argv[1:]).__dict__)
+    main()

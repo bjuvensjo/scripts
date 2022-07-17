@@ -2,9 +2,9 @@
 import argparse
 from sys import argv
 
-from vang.bitbucket.get_branches import get_branches
-from vang.bitbucket.get_projects import get_projects
-from vang.bitbucket.get_repos import get_repos
+from vang.bitbucket.get_branches import do_get_branches
+from vang.bitbucket.get_projects import do_get_projects
+from vang.bitbucket.get_repos import do_get_repos
 from vang.bitbucket.get_tags import get_all_tags
 from vang.core.core import pmap_unordered
 
@@ -12,10 +12,10 @@ from vang.core.core import pmap_unordered
 def validate_repos(project):
     valid = []
     corrupt = []
-    for r in get_repos(project):
+    for r in do_get_repos(project):
         s = "/".join(r)
         try:
-            get_branches(r)
+            do_get_branches(r)
             get_all_tags(r)
             valid.append(s)
         except KeyError:
@@ -23,10 +23,10 @@ def validate_repos(project):
     return valid, corrupt
 
 
-def validate_projects(max_projects=None, max_processes=10):
+def validate_projects(max_processes=10):
     for valid, corrupt in pmap_unordered(
         lambda p: validate_repos(p["key"]),
-        get_projects(),
+        do_get_projects(),
         processes=max_processes,
     ):
         for v in valid:
@@ -42,5 +42,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-if __name__ == "__main__":  # pragma: no cover
+def main() -> None:  # pragma: no cover
     validate_projects(**parse_args(argv[1:]).__dict__)
+
+
+if __name__ == "__main__":  # pragma: no cover
+    main()

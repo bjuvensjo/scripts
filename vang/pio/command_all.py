@@ -54,7 +54,7 @@ def execute_in_sequence(
         )
 
 
-def main(
+def command_all(
     root: str, commands: Iterable[str], find: str = ".git/", sequence: bool = False
 ):
     execute = execute_in_sequence if sequence else execute_in_parallel
@@ -84,5 +84,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main():  # pragma: no cover
+    command_all(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

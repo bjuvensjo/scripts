@@ -20,7 +20,7 @@ import pytest
     ],
 )
 def test_get_split(s, expected):
-    assert expected == get_split(s)
+    assert get_split(s) == expected
 
 
 @pytest.mark.parametrize(
@@ -45,7 +45,7 @@ def test_get_cases(s):
         "radio-button",
         "RADIO-BUTTON",
     ]
-    assert cases == get_cases(s)
+    assert get_cases(s) == cases
 
 
 @pytest.mark.parametrize(
@@ -80,7 +80,7 @@ def test_get_cases(s):
     ],
 )
 def test_zipped_cases(strings, expected):
-    assert expected == list(get_zipped_cases(strings))
+    assert list(get_zipped_cases(strings)) == expected
 
 
 @pytest.mark.parametrize(
@@ -98,13 +98,13 @@ def test_parse_args_raises(args):
     "args, expected", [["foo bar baz", {"strings": ["foo", "bar", "baz"]}]]
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected
 
 
 @patch("builtins.print")
 def test_main(mock_print):
     main(["foo", "bar"])
-    assert [
+    assert mock_print.mock_calls == [
         call("foo bar"),
         call("Foo Bar"),
         call("foo bar"),
@@ -113,4 +113,4 @@ def test_main(mock_print):
         call("FOO BAR"),
         call("foo bar"),
         call("FOO BAR"),
-    ] == mock_print.mock_calls
+    ]

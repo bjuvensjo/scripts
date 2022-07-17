@@ -46,7 +46,7 @@ def diff(master_dir, compare_dir, ignore):
     return missing_files, diffing_files
 
 
-def main(master_dir, compare_dir, ignore, only_files=False):
+def shasum_diff_dirs(master_dir, compare_dir, ignore, only_files=False):
     mfs, dfs = diff(master_dir, compare_dir, ignore)
 
     if only_files:
@@ -88,5 +88,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    shasum_diff_dirs(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

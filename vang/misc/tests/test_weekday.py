@@ -1,7 +1,7 @@
 from pytest import raises
 from unittest.mock import call, patch
 
-from vang.misc.weekday import main
+from vang.misc.weekday import weekday
 from vang.misc.weekday import name
 from vang.misc.weekday import parse_args
 from vang.misc.weekday import zeller
@@ -10,7 +10,7 @@ import pytest
 
 
 def test_name():
-    assert [
+    assert [name(d) for d in [1, 4, 4, 7, 2, 5, 7, 3, 6, 1, 4, 6]] == [
         "monday",
         "thursday",
         "thursday",
@@ -23,27 +23,11 @@ def test_name():
         "monday",
         "thursday",
         "saturday",
-    ] == [
-        name(d)
-        for d in [
-            1,
-            4,
-            4,
-            7,
-            2,
-            5,
-            7,
-            3,
-            6,
-            1,
-            4,
-            6,
-        ]
     ]
 
 
 def test_zeller():
-    assert [
+    assert [zeller(2018, m, 1) for m in range(1, 13)] == [
         1,
         4,
         4,
@@ -56,7 +40,7 @@ def test_zeller():
         1,
         4,
         6,
-    ] == [zeller(2018, m, 1) for m in range(1, 13)]
+    ]
 
 
 @pytest.mark.parametrize(
@@ -87,10 +71,10 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected
 
 
 @patch("vang.misc.weekday.print")
-def test_main(mock_print):
-    main("2018", "11", "23")
-    assert [call("friday")] == mock_print.mock_calls
+def test_weekday(mock_print):
+    weekday("2018", "11", "23")
+    assert mock_print.mock_calls == [call("friday")]

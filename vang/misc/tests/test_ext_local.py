@@ -89,12 +89,10 @@ def test_update(
     expected_hosts,
 ):
     mock_get_ip_address.return_value = "100.100.1.100"
-    with patch(
-        "vang.misc.ext_local.open", new_callable=mock_open, read_data=hosts
-    ) as m:
-        assert expected_hosts == update(backup_file)
+    with patch("vang.misc.ext_local.open", new_callable=mock_open, read_data=hosts):
+        assert update(backup_file) == expected_hosts
         if backup_file:
-            assert [call("/etc/hosts", "backup_file")] == mock_copy2.mock_calls
+            assert mock_copy2.mock_calls == [call("/etc/hosts", "backup_file")]
 
 
 @pytest.mark.parametrize(
@@ -122,7 +120,7 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected
 
 
 @patch("vang.misc.ext_local.print")
@@ -130,5 +128,5 @@ def test_parse_args_valid(args, expected):
 def test_main(mock_update, mock_print):
     mock_update.return_value = ["foo\n", "bar"]
     main("backup")
-    assert [call("backup")] == mock_update.mock_calls
-    assert [call("foo\nbar")] == mock_print.mock_calls
+    assert mock_update.mock_calls == [call("backup")]
+    assert mock_print.mock_calls == [call("foo\nbar")]

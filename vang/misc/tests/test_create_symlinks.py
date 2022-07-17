@@ -20,21 +20,22 @@ def test_is_excluded():
 def test_has_main():
     with patch(
         "builtins.open", mock_open(read_data="foo\nif __name__ == '__main__':\nfoo")
-    ) as m:
+    ):
         assert has_main("")
 
     with patch(
         "builtins.open", mock_open(read_data='foo\nif __name__ == "__main__":\nfoo')
-    ) as m:
+    ):
         assert has_main("")
 
-    with patch("builtins.open", mock_open(read_data="foo\nfoo")) as m:
+    with patch("builtins.open", mock_open(read_data="foo\nfoo")):
         assert not has_main("")
 
 
 def test_map_to_link_name():
-    assert "bitbucket-clone-repos" == map_to_link_name(
-        "/git/scripts/vang/bitbucket/clone_repos.py"
+    assert (
+        map_to_link_name("/git/scripts/vang/bitbucket/clone_repos.py")
+        == "bitbucket-clone-repos"
     )
 
 
@@ -53,16 +54,16 @@ def test_create_symlinks(mock_is_excluded, mock_has_main, mock_glob, mock_makedi
     with patch("vang.misc.create_symlinks.exists", return_value=True):
         with patch("builtins.print") as mock_print:
             create_symlinks("source", "target")
-            assert [
+            assert mock_print.mock_calls == [
                 call("target/bitbucket-clone-repos already exists"),
                 call("target/bitbucket-create-from-template already exists"),
                 call("target/bitbucket-create-repo already exists"),
-            ] == mock_print.mock_calls
+            ]
     with patch("vang.misc.create_symlinks.exists", return_value=False):
         with patch("builtins.print") as mock_print:
             with patch("vang.misc.create_symlinks.run_command") as mock_run_command:
                 create_symlinks("source", "target")
-                assert [
+                assert mock_print.mock_calls == [
                     call(
                         "ln -s /vang/bitbucket/clone_repos.py "
                         "target/bitbucket-clone-repos"
@@ -75,8 +76,8 @@ def test_create_symlinks(mock_is_excluded, mock_has_main, mock_glob, mock_makedi
                         "ln -s /vang/bitbucket/create_repo.py "
                         "target/bitbucket-create-repo"
                     ),
-                ] == mock_print.mock_calls
-                assert [
+                ]
+                assert mock_run_command.mock_calls == [
                     call(
                         "ln -s /vang/bitbucket/clone_repos.py "
                         "target/bitbucket-clone-repos"
@@ -89,7 +90,7 @@ def test_create_symlinks(mock_is_excluded, mock_has_main, mock_glob, mock_makedi
                         "ln -s /vang/bitbucket/create_repo.py "
                         "target/bitbucket-create-repo"
                     ),
-                ] == mock_run_command.mock_calls
+                ]
 
 
 @pytest.mark.parametrize(
@@ -112,4 +113,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

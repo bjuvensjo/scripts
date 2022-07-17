@@ -3,26 +3,30 @@ from unittest.mock import patch, call
 import pytest
 from pytest import raises
 
-from vang.artifactory.list_repo_content import list_repo_content, main, parse_args
+from vang.artifactory.list_repo_content import (
+    do_list_repo_content,
+    list_repo_content,
+    parse_args,
+)
 
 
 @patch("vang.artifactory.list_repo_content.get_repo_content")
-def test_list_repo_content(mock_get_repo_content):
+def test_do_list_repo_content(mock_get_repo_content):
     repo_content = {
         "files": [{"uri": "f1", "folder": False}, {"uri": "d1", "folder": True}]
     }
     mock_get_repo_content.return_value = repo_content
-    assert ["f1"] == list_repo_content("repo_key")
-    assert repo_content["files"] == list_repo_content("repo_key", False)
+    assert do_list_repo_content("repo_key") == ["f1"]
+    assert do_list_repo_content("repo_key", False) == repo_content["files"]
     mock_get_repo_content.assert_called_with("repo_key")
 
 
 @patch("vang.artifactory.list_repo_content.print")
-@patch("vang.artifactory.list_repo_content.list_repo_content")
-def test_main(mock_list_repo_content, mock_print):
+@patch("vang.artifactory.list_repo_content.do_list_repo_content")
+def test_list_repo_content(mock_list_repo_content, mock_print):
     mock_list_repo_content.return_value = ["f1", "f2"]
-    main("repo_key", True)
-    assert [call("f1"), call("f2")] == mock_print.mock_calls
+    list_repo_content("repo_key", True)
+    assert mock_print.mock_calls == [call("f1"), call("f2")]
 
 
 @pytest.mark.parametrize(
@@ -57,4 +61,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

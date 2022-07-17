@@ -19,7 +19,7 @@ def get_release_definition(template, project, repo, branch, comment=None):
     )
 
 
-def create_release_definition(organisation, project, release_definition):
+def do_create_release_definition(organisation, project, release_definition):
     return call(
         f"/{organisation}/{project}/_apis/release/definitions?api-version=3.2-preview",
         request_data=release_definition,
@@ -28,11 +28,11 @@ def create_release_definition(organisation, project, release_definition):
     )
 
 
-def main(project, repo, branch, template, comment=None):
+def create_release_definition(project, repo, branch, template, comment=None):
     organisation, project = project.split("/")
     x = get_release_definition(template, project, repo, branch, comment)
     print(dumps(x, indent=4))
-    response = create_release_definition(
+    response = do_create_release_definition(
         organisation,
         project,
         get_release_definition(template, project, repo, branch, comment),
@@ -57,5 +57,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    create_release_definition(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

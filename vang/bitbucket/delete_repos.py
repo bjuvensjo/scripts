@@ -14,14 +14,14 @@ def delete_repo(spec):
     )
 
 
-def delete_repos(repo_specs, max_processes=10):
+def do_delete_repos(repo_specs, max_processes=10):
     with Pool(processes=max_processes) as pool:
         return pool.map(delete_repo, repo_specs)
 
 
-def main(dirs, repos=None, projects=None):
+def delete_repos(dirs, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
-    for spec, response in delete_repos(specs):
+    for spec, response in do_delete_repos(specs):
         print(f"{spec[0]}/{spec[1]}: {response}")
 
 
@@ -42,5 +42,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    delete_repos(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

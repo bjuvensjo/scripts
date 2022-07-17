@@ -4,14 +4,13 @@ import pytest
 from pytest import raises
 
 from vang.bitbucket.fork_repos_git import fork_repo
-from vang.bitbucket.fork_repos_git import fork_repos
-from vang.bitbucket.fork_repos_git import main
+from vang.bitbucket.fork_repos_git import fork_repos_git
 from vang.bitbucket.fork_repos_git import parse_args
 
 
 @patch("vang.bitbucket.fork_repos_git.print")
 @patch("vang.bitbucket.fork_repos_git.set_repo_default_branch")
-@patch("vang.bitbucket.fork_repos_git.create_repo")
+@patch("vang.bitbucket.fork_repos_git.do_create_repo")
 @patch("vang.bitbucket.fork_repos_git.run_command")
 def test_fork_repo(
     mock_run_command,
@@ -24,16 +23,18 @@ def test_fork_repo(
         "http://myorg/stash/scm/project_key/repo_slug.git",
     )
 
-    assert (
+    assert fork_repo(
+        "fork_project_key", ["develop", "master"], "/project_key/repo_slug"
+    ) == (
         ("fork_project_key", "repo_slug"),
         "http://myorg/stash/scm/fork_project_key/repo_slug.git",
-    ) == fork_repo("fork_project_key", ["develop", "master"], "/project_key/repo_slug")
+    )
 
-    assert [
+    assert mock_set_repo_default_branch.mock_calls == [
         call(("fork_project_key", "repo_slug"), "develop")
-    ] == mock_set_repo_default_branch.mock_calls
-    assert [call("fork_project_key", "repo_slug")] == mock_create_repo.mock_calls
-    assert [
+    ]
+    assert mock_create_repo.mock_calls == [call("fork_project_key", "repo_slug")]
+    assert mock_run_command.mock_calls == [
         call("git checkout master", cwd="/project_key/repo_slug", return_output=True),
         call("git checkout develop", cwd="/project_key/repo_slug", return_output=True),
         call(
@@ -60,69 +61,26 @@ def test_fork_repo(
             cwd="/project_key/repo_slug",
             return_output=True,
         ),
-    ] == mock_run_command.mock_calls
+    ]
 
 
 @patch("vang.bitbucket.fork_repos_git.fork_repo")
 @patch("vang.bitbucket.fork_repos_git.get_work_dirs")
-@patch("vang.bitbucket.fork_repos_git.clone_repos.main")
-def test_fork_repos(mock_main, mock_get_work_dirs, mock_fork_repo):
+@patch("vang.bitbucket.fork_repos_git.clone_repos")
+def test_fork_repos_git(mock_clone_repos, mock_get_work_dirs, mock_fork_repo):
     mock_get_work_dirs.return_value = ("d1", "d2")
     mock_fork_repo.side_effect = lambda x, y, z: (x, y, z)
-    fork_repos(
+    fork_repos_git(
         "fork_project_key", ["develop", "master"], "work_dir", None, ["p1", "p2"]
     )
-    assert [
+    assert mock_clone_repos.mock_calls == [
         call("work_dir", ["p1", "p2"], None, branch="develop", flat=True)
-    ] == mock_main.mock_calls
-    assert [call(".git/", "work_dir")] == mock_get_work_dirs.mock_calls
-    assert [
+    ]
+    assert mock_get_work_dirs.mock_calls == [call(".git/", "work_dir")]
+    assert mock_fork_repo.mock_calls == [
         call("fork_project_key", ["develop", "master"], "d1"),
         call("fork_project_key", ["develop", "master"], "d2"),
-    ] == mock_fork_repo.mock_calls
-
-
-@pytest.mark.parametrize(
-    "repos, projects, expected",
-    [
-        (
-            ["key1/repo1", "key2/repo2"],
-            None,
-            [
-                call(
-                    "fork_project_key",
-                    ["develop", "master"],
-                    "/work_dir",
-                    ["key1/repo1", "key2/repo2"],
-                    None,
-                ),
-            ],
-        ),
-        (
-            None,
-            ["key1", "key2"],
-            [
-                call(
-                    "fork_project_key",
-                    ["develop", "master"],
-                    "/work_dir",
-                    None,
-                    ["key1", "key2"],
-                )
-            ],
-        ),
-    ],
-)
-@patch("vang.bitbucket.fork_repos_git.fork_repos")
-def test_main(mock_fork_repos, repos, projects, expected):
-    main(
-        "fork_project_key",
-        ["develop", "master"],
-        "/work_dir",
-        repos,
-        projects,
-    )
-    assert expected == mock_fork_repos.mock_calls
+    ]
 
 
 @pytest.mark.parametrize(
@@ -165,4 +123,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

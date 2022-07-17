@@ -3,7 +3,7 @@ from unittest.mock import call, patch
 import pytest
 from pytest import raises
 
-from vang.bitbucket.set_default_branches import main
+from vang.bitbucket.set_default_branches import set_default_branches
 from vang.bitbucket.set_default_branches import parse_args
 from vang.bitbucket.set_default_branches import set_default_branch
 from vang.bitbucket.set_default_branches import set_repo_default_branch
@@ -17,38 +17,40 @@ def call_fixtures():
 @patch("vang.bitbucket.set_default_branches.call")
 def test_set_repo_default_branch(mock_call, call_fixtures):
     mock_call.return_value = call_fixtures
-    assert (["project_key", "repo_slug"], 204) == set_repo_default_branch(
-        ["project_key", "repo_slug"], "develop"
+    assert set_repo_default_branch(["project_key", "repo_slug"], "develop") == (
+        ["project_key", "repo_slug"],
+        204,
     )
-    assert [
+    assert mock_call.mock_calls == [
         call(
             "/rest/api/1.0/projects/project_key/repos/repo_slug/branches/default",
             {"id": "refs/heads/develop"},
             method="PUT",
             only_response_code=True,
         )
-    ] == mock_call.mock_calls
+    ]
 
 
 @patch("vang.bitbucket.set_default_branches.call")
 def test_set_default_branch(mock_call, call_fixtures):
     mock_call.return_value = call_fixtures
-    assert [(["project_key", "repo_slug"], 204)] * 2 == set_default_branch(
-        [["project_key", "repo_slug"]] * 2, "develop"
+    assert (
+        set_default_branch([["project_key", "repo_slug"]] * 2, "develop")
+        == [(["project_key", "repo_slug"], 204)] * 2
     )
 
 
 @patch("vang.bitbucket.set_default_branches.print")
 @patch("vang.bitbucket.set_default_branches.get_repo_specs")
 @patch("vang.bitbucket.set_default_branches.call")
-def test_main(mock_call, mock_get_repo_specs, mock_print, call_fixtures):
+def test_set_default_branches(mock_call, mock_get_repo_specs, mock_print, call_fixtures):
     mock_call.return_value = call_fixtures
     mock_get_repo_specs.return_value = [["project_key", "repo_slug"]] * 2
-    main("develop", ["."], None, ["project_key"] * 2)
-    assert [call("project_key/repo_slug: 204")] * 2 == mock_print.mock_calls
-    assert [
+    set_default_branches("develop", ["."], None, ["project_key"] * 2)
+    assert mock_print.mock_calls == [call("project_key/repo_slug: 204")] * 2
+    assert mock_get_repo_specs.mock_calls == [
         call(["."], None, ["project_key", "project_key"])
-    ] == mock_get_repo_specs.mock_calls
+    ]
 
 
 @pytest.mark.parametrize(
@@ -108,4 +110,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

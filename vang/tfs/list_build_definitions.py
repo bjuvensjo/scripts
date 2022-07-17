@@ -4,12 +4,12 @@ import argparse
 from sys import argv
 
 from vang.tfs.api import call
-from vang.tfs.get_projects import get_projects
+from vang.tfs.get_projects import do_get_projects
 
 
-def list_build_definitions(organisations=None, projects=None, filter_name=None):
+def do_list_build_definitions(organisations=None, projects=None, filter_name=None):
     if organisations:
-        projects = get_projects(organisations, project_specs=True)
+        projects = do_get_projects(organisations, project_specs=True)
     if not projects:
         return []
     query = f"&name={filter_name}" if filter_name else ""
@@ -23,7 +23,7 @@ def list_build_definitions(organisations=None, projects=None, filter_name=None):
     return build_definitions
 
 
-def main(
+def list_build_definitions(
     organisations,
     projects,
     filter_name=None,
@@ -33,7 +33,7 @@ def main(
     urls=False,
     web_urls=False,
 ):
-    for name, bd in list_build_definitions(
+    for name, bd in do_list_build_definitions(
         organisations, projects, filter_name
     ).items():
         output = (name, bd)
@@ -93,5 +93,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    list_build_definitions(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

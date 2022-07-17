@@ -6,7 +6,7 @@ from vang.artifactory.publish import get_checksum_headers
 from vang.artifactory.publish import get_checksums
 from vang.artifactory.publish import get_pom_publish_name
 from vang.artifactory.publish import get_publish_data
-from vang.artifactory.publish import main
+from vang.artifactory.publish import publish
 from vang.artifactory.publish import parse_args
 from vang.artifactory.publish import publish_maven_artifact
 from vang.artifactory.publish import read_file
@@ -20,23 +20,23 @@ import pytest
     read_data=b"Nobody inspects the spammish repetition",
 )
 def test_read_file(mock_file):
-    assert b"Nobody inspects the spammish repetition" == read_file("file_path")
+    assert read_file("file_path") == b"Nobody inspects the spammish repetition"
     mock_file.assert_called_with("file_path", "rb")
 
 
 def test_get_checksums():
     md5, sha1, sha256 = get_checksums(b"Nobody inspects the spammish repetition")
-    assert "bb649c83dd1ea5c9d9dec9a18df0ffe9" == md5
-    assert "531b07a0f5b66477a21742d2827176264f4bbfe2" == sha1
-    assert "031edd7d41651593c5fe5c006fa5752b37fddff7bc4e843aa6af0c950f4b9406" == sha256
+    assert md5 == "bb649c83dd1ea5c9d9dec9a18df0ffe9"
+    assert sha1 == "531b07a0f5b66477a21742d2827176264f4bbfe2"
+    assert sha256 == "031edd7d41651593c5fe5c006fa5752b37fddff7bc4e843aa6af0c950f4b9406"
 
 
 def test_get_checksum_headers():
-    assert {
+    assert get_checksum_headers(5, 1, 256) == {
         "X-Checksum-Md5": 5,
         "X-Checksum-Sha1": 1,
         "X-Checksum-Sha256": 256,
-    } == get_checksum_headers(5, 1, 256)
+    }
 
 
 @pytest.mark.parametrize(
@@ -61,7 +61,7 @@ def test_get_checksum_headers():
     ],
 )
 def test_get_pom_publish_name(params, expected):
-    assert expected == get_pom_publish_name(*params)
+    assert get_pom_publish_name(*params) == expected
 
 
 @patch("vang.artifactory.publish.get_checksum_headers")
@@ -79,7 +79,11 @@ def test_get_publish_data(
         "X-Checksum-Sha1": 1,
         "X-Checksum-Sha256": 256,
     }
-    assert {
+    assert get_publish_data(
+        "/repo/com/foo/bar/business.baz/1.0.0-SNAPSHOT",
+        "/foo/bar/foo.pom",
+        "business.baz-1.0.0-SNAPSHOT.pom",
+    ) == {
         "checksum_headers": {
             "X-Checksum-Md5": 5,
             "X-Checksum-Sha1": 1,
@@ -87,11 +91,7 @@ def test_get_publish_data(
         },
         "content": b"Hello World!",
         "uri": "/repo/com/foo/bar/business.baz/1.0.0-SNAPSHOT/business.baz-1.0.0-SNAPSHOT.pom",
-    } == get_publish_data(
-        "/repo/com/foo/bar/business.baz/1.0.0-SNAPSHOT",
-        "/foo/bar/foo.pom",
-        "business.baz-1.0.0-SNAPSHOT.pom",
-    )
+    }
 
 
 @patch("vang.artifactory.publish.api.call")
@@ -132,19 +132,19 @@ def test_publish_maven_artifact(
     mock_glob.side_effect = [["foo.jar"], ["bar.war"]] * 2
     mock_call.return_value = '"response"'
 
-    assert [
+    assert list(publish_maven_artifact("repository", ["d1", "d2"])) == [
         ['"response"', '"response"', '"response"'],
         ['"response"', '"response"', '"response"'],
-    ] == list(publish_maven_artifact("repository", ["d1", "d2"]))
+    ]
 
 
 @patch("vang.artifactory.publish.print")
 @patch("vang.artifactory.publish.publish_maven_artifact")
 def test_main(mock_publish_maven_artifact, mock_print):
     mock_publish_maven_artifact.return_value = ["'response'"]
-    main("repository", ["d1", "d2"])
-    assert [call("repository", ["d1", "d2"])] == mock_publish_maven_artifact.mock_calls
-    assert [call('"response"')] == mock_print.mock_calls
+    publish("repository", ["d1", "d2"])
+    assert mock_publish_maven_artifact.mock_calls == [call("repository", ["d1", "d2"])]
+    assert mock_print.mock_calls == [call('"response"')]
 
 
 @pytest.mark.parametrize(
@@ -179,4 +179,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

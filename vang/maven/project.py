@@ -94,7 +94,7 @@ def make_project(output_dir, java_version, group_id, artifact_id, version, packa
         pom_file.write(pom)
 
 
-def main():
+def project():
     group_id = str(input("groupId (default mygroup): ") or "mygroup")
     artifact_id = str(input("artifactId (default slask): ") or "slask")
     version = str(input("version (default 1.0.0-SNAPSHOT): ") or "1.0.0-SNAPSHOT")
@@ -102,6 +102,10 @@ def main():
     java_version = str(input("javaVersion (default 11): ") or "11")
     output_dir = normpath("/".join(artifact_id.split(".")))
     make_project(output_dir, java_version, group_id, artifact_id, version, packaging)
+
+
+def main() -> None:  # pragma: no cover
+    project()
 
 
 if __name__ == "__main__":  # pragma: no cover

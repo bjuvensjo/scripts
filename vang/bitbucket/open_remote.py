@@ -9,7 +9,7 @@ from sys import argv
 from vang.bitbucket.utils import get_branch, get_project_and_repo
 
 
-def open_remote(
+def do_open_remote(
     git_dir,
     repo,
     project,
@@ -31,8 +31,8 @@ def open_remote(
     run(shlex.split(f"open {url}"))
 
 
-def main(repo_dir, repo, project, baseurl):
-    open_remote(abspath(f"{repo_dir}/.git"), repo, project, baseurl)
+def open_remote(repo_dir, repo, project, baseurl):
+    do_open_remote(abspath(f"{repo_dir}/.git"), repo, project, baseurl)
 
 
 def parse_args(args):
@@ -53,5 +53,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    open_remote(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

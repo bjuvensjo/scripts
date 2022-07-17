@@ -4,7 +4,7 @@ import argparse
 from sys import argv
 
 from vang.tfs.api import call
-from vang.tfs.get_repos import get_repos
+from vang.tfs.get_repos import do_get_repos
 
 
 def get_repo_branches(organisation, project, repository, ref_filter="refs/heads"):
@@ -16,11 +16,11 @@ def get_repo_branches(organisation, project, repository, ref_filter="refs/heads"
     return call(uri)["value"]
 
 
-def get_branches(organisations=None, projects=None, repos=None, names=False):
+def do_get_branches(organisations=None, projects=None, repos=None, names=False):
     if organisations:
-        repos = get_repos(organisations=organisations, repo_specs=True)
+        repos = do_get_repos(organisations=organisations, repo_specs=True)
     if projects:
-        repos = get_repos(projects=projects, repo_specs=True)
+        repos = do_get_repos(projects=projects, repo_specs=True)
     if not repos:
         return []
 
@@ -58,8 +58,8 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(organisations, projects, repos, names):
-    for the_repo, the_branches in get_branches(
+def get_branches(organisations, projects, repos, names):
+    for the_repo, the_branches in do_get_branches(
         organisations,
         projects,
         repos,
@@ -69,5 +69,9 @@ def main(organisations, projects, repos, names):
             print(f"{the_repo}: {the_branch}")
 
 
+def main() -> None:  # pragma: no cover
+    get_branches(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

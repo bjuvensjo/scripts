@@ -4,8 +4,8 @@ import pytest
 from pytest import raises
 
 from vang.bitbucket.delete_repos import delete_repo
+from vang.bitbucket.delete_repos import do_delete_repos
 from vang.bitbucket.delete_repos import delete_repos
-from vang.bitbucket.delete_repos import main
 from vang.bitbucket.delete_repos import parse_args
 
 
@@ -18,36 +18,36 @@ from vang.bitbucket.delete_repos import parse_args
     },
 )
 def test_delete_repo(mock_call):
-    assert (
+    assert delete_repo(("project", "repo")) == (
         ("project", "repo"),
         {
             "context": None,
             "exceptionName": None,
             "message": "Repository scheduled for deletion.",
         },
-    ) == delete_repo(("project", "repo"))
-    assert [
+    )
+    assert mock_call.mock_calls == [
         call("/rest/api/1.0/projects/project/repos/repo", method="DELETE")
-    ] == mock_call.mock_calls
+    ]
 
 
 @patch("vang.bitbucket.delete_repos.delete_repo", return_value=1)
-def test_delete_repos(mock_delete_repo):
-    assert [1, 1] == delete_repos(
+def test_do_delete_repos(mock_delete_repo):
+    assert do_delete_repos(
         [
             ("project", "repo1"),
             ("project", "repo2"),
         ]
-    )
-    assert [
+    ) == [1, 1]
+    assert mock_delete_repo.mock_calls == [
         call(("project", "repo1")),
         call(("project", "repo2")),
-    ] == mock_delete_repo.mock_calls
+    ]
 
 
 @patch("builtins.print")
 @patch(
-    "vang.bitbucket.delete_repos.delete_repos",
+    "vang.bitbucket.delete_repos.do_delete_repos",
     side_effect=[
         [
             [("project", "repo1"), "deleted"],
@@ -62,21 +62,21 @@ def test_delete_repos(mock_delete_repo):
         ("project", "repo2"),
     ],
 )
-def test_main(mock_get_repo_specs, mock_delete_repos, mock_print):
-    assert not main(dirs=None, projects=["project"])
-    assert [call(None, None, ["project"])] == mock_get_repo_specs.mock_calls
-    assert [
+def test_delete_repos(mock_get_repo_specs, mock_delete_repos, mock_print):
+    assert not delete_repos(dirs=None, projects=["project"])
+    assert mock_get_repo_specs.mock_calls == [call(None, None, ["project"])]
+    assert mock_delete_repos.mock_calls == [
         call(
             [
                 ("project", "repo1"),
                 ("project", "repo2"),
             ]
         )
-    ] == mock_delete_repos.mock_calls
-    assert [
+    ]
+    assert mock_print.mock_calls == [
         call("project/repo1: deleted"),
         call("project/repo1: deleted"),
-    ] == mock_print.mock_calls
+    ]
 
 
 @pytest.mark.parametrize(
@@ -103,4 +103,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

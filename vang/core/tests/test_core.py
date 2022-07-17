@@ -15,7 +15,7 @@ def test_create_timestamp():
     d = datetime(2007, 12, 6, 15, 29, 43, 79060)
     with patch("vang.core.core.datetime") as m:
         m.now.return_value = d
-        assert "20071206T152943.079060" == create_timestamp()
+        assert create_timestamp() == "20071206T152943.079060"
 
 
 def test_has_match():
@@ -35,17 +35,18 @@ def test_is_included():
 
 
 def test_pmap():
-    assert [2, 4, 6] == pmap(lambda x: x * 2, [1, 2, 3])
+    assert pmap(lambda x: x * 2, [1, 2, 3]) == [2, 4, 6]
 
 
 def test_pmap_unordered():
-    assert [2, 4, 6] == sorted(pmap_unordered(lambda x: x * 2, [1, 2, 3]))
+    assert sorted(pmap_unordered(lambda x: x * 2, [1, 2, 3])) == [2, 4, 6]
 
 
 def test_select_keys():
-    assert {"foo": 1, "bar": 2} == select_keys(
-        {"foo": 1, "bar": 2, "baz": 3}, ("foo", "bar")
-    )
+    assert select_keys({"foo": 1, "bar": 2, "baz": 3}, ("foo", "bar")) == {
+        "foo": 1,
+        "bar": 2,
+    }
 
 
 @pytest.mark.parametrize(
@@ -58,4 +59,4 @@ def test_select_keys():
 )
 def test_get_in(keys, expected):
     d = {"a": {"b": {"c": "c", "d": [{"e": 1}]}}}
-    assert get_in(d, keys) == expected
+    assert expected == get_in(d, keys)

@@ -5,12 +5,12 @@ from sys import argv
 from vang.bitbucket.api import get_all
 
 
-def get_projects():
+def do_get_projects():
     return get_all("/rest/api/1.0/projects")
 
 
-def main(key=False):
-    for project in get_projects():
+def get_projects(key=False):
+    for project in do_get_projects():
         if key:
             print(project["key"])
         else:
@@ -25,5 +25,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    get_projects(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

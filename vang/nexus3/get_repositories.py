@@ -8,7 +8,7 @@ from sys import argv
 from requests import get
 
 
-def get_repositories(url, username, password):
+def do_get_repositories(url, username, password):
     url = f"{url}/service/rest/v1/repositories"
     response = get(url, auth=(username, password))
     if response.status_code != 200:
@@ -39,9 +39,13 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(url, username, password):
-    pprint(get_repositories(url, username, password))
+def get_repositories(url, username, password):
+    pprint(do_get_repositories(url, username, password))
+
+
+def main() -> None:  # pragma: no cover
+    get_repositories(**parse_args(argv[1:]).__dict__)
 
 
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

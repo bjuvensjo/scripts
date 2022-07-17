@@ -5,7 +5,7 @@ from pytest import raises
 
 from vang.maven.multi_module_project import get_pom
 from vang.maven.multi_module_project import get_pom_infos
-from vang.maven.multi_module_project import main
+from vang.maven.multi_module_project import multi_module_project
 from vang.maven.multi_module_project import make_project
 from vang.maven.multi_module_project import parse_args
 
@@ -46,12 +46,15 @@ def test_get_pom(pom_infos_fixture):
     </modules>
 </project>"""
 
-    assert expected == get_pom(
-        pom_infos_fixture,
-        "/root/ws",
-        "group_id",
-        "artifact_id",
-        "version",
+    assert (
+        get_pom(
+            pom_infos_fixture,
+            "/root/ws",
+            "group_id",
+            "artifact_id",
+            "version",
+        )
+        == expected
     )
 
 
@@ -67,7 +70,7 @@ def test_make_project(mock_get_pom, mock_makedirs, pom_infos_fixture):
             "artifact_id",
             "version",
         )
-        assert [
+        assert mock_get_pom.mock_calls == [
             call(
                 [
                     {
@@ -90,14 +93,14 @@ def test_make_project(mock_get_pom, mock_makedirs, pom_infos_fixture):
                 "artifact_id",
                 "version",
             )
-        ] == mock_get_pom.mock_calls
-        assert [call("/root/ws")] == mock_makedirs.mock_calls
-        assert [
+        ]
+        assert mock_makedirs.mock_calls == [call("/root/ws")]
+        assert m.mock_calls == [
             call("/root/ws/pom.xml", "wt", encoding="utf-8"),
             call().__enter__(),
             call().write("pom"),
             call().__exit__(None, None, None),
-        ] == m.mock_calls
+        ]
 
 
 @patch("vang.maven.multi_module_project.pom.get_pom_info")
@@ -109,7 +112,7 @@ def test_get_pom_infos(mock_get_pom_paths, mock_get_pom_info, pom_infos_fixture)
     )
     mock_get_pom_info.side_effect = pom_infos_fixture
 
-    assert [
+    assert get_pom_infos("source_dir") == [
         {
             "artifact_id": "m1",
             "group_id": "com.example",
@@ -124,7 +127,7 @@ def test_get_pom_infos(mock_get_pom_paths, mock_get_pom_info, pom_infos_fixture)
             "pom_path": "/root/m2/pom.xml",
             "version": "1.0.0-SNAPSHOT",
         },
-    ] == get_pom_infos("source_dir")
+    ]
 
 
 @pytest.mark.parametrize(
@@ -152,7 +155,7 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected
 
 
 @pytest.mark.parametrize(
@@ -221,7 +224,7 @@ def test_parse_args_valid(args, expected):
 @patch("vang.maven.multi_module_project.input")
 @patch("vang.maven.multi_module_project.make_project")
 @patch("vang.maven.multi_module_project.get_pom_infos")
-def test_main(
+def test_multi_module_project(
     mock_get_pom_infos,
     mock_make_project,
     mock_input,
@@ -235,7 +238,7 @@ def test_main(
     mock_get_pom_infos.return_value = pom_infos_fixture
     mock_input.side_effect = ("g", "a", "v", "s", "o")
 
-    main(use_defaults)
+    multi_module_project(use_defaults)
 
-    assert source_dir_expected == mock_get_pom_infos.mock_calls
-    assert expected == mock_make_project.mock_calls
+    assert mock_get_pom_infos.mock_calls == source_dir_expected
+    assert mock_make_project.mock_calls == expected

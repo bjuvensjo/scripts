@@ -9,7 +9,7 @@ from vang.maven.reactor_summary import get_project
 from vang.maven.reactor_summary import get_reactor_summary
 from vang.maven.reactor_summary import get_successes
 from vang.maven.reactor_summary import get_summary
-from vang.maven.reactor_summary import main
+from vang.maven.reactor_summary import reactor_summary
 from vang.maven.reactor_summary import parse_args
 from vang.maven.reactor_summary import print_summary
 
@@ -27,10 +27,10 @@ def reactor_summary_fixture():
 def test_get_reactor_summary():
     with open(dirname(__file__) + "/mvn.log", "rt", encoding="utf-8") as f:
         mvn_log = f.readlines()
-        assert [
+        assert get_reactor_summary(mvn_log) == [
             "[INFO] myorg:app 0.0.1-SNAPSHOT ................. SUCCESS [ 1.095 s]",
             "[INFO] config 1.0.0-SNAPSHOT ................. SUCCESS [  4.300 s]",
-        ] == get_reactor_summary(mvn_log)
+        ]
 
 
 @pytest.mark.parametrize(
@@ -59,7 +59,7 @@ def test_get_reactor_summary():
     ],
 )
 def test_get_reactor_summary_single_project(mvn_log, expected):
-    assert expected == get_reactor_summary(mvn_log)
+    assert get_reactor_summary(mvn_log) == expected
 
 
 @pytest.mark.parametrize(
@@ -76,7 +76,7 @@ def test_get_reactor_summary_single_project(mvn_log, expected):
     ],
 )
 def test_get_project(line, expected):
-    assert expected == get_project(line)
+    assert get_project(line) == expected
 
 
 @pytest.mark.parametrize(
@@ -86,7 +86,7 @@ def test_get_project(line, expected):
     ],
 )
 def test_get_successes(reactor_summary_fixture, expected):
-    assert expected == get_successes(reactor_summary_fixture)
+    assert get_successes(reactor_summary_fixture) == expected
 
 
 @pytest.mark.parametrize(
@@ -96,12 +96,12 @@ def test_get_successes(reactor_summary_fixture, expected):
     ],
 )
 def test_get_failures(reactor_summary_fixture, expected):
-    assert expected == get_failures(reactor_summary_fixture)
+    assert get_failures(reactor_summary_fixture) == expected
 
 
 @patch("vang.maven.reactor_summary.print_summary")
 def test_get_summary(mock_print_summary):
-    assert (
+    assert get_summary([dirname(__file__) + "/mvn.log"] * 2, True) == (
         [
             "myorg:app",
             "config",
@@ -109,13 +109,13 @@ def test_get_summary(mock_print_summary):
             "config",
         ],
         [],
-    ) == get_summary([dirname(__file__) + "/mvn.log"] * 2, True)
-    assert [
+    )
+    assert mock_print_summary.mock_calls == [
         call(
             ["myorg:app", "config", "myorg:app", "config"],
             [],
         )
-    ] == mock_print_summary.mock_calls
+    ]
 
 
 @patch("vang.maven.reactor_summary.print")
@@ -124,7 +124,7 @@ def test_print_summary(mock_print):
         ["myorg:app", "config", "myorg:app", "config"],
         ["yorg:app"],
     )
-    assert [
+    assert mock_print.mock_calls == [
         call(
             "\n".join(
                 [
@@ -140,28 +140,30 @@ def test_print_summary(mock_print):
                 ]
             )
         )
-    ] == mock_print.mock_calls
+    ]
 
 
 @patch("vang.maven.reactor_summary.glob")
 @patch("vang.maven.reactor_summary.realpath")
 @patch("vang.maven.reactor_summary.print_summary")
 @patch("vang.maven.reactor_summary.get_summary")
-def test_main(mock_get_summary, mock_print_summary, mock_realpath, mock_glob):
+def test_reactor_summary(
+    mock_get_summary, mock_print_summary, mock_realpath, mock_glob
+):
     mock_get_summary.return_value = [["success"], ["failure"]]
     mock_realpath.side_effect = lambda x: x
     mock_glob.return_value = ["p1", "p2"]
-    main(["r1", "r2"], "mvn.log")
+    reactor_summary(["r1", "r2"], "mvn.log")
 
-    assert [call(["p1", "p2", "p1", "p2"])] == mock_get_summary.mock_calls
-    assert [
+    assert mock_get_summary.mock_calls == [call(["p1", "p2", "p1", "p2"])]
+    assert mock_glob.mock_calls == [
         call("r1/**/mvn.log", recursive=True),
         call(
             "r2/**/mvn.log",
             recursive=True,
         ),
-    ] == mock_glob.mock_calls
-    assert [call(["success"], ["failure"])] == mock_print_summary.mock_calls
+    ]
+    assert mock_print_summary.mock_calls == [call(["success"], ["failure"])]
 
 
 @pytest.mark.parametrize(
@@ -189,4 +191,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

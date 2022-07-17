@@ -14,14 +14,14 @@ def fork_repo(spec, fork_project):
     return spec, call(uri, request_data, "POST")
 
 
-def fork_repos(repo_specs, fork_project, max_processes=10):
+def do_fork_repos(repo_specs, fork_project, max_processes=10):
     with Pool(processes=max_processes) as pool:
         return pool.starmap(fork_repo, product(repo_specs, [fork_project]))
 
 
-def main(fork_project, dirs, repos=None, projects=None):
+def fork_repos(fork_project, dirs, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
-    for spec, response in fork_repos(specs, fork_project):
+    for spec, response in do_fork_repos(specs, fork_project):
         print(f"{spec[0]}/{spec[1]}: {response}")
 
 
@@ -43,5 +43,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    fork_repos(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

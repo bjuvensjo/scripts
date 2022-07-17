@@ -1,19 +1,19 @@
 [project]
 name = "vang"
-version = "1.3.1"
+version = "1.4.0-beta"
 authors = [
   { name="Magnus Bjuvensjö", email="bjuvensjo@gmail.com" },
 ]
 description = "Scripts"
 readme = "README.md"
 license = { file="LICENSE" }
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-keywords=["python", "script", "artifactory", "azdo", "bitbucket", "git", "github", "jenkins", "maven", "nexus3", "tfs"]
+keywords=["python", "pipx", "script", "artifactory", "azdo", "bitbucket", "git", "github", "jenkins", "maven", "nexus3", "tfs"]
 dependencies = [
     "more-itertools",
     "requests",
@@ -30,3 +30,91 @@ dev = [
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[project.scripts]
+vang-artifactory-delete = "vang.artifactory.delete:main"
+vang-artifactory-diff-repos = "vang.artifactory.diff_repos:main"
+vang-artifactory-download-repo-content = "vang.artifactory.download_repo_content:main"
+vang-artifactory-list-repo-content = "vang.artifactory.list_repo_content:main"
+vang-artifactory-list-repos = "vang.artifactory.list_repos:main"
+vang-artifactory-publish = "vang.artifactory.publish:main"
+vang-azdo-clone-repos = "vang.azdo.clone_repos:main"
+vang-azdo-create-build-definition = "vang.azdo.create_build_definition:main"
+vang-azdo-create-repo = "vang.azdo.create_repo:main"
+vang-azdo-get-project = "vang.azdo.get_project:main"
+vang-azdo-list-builds = "vang.azdo.list_builds:main"
+vang-azdo-list-projects = "vang.azdo.list_projects:main"
+vang-azdo-list-repos = "vang.azdo.list_repos:main"
+vang-bitbucket-clone-repos = "vang.bitbucket.clone_repos:main"
+vang-bitbucket-create-from-template = "vang.bitbucket.create_from_template:main"
+vang-bitbucket-create-repo = "vang.bitbucket.create_repo:main"
+vang-bitbucket-delete-repos = "vang.bitbucket.delete_repos:main"
+vang-bitbucket-enable-webhooks = "vang.bitbucket.enable_webhooks:main"
+vang-bitbucket-fork-repos-git = "vang.bitbucket.fork_repos_git:main"
+vang-bitbucket-get-branches = "vang.bitbucket.get_branches:main"
+vang-bitbucket-get-clone-urls = "vang.bitbucket.get_clone_urls:main"
+vang-bitbucket-get-clone-urls-grep = "vang.bitbucket.get_clone_urls_grep:main"
+vang-bitbucket-get-commits = "vang.bitbucket.get_commits:main"
+vang-bitbucket-get-default-branches = "vang.bitbucket.get_default_branches:main"
+vang-bitbucket-get-projects = "vang.bitbucket.get_projects:main"
+vang-bitbucket-get-repos = "vang.bitbucket.get_repos:main"
+vang-bitbucket-get-tags = "vang.bitbucket.get_tags:main"
+vang-bitbucket-has-branch = "vang.bitbucket.has_branch:main"
+vang-bitbucket-has-tag = "vang.bitbucket.has_tag:main"
+vang-bitbucket-open-remote = "vang.bitbucket.open_remote:main"
+vang-bitbucket-set-default-branches = "vang.bitbucket.set_default_branches:main"
+vang-bitbucket-set-webhooks = "vang.bitbucket.set_webhooks:main"
+vang-git-filter-branch = "vang.git.filter_branch:main"
+vang-git-open-remote = "vang.git.open_remote:main"
+vang-jenkins-copy-job = "vang.jenkins.copy_job:main"
+vang-jenkins-delete-jobs = "vang.jenkins.delete_jobs:main"
+vang-jenkins-download-configs = "vang.jenkins.download_configs:main"
+vang-jenkins-get-jobs = "vang.jenkins.get_jobs:main"
+vang-jenkins-upload-configs = "vang.jenkins.upload_configs:main"
+vang-jenkins-view = "vang.jenkins.view:main"
+vang-maven-get-artifact-id = "vang.maven.get_artifact_id:main"
+vang-maven-get-dependants = "vang.maven.get_dependants:main"
+vang-maven-get-dependencies = "vang.maven.get_dependencies:main"
+vang-maven-list-repo = "vang.maven.list_repo:main"
+vang-maven-multi-module-project = "vang.maven.multi_module_project:main"
+vang-maven-project = "vang.maven.project:main"
+vang-maven-reactor-summary = "vang.maven.reactor_summary:main"
+vang-maven-regroup = "vang.maven.regroup:main"
+vang-maven-remote-from-local = "vang.maven.remote_from_local:main"
+vang-maven-switch-settings = "vang.maven.switch_settings:main"
+vang-misc-basic = "vang.misc.basic:main"
+vang-misc-mac-ip = "vang.misc.mac_ip:main"
+vang-misc-pw-generator = "vang.misc.pw_generator:main"
+vang-misc-wc = "vang.misc.wc:main"
+vang-misc-weekday = "vang.misc.weekday:main"
+vang-nexus3-get-assets = "vang.nexus3.get_assets:main"
+vang-nexus3-get-components = "vang.nexus3.get_components:main"
+vang-nexus3-get-repositories = "vang.nexus3.get_repositories:main"
+vang-nexus3-publish = "vang.nexus3.publish:main"
+vang-nexus3-upload = "vang.nexus3.upload:main"
+vang-pio-command-all = "vang.pio.command_all:main"
+vang-pio-download = "vang.pio.download:main"
+vang-pio-replace-in-zip = "vang.pio.replace_in_zip:main"
+vang-pio-rsr = "vang.pio.rsr:main"
+vang-pio-shasum-diff-dirs = "vang.pio.shasum_diff_dirs:main"
+vang-pio-synchronize-dirs = "vang.pio.synchronize_dirs:main"
+vang-pio-zip-read = "vang.pio.zip_read:main"
+vang-tfs-clone-repos = "vang.tfs.clone_repos:main"
+vang-tfs-create-from-template = "vang.tfs.create_from_template:main"
+vang-tfs-create-release-definition = "vang.tfs.create_release_definition:main"
+vang-tfs-create-repo = "vang.tfs.create_repo:main"
+vang-tfs-delete-build-definitions = "vang.tfs.delete_build_definitions:main"
+vang-tfs-delete-repo = "vang.tfs.delete_repo:main"
+vang-tfs-get-branches = "vang.tfs.get_branches:main"
+vang-tfs-get-build-definitions = "vang.tfs.get_build_definitions:main"
+vang-tfs-get-projects = "vang.tfs.get_projects:main"
+vang-tfs-get-release-definitions = "vang.tfs.get_release_definitions:main"
+vang-tfs-get-repos = "vang.tfs.get_repos:main"
+vang-tfs-list-build-definitions = "vang.tfs.list_build_definitions:main"
+vang-tfs-list-release-definitions = "vang.tfs.list_release_definitions:main"
+vang-tfs-queue-build-definitions = "vang.tfs.queue_build_definitions:main"
+vang-tfs-update-build-definition = "vang.tfs.update_build_definition:main"
+vang-tfs-update-release-definition = "vang.tfs.update_release_definition:main"
+
+
+

@@ -126,7 +126,7 @@ def parse_args(args):  # pragma: no cover
     return parser.parse_args(args)
 
 
-def main(
+def example(
     endpoint: str, token: str, login: str, first: int, with_message: bool
 ) -> None:  # pragma: no cover
     login = login or get_login(endpoint, token)
@@ -135,5 +135,9 @@ def main(
         pprint(r)
 
 
+def main() -> None:  # pragma: no cover
+    example(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

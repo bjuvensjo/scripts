@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, call, patch
 
 from pytest import raises
 
-from vang.pio.command_all import execute_in_parallel
+from vang.pio.command_all import command_all, execute_in_parallel
 from vang.pio.command_all import execute_in_sequence
 from vang.pio.command_all import get_command
 from vang.pio.command_all import get_work_dirs
@@ -22,38 +22,38 @@ import pytest
     ],
 )
 def test_get_work_dirs(mock_glob, mock_realpath):
-    assert [
+    assert get_work_dirs(".git", "root") == [
         Path("root/sub/foo"),
         Path("root/sub/bar"),
-    ] == get_work_dirs(".git", "root")
+    ]
 
 
 def test_get_command():
-    assert [""] == get_command([])
-    assert ["pwd"] == get_command(["pwd"])
-    assert ["pwd && ls"] == get_command(["pwd", "ls"])
+    assert get_command([]) == [""]
+    assert get_command(["pwd"]) == ["pwd"]
+    assert get_command(["pwd", "ls"]) == ["pwd && ls"]
 
 
 @patch("vang.pio.command_all.run_commands", return_value=iter([1, 2]))
 @patch("vang.pio.command_all.get_work_dirs", return_value=["foo", "bar"])
 def test_execute_in_parallel(mock_get_work_dirs, mock_run_commands):
-    assert [1, 2] == list(execute_in_parallel("root", ["pwd", "ls"], find="find"))
-    assert [call("find", "root")] == mock_get_work_dirs.mock_calls
-    assert [
+    assert list(execute_in_parallel("root", ["pwd", "ls"], find="find")) == [1, 2]
+    assert mock_get_work_dirs.mock_calls == [call("find", "root")]
+    assert mock_run_commands.mock_calls == [
         call(
             (("pwd && ls", "foo"), ("pwd && ls", "bar")), check=False, max_processes=25
         )
-    ] == mock_run_commands.mock_calls
+    ]
 
 
 @patch("vang.pio.command_all.run", side_effect=[1, 2])
 @patch("vang.pio.command_all.get_work_dirs", return_value=["foo", "bar"])
 def test_execute_in_sequence(mock_get_work_dirs, mock_run):
-    assert [1, 2] == list(
+    assert list(
         execute_in_sequence("root", ["pwd", "ls"], find="find", timeout=10)
-    )
-    assert [call("find", "root")] == mock_get_work_dirs.mock_calls
-    assert [
+    ) == [1, 2]
+    assert mock_get_work_dirs.mock_calls == [call("find", "root")]
+    assert mock_run.mock_calls == [
         call(
             "pwd && ls",
             check=False,
@@ -72,21 +72,21 @@ def test_execute_in_sequence(mock_get_work_dirs, mock_run):
             stdout=-1,
             timeout=10,
         ),
-    ] == mock_run.mock_calls
+    ]
 
 
 @patch("builtins.print")
 @patch("vang.pio.command_all.execute_in_parallel")
 @patch("vang.pio.command_all.execute_in_sequence")
-def test_main(mock_execute_in_sequence, mock_execute_in_parallel, mock_print):
+def test_command_all(mock_execute_in_sequence, mock_execute_in_parallel, mock_print):
     processes = [MagicMock(stdout=b" output   ")]
     mock_execute_in_parallel.return_value = processes
     mock_execute_in_sequence.return_value = processes
-    assert not main("root", ["pwd", "ls"], find="find", sequence=False)
-    assert not main("root", ["pwd", "ls"], find="find", sequence=True)
-    assert [call("root", ["pwd", "ls"], "find")] == mock_execute_in_parallel.mock_calls
-    assert [call("root", ["pwd", "ls"], "find")] == mock_execute_in_sequence.mock_calls
-    assert [call("output"), call("output")] == mock_print.mock_calls
+    assert not command_all("root", ["pwd", "ls"], find="find", sequence=False)
+    assert not command_all("root", ["pwd", "ls"], find="find", sequence=True)
+    assert mock_execute_in_parallel.mock_calls == [call("root", ["pwd", "ls"], "find")]
+    assert mock_execute_in_sequence.mock_calls == [call("root", ["pwd", "ls"], "find")]
+    assert mock_print.mock_calls == [call("output"), call("output")]
 
 
 @pytest.mark.parametrize(
@@ -119,4 +119,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

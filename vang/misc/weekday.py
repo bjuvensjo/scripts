@@ -41,9 +41,13 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(year, month, day):
+def weekday(year, month, day):
     print(name(zeller(int(year), int(month), int(day))))
 
 
+def main() -> None:  # pragma: no cover
+    weekday(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

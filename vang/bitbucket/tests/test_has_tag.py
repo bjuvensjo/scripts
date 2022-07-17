@@ -37,13 +37,10 @@ def tags_fixture():
 
 
 @pytest.mark.parametrize("tag, expected", [("t1", True), ("t2", False)])
-@patch("vang.bitbucket.has_tag.get_tags", autospec=True)
-def test_has_tag(mock_get_tags, tag, expected, tags_fixture):
-    mock_get_tags.return_value = tags_fixture
-    assert [
-        (["project_key", "repo_slug1"], expected),
-        (["project_key", "repo_slug2"], expected),
-    ] == list(
+@patch("vang.bitbucket.has_tag.do_get_tags", autospec=True)
+def test_has_tag(mock_do_get_tags, tag, expected, tags_fixture):
+    mock_do_get_tags.return_value = tags_fixture
+    assert list(
         has_tag(
             [
                 ["project_key", "repo_slug1"],
@@ -51,20 +48,23 @@ def test_has_tag(mock_get_tags, tag, expected, tags_fixture):
             ],
             tag,
         )
-    )
+    ) == [
+        (["project_key", "repo_slug1"], expected),
+        (["project_key", "repo_slug2"], expected),
+    ]
 
 
 @patch("vang.bitbucket.has_tag.print")
 @patch("vang.bitbucket.has_tag.get_repo_specs", autospec=True)
-@patch("vang.bitbucket.has_tag.get_tags", autospec=True)
-def test_main(mock_get_tags, mock_get_repo_specs, mock_print, tags_fixture):
-    mock_get_tags.return_value = tags_fixture
+@patch("vang.bitbucket.has_tag.do_get_tags", autospec=True)
+def test_main(mock_do_get_tags, mock_get_repo_specs, mock_print, tags_fixture):
+    mock_do_get_tags.return_value = tags_fixture
     mock_get_repo_specs.return_value = [
         ["project_key", "repo_slug1"],
         ["project_key", "repo_slug2"],
     ]
     main("t1", repos=["project_key/repo_slug1", "project_key/repo_slug2"])
-    assert [
+    assert mock_get_repo_specs.mock_calls == [
         call(
             None,
             [
@@ -73,11 +73,11 @@ def test_main(mock_get_tags, mock_get_repo_specs, mock_print, tags_fixture):
             ],
             None,
         )
-    ] == mock_get_repo_specs.mock_calls
-    assert [
+    ]
+    assert mock_print.mock_calls == [
         call("project_key/repo_slug1, t1: True"),
         call("project_key/repo_slug2, t1: True"),
-    ] == mock_print.mock_calls
+    ]
 
 
 @pytest.mark.parametrize(
@@ -121,4 +121,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

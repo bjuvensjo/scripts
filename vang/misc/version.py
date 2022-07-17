@@ -3,18 +3,16 @@ from itertools import count
 
 
 def _get_rc_number(version):
-    m = re.search(r"rc([0-9]+)", version)
+    m = re.search(r"rc(\d+)", version)
     return int(m[1]) if m else -1
 
 
 def _get_version_number(version):
     version = version.replace("_", ".")
     try:
-        numbers = [
-            int(x) for x in re.match(r"([0-9]+)\.([0-9]+)\.([0-9]+)", version).groups()
-        ]
+        numbers = [int(x) for x in re.match(r"(\d+)\.(\d+)\.(\d+)", version).groups()]
         return numbers
-    except AttributeError as e:
+    except AttributeError:
         raise ValueError(f"version must be semver {version}")
 
 

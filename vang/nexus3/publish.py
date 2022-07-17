@@ -7,7 +7,7 @@ from os.path import basename
 from sys import argv
 
 from vang.maven.pom import get_pom_info
-from vang.nexus3.upload import upload
+from vang.nexus3.upload import do_upload
 from vang.nexus3.utils import get_artifact_base_uri, get_pom_path
 
 
@@ -44,7 +44,7 @@ def publish_maven_artifact(repository, pom_dirs, url, username, password):
         ]
 
         yield [
-            upload(
+            do_upload(
                 pd["file_path"],
                 repository,
                 pd["repository_path"],
@@ -56,7 +56,7 @@ def publish_maven_artifact(repository, pom_dirs, url, username, password):
         ]
 
 
-def main(repository, dirs, url, username, password):
+def publish(repository, dirs, url, username, password):
     for response in publish_maven_artifact(repository, dirs, url, username, password):
         print(response)
 
@@ -92,5 +92,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    publish(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

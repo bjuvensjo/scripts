@@ -47,7 +47,7 @@ def get_artifactory_url(repo_content):
     return repo_content["uri"].replace("api/storage/", "")
 
 
-def download_repo_content(output_dir, repo_key):
+def do_download_repo_content(output_dir, repo_key):
     base_dir = f"{output_dir}/{repo_key}"
     repo_content = get_repo_content(repo_key)
     create_dirs(base_dir, repo_content["files"])
@@ -55,8 +55,8 @@ def download_repo_content(output_dir, repo_key):
     yield from download_files(artifactory_url, base_dir, repo_content["files"])
 
 
-def main(output_dir, repo_key):
-    for url, output_file in download_repo_content(output_dir, repo_key):
+def download_repo_content(output_dir, repo_key):
+    for url, output_file in do_download_repo_content(output_dir, repo_key):
         print(url, "->", output_file)
 
 
@@ -67,5 +67,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    download_repo_content(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

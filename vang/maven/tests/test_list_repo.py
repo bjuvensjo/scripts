@@ -4,7 +4,7 @@ from pytest import raises
 from vang.maven.list_repo import get_artifacts
 from vang.maven.list_repo import has_ending
 from vang.maven.list_repo import is_included
-from vang.maven.list_repo import main
+from vang.maven.list_repo import list_repo
 from vang.maven.list_repo import parse_args
 
 import pytest
@@ -21,7 +21,7 @@ import pytest
     ],
 )
 def test_has_ending(endings, file_names, expected):
-    assert expected == has_ending(endings, file_names)
+    assert has_ending(endings, file_names) == expected
 
 
 @pytest.mark.parametrize(
@@ -34,7 +34,7 @@ def test_has_ending(endings, file_names, expected):
     ],
 )
 def test_is_included(snapshots, dir_path, expected):
-    assert expected == is_included(snapshots, dir_path)
+    assert is_included(snapshots, dir_path) == expected
 
 
 @pytest.mark.parametrize(
@@ -60,7 +60,7 @@ def test_get_artifacts(snapshots, expected):
             ],
         ],
     ):
-        assert expected == get_artifacts("repo_dir", snapshots=snapshots)
+        assert get_artifacts("repo_dir", snapshots=snapshots) == expected
 
 
 @pytest.mark.parametrize(
@@ -87,18 +87,18 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ")).__dict__
+    assert parse_args(args.split(" ")).__dict__ == expected
 
 
 @patch("vang.maven.list_repo.print")
 @patch("vang.maven.list_repo.get_artifacts")
-def test_main(mock_get_artifacts, mock_print):
+def test_list_repo(mock_get_artifacts, mock_print):
     mock_get_artifacts.return_value = [
         "ch/qos/logback/logback-core/1.1.11",
         "ch/qos/logback/logback-core/1.2.3",
     ]
-    main("repo_dir")
-    assert [
+    list_repo("repo_dir")
+    assert mock_print.mock_calls == [
         call(
             "<dependency>\n"
             "    <groupId>ch.qos.logback</groupId>\n"
@@ -113,4 +113,4 @@ def test_main(mock_get_artifacts, mock_print):
             "    <version>1.2.3</version>\n"
             "</dependency>"
         ),
-    ] == mock_print.mock_calls
+    ]

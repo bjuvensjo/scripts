@@ -5,17 +5,17 @@ from pytest import raises
 
 from vang.jenkins.get_jobs import FAILURE
 from vang.jenkins.get_jobs import SUCCESS
-from vang.jenkins.get_jobs import get_jobs, NOT_BUILT, UNKNOWN
+from vang.jenkins.get_jobs import do_get_jobs, NOT_BUILT, UNKNOWN
 from vang.jenkins.get_jobs import map_color
 from vang.jenkins.get_jobs import parse_args
 
 
 def test_map_color():
-    assert SUCCESS == map_color("blue")
-    assert NOT_BUILT == map_color("notbuilt")
-    assert FAILURE == map_color("red")
-    assert UNKNOWN == map_color("")
-    assert UNKNOWN == map_color("x")
+    assert map_color("blue") == SUCCESS
+    assert map_color("notbuilt") == NOT_BUILT
+    assert map_color("red") == FAILURE
+    assert map_color("") == UNKNOWN
+    assert map_color("x") == UNKNOWN
 
 
 @pytest.mark.parametrize(
@@ -43,7 +43,7 @@ def test_get_jobs(mock_call, statuses, only_names, expected):
         ]
     }
 
-    assert expected == get_jobs(statuses, only_names)
+    assert do_get_jobs(statuses, only_names) == expected
 
 
 @pytest.mark.parametrize(
@@ -97,4 +97,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

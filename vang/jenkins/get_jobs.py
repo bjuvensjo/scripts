@@ -22,7 +22,7 @@ def map_color(color):
     return UNKNOWN
 
 
-def get_jobs(
+def do_get_jobs(
     statuses=(FAILURE, SUCCESS, NOT_BUILT, UNKNOWN),
     only_names=False,
     url=environ.get("JENKINS_REST_URL", None),
@@ -79,7 +79,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(only_failures, only_successes, only_names, only_not_built, only_unknown, view):
+def get_jobs(
+    only_failures, only_successes, only_names, only_not_built, only_unknown, view
+):
     if only_failures:
         job_statuses = [FAILURE]
     elif only_successes:
@@ -91,9 +93,13 @@ def main(only_failures, only_successes, only_names, only_not_built, only_unknown
     else:
         job_statuses = [FAILURE, SUCCESS, NOT_BUILT, UNKNOWN]
 
-    for a_job in get_jobs(job_statuses, only_names, view=view):
+    for a_job in do_get_jobs(job_statuses, only_names, view=view):
         print(a_job)
 
 
+def main() -> None:  # pragma: no cover
+    get_jobs(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

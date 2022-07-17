@@ -9,13 +9,13 @@ from vang.pio.shell import run_command
 logging.basicConfig(stream=stdout, level=logging.INFO)
 
 
-def get_dependencies(dependency_tree_split):
+def do_get_dependencies(dependency_tree_split):
     lines = dependency_tree_split.split("\n")
     module = lines[0].replace("[INFO]", "").strip()
     direct = []
     transitive = []
     for line in lines[1:]:
-        if line.startswith("[INFO] +- ") or line.startswith("[INFO] \- "):
+        if line.startswith("[INFO] +- ") or line.startswith("[INFO] \\- "):
             direct.append(line.split("-", maxsplit=1)[1].strip())
         else:
             transitive.append(line.split("-", maxsplit=1)[1].strip())
@@ -50,11 +50,13 @@ def get_modules_dependencies(pom_file):
     logging.debug("dependency tree: %s", dependency_tree)
     modules_dependency_trees = split_dependency_tree(dependency_tree)
     logging.debug("modules dependency tree: %s", modules_dependency_trees)
-    modules_dependencies = [get_dependencies(mdt) for mdt in modules_dependency_trees]
+    modules_dependencies = [
+        do_get_dependencies(mdt) for mdt in modules_dependency_trees
+    ]
     return modules_dependencies
 
 
-def main(pom_file, only_direct, only_transitive):
+def get_dependencies(pom_file, only_direct, only_transitive):
     for module, direct, transitive in get_modules_dependencies(pom_file):
         print("#" * 80)
         print(module)
@@ -85,5 +87,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    get_dependencies(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

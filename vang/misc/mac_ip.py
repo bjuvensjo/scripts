@@ -13,10 +13,14 @@ def get_ip_address():  # pragma: no cover
     ][0][1]
 
 
-def main():
+def mac_ip():
     ip_address = get_ip_address()
     system(f'echo "{ip_address}\\c" | pbcopy')
     print(ip_address)
+
+
+def main() -> None:  # pragma: no cover
+    mac_ip()
 
 
 if __name__ == "__main__":  # pragma: no cover

@@ -2,9 +2,9 @@
 from argparse import ArgumentParser
 from sys import argv
 
-from vang.bitbucket.create_repo import create_repo
+from vang.bitbucket.create_repo import do_create_repo
 from vang.bitbucket.enable_webhooks import enable_repo_web_hook
-from vang.bitbucket.get_clone_urls import get_clone_urls
+from vang.bitbucket.get_clone_urls import do_get_clone_urls
 from vang.bitbucket.set_default_branches import set_repo_default_branch
 from vang.misc.s import get_zipped_cases
 from vang.pio.rsr import get_replace_function, rsr
@@ -12,12 +12,12 @@ from vang.pio.shell import run_command
 
 
 def setup(project, repo, src_branch, dest_project, dest_repo, dest_branch, work_dir):
-    clone_url = [c for _, p, r, c in get_clone_urls([project]) if r == repo][0]
+    clone_url = [c for _, p, r, c in do_get_clone_urls([project]) if r == repo][0]
     dest_repo_dir = f"{work_dir}/{dest_project}/{dest_repo}"
     run_command(f"git clone -b {src_branch} {clone_url} {dest_repo_dir}")
     run_command("rm -rf .git", return_output=True, cwd=dest_repo_dir)
     run_command("git init", return_output=True, cwd=dest_repo_dir)
-    if not dest_branch == "master":
+    if dest_branch != "master":
         run_command(
             f"git checkout -b {dest_branch}", return_output=True, cwd=dest_repo_dir
         )
@@ -41,7 +41,9 @@ def update(repo, dest_repo, dest_repo_dir):
 def create_and_push_to_dest_repo(
     dest_project, dest_repo, dest_branch, dest_repo_dir, webhook=None
 ):
-    dest_repo_origin = create_repo(dest_project, dest_repo)["links"]["clone"][0]["href"]
+    dest_repo_origin = do_create_repo(dest_project, dest_repo)["links"]["clone"][0][
+        "href"
+    ]
     if webhook:
         enable_repo_web_hook([dest_project, dest_repo], webhook)
     run_command(
@@ -94,7 +96,7 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(
+def create_from_template(
     src_project,
     src_repo,
     src_branch,
@@ -123,5 +125,9 @@ def main(
     print("Created", dest_repo_origin)
 
 
+def main() -> None:  # pragma: no cover
+    create_from_template(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

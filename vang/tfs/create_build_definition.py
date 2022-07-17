@@ -20,7 +20,7 @@ def get_build_definition(template, organisation, project, repo, branch, comment=
     )
 
 
-def create_build_definition(organisation, project, build_definition):
+def do_create_build_definition(organisation, project, build_definition):
     return call(
         # f'/{organisation}/{project}/_apis/build/definitions?api-version=3.2',
         f"/{organisation}/{project}/_apis/build/definitions?api-version=3.2",
@@ -30,9 +30,9 @@ def create_build_definition(organisation, project, build_definition):
     )
 
 
-def main(project, repo, branch, template, comment=None):
+def create_build_definition(project, repo, branch, template, comment=None):
     organisation, project = project.split("/")
-    response = create_build_definition(
+    response = do_create_build_definition(
         organisation,
         project,
         get_build_definition(template, organisation, project, repo, branch, comment),
@@ -57,5 +57,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    create_build_definition(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

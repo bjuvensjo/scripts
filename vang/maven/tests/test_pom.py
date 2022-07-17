@@ -9,8 +9,8 @@ import pytest
 
 @patch("vang.maven.pom.glob", autospec=True, return_value=["p1", "p2"])
 def test_get_pom_paths(mock_glob):
-    assert 2 == len(get_pom_paths("root"))
-    assert [call("root/**/pom.xml", recursive=True)] == mock_glob.mock_calls
+    assert len(get_pom_paths("root")) == 2
+    assert mock_glob.mock_calls == [call("root/**/pom.xml", recursive=True)]
 
 
 @pytest.mark.parametrize(
@@ -60,4 +60,4 @@ def test_get_pom_paths(mock_glob):
 )
 def test_get_pom_info_no_parent(pom, expected):
     with patch("vang.maven.pom.parse", autospec=True, return_value=fromstring(pom)):
-        assert expected == get_pom_info("pom_path")
+        assert get_pom_info("pom_path") == expected

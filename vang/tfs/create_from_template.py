@@ -5,12 +5,12 @@ from sys import argv
 from vang.misc.s import get_zipped_cases
 from vang.pio.rsr import get_replace_function, rsr
 from vang.pio.shell import run_command
-from vang.tfs.clone_repos import clone_repos
-from vang.tfs.create_repo import create_repo
+from vang.tfs.clone_repos import do_clone_repos
+from vang.tfs.create_repo import do_create_repo
 
 
 def setup(repo, src_branch, dest_repo, dest_branch, work_dir):
-    clone_url, repo_dir = clone_repos(
+    clone_url, repo_dir = do_clone_repos(
         work_dir,
         repos=[repo],
         branch=src_branch,
@@ -21,7 +21,7 @@ def setup(repo, src_branch, dest_repo, dest_branch, work_dir):
 
     run_command("rm -rf .git", return_output=True, cwd=dest_repo_dir)
     run_command("git init", return_output=True, cwd=dest_repo_dir)
-    if not dest_branch == "master":
+    if dest_branch != "master":
         run_command(
             f"git checkout -b {dest_branch}",
             return_output=True,
@@ -55,7 +55,7 @@ def create_and_push_to_dest_repo(
     dest_repo,
     dest_repo_dir,
 ):
-    dest_repo_origin = create_repo(dest_repo)["remoteUrl"]
+    dest_repo_origin = do_create_repo(dest_repo)["remoteUrl"]
     run_command(
         f"git remote add origin {dest_repo_origin}",
         return_output=True,
@@ -82,7 +82,7 @@ def parse_args(args):
     )
     parser.add_argument(
         "dest_repo",
-        help="The new repo (must not exist), " "e.g. organisation/project/repo2",
+        help="The new repo (must not exist), e.g. organisation/project/repo2",
     )
     parser.add_argument(
         "-sb",
@@ -116,7 +116,7 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(
+def create_from_template(
     src_repo,
     src_branch,
     dest_repo,
@@ -128,7 +128,7 @@ def main(
         print("Error: Replacements must be pairs")
         exit(1)
 
-    clone_url, dest_repo_dir = setup(
+    _, dest_repo_dir = setup(
         src_repo,
         src_branch,
         dest_repo,
@@ -149,5 +149,9 @@ def main(
     print("Created", dest_repo_origin)
 
 
+def main() -> None:  # pragma: no cover
+    create_from_template(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

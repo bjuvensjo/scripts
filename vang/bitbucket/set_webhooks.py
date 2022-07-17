@@ -69,16 +69,16 @@ def set_repo_web_hooks(spec, hooks):
         return spec, False, ioe
 
 
-def set_web_hooks(specs, hooks, max_processes=10):
+def do_set_web_hooks(specs, hooks, max_processes=10):
     with Pool(processes=max_processes) as pool:
         return pool.starmap(set_repo_web_hooks, product(specs, (hooks,)))
 
 
-def main(title, url, dirs, repos=None, projects=None):
+def set_web_hooks(title, url, dirs, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
     hook = dict(hook_template, title=title, url=url)
     hooks = (hook,)
-    for spec, result, message in set_web_hooks(specs, hooks):
+    for spec, result, message in do_set_web_hooks(specs, hooks):
         if result:
             print(f"spec[0]/{spec[1]}: {result}")
         else:
@@ -107,5 +107,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    set_web_hooks(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

@@ -9,7 +9,7 @@ def get_repo_content(repo_key):
     return call(f"/api/storage/{repo_key}?list&deep=1&listFolders=1")
 
 
-def list_repo_content(repo_key, only_files=True):
+def do_list_repo_content(repo_key, only_files=True):
     result = get_repo_content(repo_key)
     result = result["files"]
     if only_files:
@@ -17,8 +17,8 @@ def list_repo_content(repo_key, only_files=True):
     return result
 
 
-def main(repo_key, only_files):
-    for f in list_repo_content(repo_key, only_files):
+def list_repo_content(repo_key, only_files):
+    for f in do_list_repo_content(repo_key, only_files):
         print(f)
 
 
@@ -34,5 +34,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    list_repo_content(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
-import argparse
 import traceback
+from argparse import ArgumentParser, BooleanOptionalAction
 from itertools import count
-from os import makedirs, environ
+from os import environ, makedirs
 from sys import argv
-from typing import List, Iterable, Tuple
+from typing import Iterable, List, Tuple
 
-from vang.azdo.list_projects import list_projects
-from vang.azdo.list_repos import list_repos
+from rich import print
+from vang.azdo.list_projects import do_list_projects
+from vang.azdo.list_repos import do_list_repos
 from vang.pio.shell import run_commands
 
 
@@ -24,15 +25,27 @@ def get_commands(clone_specs, branch, flat):
     return [f'git clone {c[0]}{b}{"" if flat else f" {c[1]}"}' for c in clone_specs]
 
 
-def get_clone_specs(token: str, projects: Iterable, flat: bool) -> List[Tuple]:
+def get_clone_specs(
+    azure_devops_url: str,
+    token: str,
+    projects: Iterable,
+    flat: bool,
+    verify_certificate: bool,
+) -> List[Tuple]:
     return [
         (r["remoteUrl"], r["name"] if flat else f'{r["project"]["name"]}/{r["name"]}')
         for p in projects
-        for r in list_repos(token, *p.split("/"))["value"]
+        for r in do_list_repos(
+            azure_devops_url,
+            token,
+            *p.split("/"),
+            verify_certificate=verify_certificate,
+        )["value"]
     ]
 
 
-def clone_repos(
+def do_clone_repos(
+    azure_devops_url: str,
     token: str,
     clone_dir: str,
     organisation: str = None,
@@ -40,13 +53,23 @@ def clone_repos(
     repos: List[str] = None,
     branch: str = None,
     flat: bool = True,
+    verify_certificate: bool = True,
 ) -> List[Tuple]:
     if organisation:
-        projects = list_projects(token, organisation, names=False, project_specs=True)
+        projects = do_list_projects(
+            azure_devops_url,
+            token,
+            organisation,
+            names=False,
+            project_specs=True,
+            verify_certificate=verify_certificate,
+        )
     elif repos:
         projects = set(["/".join(r.split("/")[:2]) for r in repos])
 
-    clone_specs = get_clone_specs(token, projects, flat)
+    clone_specs = get_clone_specs(
+        azure_devops_url, token, projects, flat, verify_certificate
+    )
 
     if repos:
         clone_dirs = [
@@ -61,7 +84,7 @@ def clone_repos(
     commands = get_commands(clone_specs, branch, flat)
     for n, process in zip(count(1), clone(commands, clone_dir)):
         try:
-            print(str(n).zfill(2), process.stdout.decode(), end="")
+            print(str(n).zfill(2), process.stdout.decode("utf-8"), end="")
         except OSError:  # pragma: no cover
             print(traceback.format_exc())
 
@@ -69,8 +92,21 @@ def clone_repos(
 
 
 def parse_args(args):
-    parser = argparse.ArgumentParser(description="Clone Azure DevOps repos")
+    parser = ArgumentParser(description="Clone Azure DevOps repos")
     parser.add_argument(
+        "-au",
+        "--azure_devops_url",
+        default="https://dev.azure.com",
+        help="The Azure DevOps REST API base url",
+    )
+    parser.add_argument(
+        "--verify_certificate",
+        default=True,
+        action=BooleanOptionalAction,
+        help="If certificate of Azure should be verified",
+    )
+    parser.add_argument(
+        "-t",
         "--token",
         default=environ.get("AZDO_TOKEN", ""),
         help="The Azure DevOps authorisation token",
@@ -98,7 +134,8 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(
+def clone_repos(
+    azure_devops_url: str,
     token: str,
     clone_dir: str,
     organisation: str,
@@ -106,8 +143,10 @@ def main(
     repos: List[str],
     branch: str,
     flat: bool,
+    verify_certificate: bool,
 ):
-    for a_repo in clone_repos(
+    for a_repo in do_clone_repos(
+        azure_devops_url,
         token,
         clone_dir,
         organisation,
@@ -115,9 +154,14 @@ def main(
         repos,
         branch,
         flat,
+        verify_certificate,
     ):
         print(a_repo[1])
 
 
+def main() -> None:  # pragma: no cover
+    clone_repos(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

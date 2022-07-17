@@ -14,8 +14,8 @@ import pytest
 @patch("vang.pio.shell.run")
 def test_run_command(mock_run, return_output, expected):
     mock_run.return_value = MagicMock(returncode=0, stdout=b"response")
-    assert expected == run_command("command", return_output, "cwd", True, 1)
-    assert [
+    assert run_command("command", return_output, "cwd", True, 1) == expected
+    assert mock_run.mock_calls == [
         call(
             "command",
             check=True,
@@ -25,7 +25,7 @@ def test_run_command(mock_run, return_output, expected):
             stdout=-1,
             timeout=1,
         )
-    ] == mock_run.mock_calls
+    ]
 
 
 @patch("vang.pio.shell.run")
@@ -34,7 +34,7 @@ def test_run_commands(mock_run):
         MagicMock(returncode=0, stdout=b"response1"),
         MagicMock(returncode=0, stdout=b"response2"),
     )
-    assert [(0, "response1"), (0, "response2")] == [
+    assert [
         (cp.returncode, cp.stdout.decode().strip())
         for cp in run_commands(
             (
@@ -45,7 +45,7 @@ def test_run_commands(mock_run):
             True,
             1,
         )
-    ]
+    ] == [(0, "response1"), (0, "response2")]
     mock_run.assert_has_calls(
         [
             call(
@@ -69,7 +69,7 @@ def test_run_commands(mock_run):
         ],
         any_order=True,
     )
-    assert 2 == mock_run.call_count
+    assert mock_run.call_count == 2
 
 
 @patch("vang.pio.shell.run")
@@ -93,11 +93,11 @@ def test_run_commands_raise(mock_run):
                 1,
             )
         )
-    except CalledProcessError as cpe:
+    except CalledProcessError:
         pass
 
-    assert [
+    assert mock_run.mock_calls == [
         call("pwd", check=True, cwd="dir", shell=True, stderr=-2, stdout=-1, timeout=1),
         call("foo", check=True, cwd="dir", shell=True, stderr=-2, stdout=-1, timeout=1),
         call("ls", check=True, cwd="dir", shell=True, stderr=-2, stdout=-1, timeout=1),
-    ] == mock_run.mock_calls
+    ]

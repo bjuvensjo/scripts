@@ -9,7 +9,7 @@ def test_get_artifact_id():
         "vang.maven.get_artifact_id.get_pom_info",
         return_value={"artifact_id": "artifact_id"},
     ) as m:
-        assert "artifact_id" == get_artifact_id("pom_path")
+        assert get_artifact_id("pom_path") == "artifact_id"
         m.assert_called_with("pom_path")
 
 
@@ -21,13 +21,13 @@ def test_main():
             with patch("vang.maven.get_artifact_id.system") as mock_system:
                 with patch("builtins.print") as mock_print:
                     main()
-                    assert [
+                    assert mock_system.mock_calls == [
                         call('echo "artifact_id\\c" | pbcopy')
-                    ] == mock_system.mock_calls
-                    assert [
+                    ]
+                    assert mock_print.mock_calls == [
                         call('"artifact_id" copied to clipboard')
-                    ] == mock_print.mock_calls
+                    ]
         with patch("vang.maven.get_artifact_id.name", "not-posix"):
             with patch("builtins.print") as mock_print:
                 main()
-                assert [call("artifact_id")] == mock_print.mock_calls
+                assert mock_print.mock_calls == [call("artifact_id")]

@@ -3,7 +3,12 @@ from unittest.mock import call, patch
 import pytest
 from pytest import raises
 
-from vang.tfs.get_branches import get_branches, get_repo_branches, main, parse_args
+from vang.tfs.get_branches import (
+    do_get_branches,
+    get_repo_branches,
+    get_branches,
+    parse_args,
+)
 
 
 def test_get_repo_branches():
@@ -22,31 +27,31 @@ def test_get_repo_branches():
         },
         autospec=True,
     ) as mock_call:
-        assert [
+        assert get_repo_branches("organisation", "project", "repository") == [
             {
                 "name": "refs/heads/develop",
                 "objectId": "071bd4a8b19c37b2c5290b127c787f8acd52272e",
                 "url": "remoteUrl",
                 "statuses": [],
             }
-        ] == get_repo_branches("organisation", "project", "repository")
-        assert [
+        ]
+        assert mock_call.mock_calls == [
             call(
                 "/organisation/project/_apis/git/"
                 "repositories/repository/refs/heads?includeStatuses=true"
                 "&api-version=3.2"
             )
-        ] == mock_call.mock_calls
+        ]
 
 
-def test_get_branches():
-    assert [] == get_branches(None)
-    assert [] == get_branches([])
+def test_do_get_branches():
+    assert do_get_branches(None) == []
+    assert do_get_branches([]) == []
     with patch(
-        "vang.tfs.get_branches.get_repos",
+        "vang.tfs.get_branches.do_get_repos",
         return_value=["organisation/project/repo"],
         autospec=True,
-    ) as mock_get_repos:
+    ) as mock_do_get_repos:
         with patch(
             "vang.tfs.get_branches.get_repo_branches",
             return_value=[
@@ -59,7 +64,7 @@ def test_get_branches():
             ],
             autospec=True,
         ) as mock_get_repo_branches:
-            assert [
+            assert do_get_branches(organisations=["organisation"]) == [
                 (
                     "organisation/project/repo",
                     [
@@ -71,17 +76,17 @@ def test_get_branches():
                         }
                     ],
                 )
-            ] == get_branches(organisations=["organisation"])
-            assert [
+            ]
+            assert mock_do_get_repos.mock_calls == [
                 call(organisations=["organisation"], repo_specs=True)
-            ] == mock_get_repos.mock_calls
-            assert [
+            ]
+            assert mock_get_repo_branches.mock_calls == [
                 call("organisation", "project", "repo")
-            ] == mock_get_repo_branches.mock_calls
-            mock_get_repos.reset_mock()
+            ]
+            mock_do_get_repos.reset_mock()
             mock_get_repo_branches.reset_mock()
 
-            assert [
+            assert do_get_branches(projects=["organisation/project"]) == [
                 (
                     "organisation/project/repo",
                     [
@@ -93,17 +98,17 @@ def test_get_branches():
                         }
                     ],
                 )
-            ] == get_branches(projects=["organisation/project"])
-            assert [
+            ]
+            assert mock_do_get_repos.mock_calls == [
                 call(projects=["organisation/project"], repo_specs=True)
-            ] == mock_get_repos.mock_calls
-            assert [
+            ]
+            assert mock_get_repo_branches.mock_calls == [
                 call("organisation", "project", "repo")
-            ] == mock_get_repo_branches.mock_calls
-            mock_get_repos.reset_mock()
+            ]
+            mock_do_get_repos.reset_mock()
             mock_get_repo_branches.reset_mock()
 
-            assert [
+            assert do_get_branches(repos=["organisation/project/repo"]) == [
                 (
                     "organisation/project/repo",
                     [
@@ -115,15 +120,15 @@ def test_get_branches():
                         }
                     ],
                 )
-            ] == get_branches(repos=["organisation/project/repo"])
-            assert [] == mock_get_repos.mock_calls
-            assert [
+            ]
+            assert mock_do_get_repos.mock_calls == []
+            assert mock_get_repo_branches.mock_calls == [
                 call("organisation", "project", "repo")
-            ] == mock_get_repo_branches.mock_calls
+            ]
 
-            assert [
+            assert do_get_branches(repos=["organisation/project/repo"], names=True) == [
                 ("organisation/project/repo", ["develop"]),
-            ] == get_branches(repos=["organisation/project/repo"], names=True)
+            ]
 
 
 @pytest.mark.parametrize(
@@ -177,23 +182,23 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ")).__dict__
+    assert parse_args(args.split(" ")).__dict__ == expected
 
 
-def test_main():
+def test_get_branches():
     with patch(
-        "vang.tfs.get_branches.get_branches",
+        "vang.tfs.get_branches.do_get_branches",
         return_value=[["r1", ["b1", "b2"]], ["r2", ["b1", "b2"]]],
         autospec=True,
-    ) as mock_get_branches:
+    ) as mock_do_get_branches:
         with patch("vang.tfs.get_branches.print") as mock_print:
-            main("organisations", None, None, False)
-            assert [
+            get_branches("organisations", None, None, False)
+            assert mock_do_get_branches.mock_calls == [
                 call("organisations", None, None, False)
-            ] == mock_get_branches.mock_calls
-            assert [
+            ]
+            assert mock_print.mock_calls == [
                 call("r1: b1"),
                 call("r1: b2"),
                 call("r2: b1"),
                 call("r2: b2"),
-            ] == mock_print.mock_calls
+            ]

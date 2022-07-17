@@ -5,7 +5,7 @@ from sys import argv
 from vang.artifactory import api
 
 
-def list_repos(repo_type=None, only_key=False, only_url=False):
+def do_list_repos(repo_type=None, only_key=False, only_url=False):
     result = api.call("/api/repositories")
     if repo_type:
         result = [r for r in result if r["type"] == repo_type]
@@ -16,8 +16,8 @@ def list_repos(repo_type=None, only_key=False, only_url=False):
     return result
 
 
-def main(repo_type, only_key, only_url):
-    for repo in list_repos(repo_type, only_key, only_url):
+def list_repos(repo_type, only_key, only_url):
+    for repo in do_list_repos(repo_type, only_key, only_url):
         print(repo)
 
 
@@ -38,5 +38,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    list_repos(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

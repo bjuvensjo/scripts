@@ -3,8 +3,8 @@ from unittest.mock import MagicMock, call, patch
 import pytest
 from pytest import raises
 
-from vang.tfs.clone_repos import clone, main
-from vang.tfs.clone_repos import clone_repos
+from vang.tfs.clone_repos import clone, clone_repos
+from vang.tfs.clone_repos import do_clone_repos
 from vang.tfs.clone_repos import get_clone_specs
 from vang.tfs.clone_repos import get_commands
 from vang.tfs.clone_repos import parse_args
@@ -13,16 +13,16 @@ from vang.tfs.clone_repos import parse_args
 @patch("vang.tfs.clone_repos.run_commands", autospec=True, return_value=range(3))
 @patch("vang.tfs.clone_repos.makedirs", autospec=True)
 def test_clone(mock_makedirs, mock_run_commands):
-    assert [0, 1, 2] == list(clone(["c1", "c2"], "root_dir"))
-    assert [call("root_dir", exist_ok=True)] == mock_makedirs.mock_calls
-    assert [
+    assert list(clone(["c1", "c2"], "root_dir")) == [0, 1, 2]
+    assert mock_makedirs.mock_calls == [call("root_dir", exist_ok=True)]
+    assert mock_run_commands.mock_calls == [
         call(
             [("c1", "root_dir"), ("c2", "root_dir")],
             check=False,
             max_processes=5,
             timeout=180,
         )
-    ] == mock_run_commands.mock_calls
+    ]
 
 
 @pytest.mark.parametrize(
@@ -49,24 +49,24 @@ def test_clone(mock_makedirs, mock_run_commands):
     ],
 )
 def test_get_commands(clone_specs, branch, flat, expected):
-    assert expected == get_commands(clone_specs, branch, flat)
+    assert get_commands(clone_specs, branch, flat) == expected
 
 
-@patch("vang.tfs.clone_repos.get_repos", autospec=True)
-def test_get_clone_specs(mock_get_repos):
-    mock_get_repos.return_value = [
+@patch("vang.tfs.clone_repos.do_get_repos", autospec=True)
+def test_get_clone_specs(mock_do_get_repos):
+    mock_do_get_repos.return_value = [
         ["project", {"name": "name", "remoteUrl": "remoteUrl"}]
     ]
-    assert [("remoteUrl", "project/name")] == get_clone_specs("projects", False)
-    assert [("remoteUrl", "name")] == get_clone_specs("projects", True)
+    assert get_clone_specs("projects", False) == [("remoteUrl", "project/name")]
+    assert get_clone_specs("projects", True) == [("remoteUrl", "name")]
 
 
 @patch("vang.tfs.clone_repos.print")
 @patch("vang.tfs.clone_repos.clone", autospec=True)
 @patch("vang.tfs.clone_repos.get_clone_specs", autospec=True)
-@patch("vang.tfs.clone_repos.get_projects", autospec=True)
-def test_clone_repos(
-    mock_get_projects,
+@patch("vang.tfs.clone_repos.do_get_projects", autospec=True)
+def test_do_clone_repos(
+    mock_do_get_projects,
     mock_get_clone_specs,
     mock_clone,
     mock_print,
@@ -74,60 +74,58 @@ def test_clone_repos(
     organisations = ["o1", "o2"]
     projects = ["o1/p", "o2/p"]
     repos = ["o1/p/r1", "o1/p/r2"]
-    mock_get_projects.return_value = projects
+    mock_do_get_projects.return_value = projects
     mock_get_clone_specs.return_value = [("remoteUrl1", "r1"), ("remoteUrl2", "r2")]
     process_mock = MagicMock()
     process_mock.stdout.decode.return_value = "decode"
     mock_clone.return_value = [process_mock] * 2
 
     # organisations
-    assert [("remoteUrl1", "r1"), ("remoteUrl2", "r2"),] == clone_repos(
-        "root_dir",
-        organisations=organisations,
-        flat=True,
-    )
-    assert [
+    assert do_clone_repos("root_dir", organisations=organisations, flat=True,) == [
+        ("remoteUrl1", "r1"),
+        ("remoteUrl2", "r2"),
+    ]
+    assert mock_do_get_projects.mock_calls == [
         call(["o1", "o2"], project_specs=True),
-    ] == mock_get_projects.mock_calls
-    assert [
+    ]
+    assert mock_get_clone_specs.mock_calls == [
         call(["o1/p", "o2/p"], True),
-    ] == mock_get_clone_specs.mock_calls
-    assert [
+    ]
+    assert mock_clone.mock_calls == [
         call(["git clone remoteUrl1", "git clone remoteUrl2"], "root_dir"),
-    ] == mock_clone.mock_calls
-    assert [
+    ]
+    assert mock_print.mock_calls == [
         call("01", "decode", end=""),
         call("02", "decode", end=""),
-    ] == mock_print.mock_calls
+    ]
 
     # projects
     mock_get_clone_specs.reset_mock()
     mock_clone.reset_mock()
-    assert [
+    assert do_clone_repos("root_dir", projects=projects) == [
         ("remoteUrl1", "r1"),
         ("remoteUrl2", "r2"),
-    ] == clone_repos("root_dir", projects=projects)
-    assert [
+    ]
+    assert mock_get_clone_specs.mock_calls == [
         call(["o1/p", "o2/p"], False),
-    ] == mock_get_clone_specs.mock_calls
-    assert [
+    ]
+    assert mock_clone.mock_calls == [
         call(["git clone remoteUrl1 r1", "git clone remoteUrl2 r2"], "root_dir"),
-    ] == mock_clone.mock_calls
+    ]
 
     # repos
     mock_get_clone_specs.reset_mock()
     mock_clone.reset_mock()
-    assert [("remoteUrl1", "r1"), ("remoteUrl2", "r2"),] == clone_repos(
-        "root_dir",
-        repos=repos,
-        flat=True,
-    )
-    assert [
+    assert do_clone_repos("root_dir", repos=repos, flat=True,) == [
+        ("remoteUrl1", "r1"),
+        ("remoteUrl2", "r2"),
+    ]
+    assert mock_get_clone_specs.mock_calls == [
         call({"o1/p"}, True),
-    ] == mock_get_clone_specs.mock_calls
-    assert [
+    ]
+    assert mock_clone.mock_calls == [
         call(["git clone remoteUrl1", "git clone remoteUrl2"], "root_dir"),
-    ] == mock_clone.mock_calls
+    ]
 
 
 @pytest.mark.parametrize(
@@ -194,14 +192,14 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ")).__dict__
+    assert parse_args(args.split(" ")).__dict__ == expected
 
 
 @patch("vang.tfs.clone_repos.print")
-@patch("vang.tfs.clone_repos.clone_repos", autospec=True)
-def test_main(mock_clone_repos, mock_print):
-    mock_clone_repos.return_value = [[0, "r1"], [1, "r2"]]
-    main(
+@patch("vang.tfs.clone_repos.do_clone_repos", autospec=True)
+def test_clone_repos(mock_do_clone_repos, mock_print):
+    mock_do_clone_repos.return_value = [[0, "r1"], [1, "r2"]]
+    clone_repos(
         "clone_dir",
         ["organisations"],
         ["projects"],
@@ -209,4 +207,4 @@ def test_main(mock_clone_repos, mock_print):
         "branch",
         True,
     )
-    assert [call("r1"), call("r2")] == mock_print.mock_calls
+    assert mock_print.mock_calls == [call("r1"), call("r2")]

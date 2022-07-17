@@ -6,7 +6,7 @@ from pytest import raises
 
 from vang.nexus3.publish import get_pom_publish_name
 from vang.nexus3.publish import get_publish_data
-from vang.nexus3.publish import main
+from vang.nexus3.publish import publish
 from vang.nexus3.publish import parse_args
 from vang.nexus3.publish import publish_maven_artifact
 
@@ -33,21 +33,21 @@ from vang.nexus3.publish import publish_maven_artifact
     ],
 )
 def test_get_pom_publish_name(params, expected):
-    assert expected == get_pom_publish_name(*params)
+    assert get_pom_publish_name(*params) == expected
 
 
 def test_get_publish_data():
-    assert {
-        "file_path": "/foo/bar/foo.pom",
-        "repository_path": "/repo/com/foo/bar/business.baz/1.0.0-SNAPSHOT/business.baz-1.0.0-SNAPSHOT.pom",
-    } == get_publish_data(
+    assert get_publish_data(
         "/repo/com/foo/bar/business.baz/1.0.0-SNAPSHOT",
         "/foo/bar/foo.pom",
         "business.baz-1.0.0-SNAPSHOT.pom",
-    )
+    ) == {
+        "file_path": "/foo/bar/foo.pom",
+        "repository_path": "/repo/com/foo/bar/business.baz/1.0.0-SNAPSHOT/business.baz-1.0.0-SNAPSHOT.pom",
+    }
 
 
-@patch("vang.nexus3.publish.upload")
+@patch("vang.nexus3.publish.do_upload")
 @patch("vang.nexus3.publish.glob")
 @patch("vang.nexus3.publish.get_pom_publish_name")
 @patch("vang.nexus3.publish.get_publish_data")
@@ -61,7 +61,7 @@ def test_publish_maven_artifact(
     mock_get_publish_data,
     mock_get_pom_publish_name,
     mock_glob,
-    mock_upload,
+    mock_do_upload,
 ):
     mock_get_pom_path.return_value = "pom_path"
     mock_get_pom_info.return_value = {
@@ -78,24 +78,24 @@ def test_publish_maven_artifact(
     }
     mock_get_pom_publish_name.return_value = "pom_publish_name"
     mock_glob.side_effect = [["foo.jar"], ["bar.war"]] * 2
-    mock_upload.return_value = 201
+    mock_do_upload.return_value = 201
 
-    assert [[201, 201, 201], [201, 201, 201]] == list(
+    assert list(
         publish_maven_artifact(
             "repository", ["d1", "d2"], "url", "username", "password"
         )
-    )
+    ) == [[201, 201, 201], [201, 201, 201]]
 
 
 @patch("vang.nexus3.publish.print")
 @patch("vang.nexus3.publish.publish_maven_artifact")
-def test_main(mock_publish_maven_artifact, mock_print):
+def test_publish(mock_publish_maven_artifact, mock_print):
     mock_publish_maven_artifact.return_value = [201]
-    main("repository", ["d1", "d2"], "url", "username", "password")
-    assert [
+    publish("repository", ["d1", "d2"], "url", "username", "password")
+    assert mock_publish_maven_artifact.mock_calls == [
         call("repository", ["d1", "d2"], "url", "username", "password")
-    ] == mock_publish_maven_artifact.mock_calls
-    assert [call(201)] == mock_print.mock_calls
+    ]
+    assert mock_print.mock_calls == [call(201)]
 
 
 @pytest.mark.parametrize(
@@ -145,4 +145,4 @@ def test_parse_args_valid(args, expected):
         },
         clear=True,
     ):
-        assert expected == parse_args(args.split(" ") if args else "").__dict__
+        assert parse_args(args.split(" ") if args else "").__dict__ == expected

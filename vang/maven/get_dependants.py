@@ -6,7 +6,7 @@ from re import search
 from sys import argv
 
 
-def get_dependants(dependency_tree_file, dependency):
+def do_get_dependants(dependency_tree_file, dependency):
     dependency_dict = {}
     with open(dependency_tree_file, "rt") as file:
         previous_line = ""
@@ -27,9 +27,13 @@ def get_dependants(dependency_tree_file, dependency):
     return dependency_dict
 
 
-def main(dependency_tree_file, dependency, only_direct, only_transitive):
-    dependants = get_dependants(dependency_tree_file, dependency)
-    key = "direct" if only_direct else "transitive" if only_transitive else None
+def get_dependants(dependency_tree_file, dependency, only_direct, only_transitive):
+    dependants = do_get_dependants(dependency_tree_file, dependency)
+    key = None
+    if only_direct:
+        key = "direct"
+    elif only_transitive:
+        key = "transitive"
 
     if key:
         d = {}
@@ -69,5 +73,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    get_dependants(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

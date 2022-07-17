@@ -47,7 +47,7 @@ def do_mmp(root_dir):
     make_project(**get_mmp_args(root_dir))
 
 
-def main(root_dir, branch):
+def clone_config_and_create_mmp(root_dir, branch):
     do_clone(root_dir, branch)
     do_mmp(root_dir)
 
@@ -67,4 +67,4 @@ if __name__ == "__main__":  # pragma: no cover
     parser.add_argument("-b", "--branch", default="develop", help="The branch to clone")
     p_args = parser.parse_args()
 
-    main(p_args.root_dir, p_args.branch)
+    clone_config_and_create_mmp(p_args.root_dir, p_args.branch)

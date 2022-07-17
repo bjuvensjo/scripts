@@ -69,7 +69,7 @@ def upload_config(config_path, existing_job_names, jenkins_spec):
         return f"{job_name}: {e}"
 
 
-def upload_configs(
+def do_upload_configs(
     input_dir, jenkins_spec=get_default_jenkins_spec(), max_processes=10
 ):
     existing_job_names = get_all_job_names(jenkins_spec)
@@ -90,10 +90,14 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(input_dir):
-    for job_name in upload_configs(input_dir, get_default_jenkins_spec()):
+def upload_configs(input_dir):
+    for job_name in do_upload_configs(input_dir, get_default_jenkins_spec()):
         print(job_name)
 
 
+def main() -> None:  # pragma: no cover
+    upload_configs(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

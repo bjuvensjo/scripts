@@ -36,7 +36,7 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(username, password):
+def basic(username, password):
     basic_auth_header = get_basic_auth_header(username, password)
     if name == "posix":
         system(f"echo '{basic_auth_header}\\c' | pbcopy")
@@ -45,5 +45,9 @@ def main(username, password):
         print(basic_auth_header)
 
 
+def main() -> None:  # pragma: no cover
+    basic(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

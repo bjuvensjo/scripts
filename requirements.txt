@@ -1,6 +1,7 @@
 # Runtime dependencies
 more-itertools==8.13.0
 requests==2.28.1
+rich==12.5.1
 
 # Style and formatting
 black==22.6.0

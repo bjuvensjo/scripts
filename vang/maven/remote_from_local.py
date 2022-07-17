@@ -121,7 +121,7 @@ def create_urls(remote_dict, artifact_path, artifacts):
     return urls if any(urls) else []
 
 
-def main(settings_file, urls_only, skipped, files=None):
+def remote_from_local(settings_file, urls_only, skipped, files=None):
     skipped_artifacts = []
     local_repo, remotes = get_settings_info(settings_file)
 
@@ -166,5 +166,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    remote_from_local(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

@@ -50,9 +50,9 @@ def get_unpatched_tags(patchs_tags, applied_tags):
 
 
 def is_valid(patchs_tags, applied_tags):
-    return all([p == a for p, a in zip(patchs_tags, applied_tags)]) and not len(
+    return all([p == a for p, a in zip(patchs_tags, applied_tags)]) and len(
         applied_tags
-    ) > len(patchs_tags)
+    ) <= len(patchs_tags)
 
 
 def main(patch_repo, tag_pattern, output, apply_repo):

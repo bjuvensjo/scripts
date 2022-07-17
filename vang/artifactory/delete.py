@@ -19,7 +19,7 @@ def delete_maven_artifact(repository, pom_dirs):
         yield api.call(base_uri, method="DELETE")
 
 
-def main(repository, pom_dirs):
+def delete(repository, pom_dirs):
     for response in delete_maven_artifact(repository, pom_dirs):
         print(response)
 
@@ -37,5 +37,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    delete(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

@@ -6,17 +6,17 @@ from json import dumps
 from sys import argv
 
 from vang.tfs.api import call_url
-from vang.tfs.list_build_definitions import list_build_definitions
+from vang.tfs.list_build_definitions import do_list_build_definitions
 
 
-def queue_build_definitions(
+def do_queue_build_definitions(
     organisations=None,
     projects=None,
     filter_name=None,
 ):
     name_and_urls = [
         (name, bd["id"], bd["url"])
-        for name, bd in list_build_definitions(
+        for name, bd in do_list_build_definitions(
             organisations, projects, filter_name
         ).items()
     ]
@@ -27,8 +27,12 @@ def queue_build_definitions(
         )
 
 
-def main(organisations, projects, filter_name=None, format_output=False):
-    for name, result in queue_build_definitions(organisations, projects, filter_name):
+def queue_build_definitions(
+    organisations, projects, filter_name=None, format_output=False
+):
+    for name, result in do_queue_build_definitions(
+        organisations, projects, filter_name
+    ):
         json = dumps(result, indent=4) if format_output else dumps(result)
         print(json)
 
@@ -57,5 +61,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    queue_build_definitions(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

@@ -6,7 +6,7 @@ from sys import argv
 from vang.jenkins.api import call
 
 
-def trigger_builds(names):
+def do_trigger_builds(names):
     return [
         (
             name,
@@ -30,10 +30,14 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(job_names):
-    for job_name, response_code in trigger_builds(job_names):
+def trigger_builds(job_names):
+    for job_name, response_code in do_trigger_builds(job_names):
         print(job_name, response_code)
 
 
+def main() -> None:  # pragma: no cover
+    trigger_builds(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

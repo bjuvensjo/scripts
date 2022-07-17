@@ -5,7 +5,7 @@ from json import load
 from os import makedirs
 from sys import argv
 
-from vang.bitbucket.get_clone_urls import get_clone_urls
+from vang.bitbucket.get_clone_urls import do_get_clone_urls
 from vang.bitbucket.has_branch import has_branch
 from vang.core.core import is_included
 from vang.pio.shell import run_commands
@@ -29,7 +29,7 @@ def clone(commands, root_dir):
 def get_projects_commands(projects, branch=None, flat=False):
     return (
         (clone_dir, project, repo, command)
-        for clone_dir, project, repo, command in get_clone_urls(
+        for clone_dir, project, repo, command in do_get_clone_urls(
             projects,
             True,
             branch,
@@ -44,7 +44,7 @@ def get_repos_commands(repos, branch=None, flat=False):
     commands = []
     clone_urls_map = {
         f"{project}/{repo}": (clone_dir, project, repo, command)
-        for clone_dir, project, repo, command in get_clone_urls(
+        for clone_dir, project, repo, command in do_get_clone_urls(
             projects,
             True,
             branch,
@@ -62,12 +62,12 @@ def get_repos_commands(repos, branch=None, flat=False):
 
 def get_config_commands(config, branch=None, flat=False):
     clone_url_specs = tuple(
-        get_clone_urls(
+        do_get_clone_urls(
             config["projects"], True, branch if branch else config["branch"], flat
         )
     )
     has_branch_specs = has_branch(
-        [(p, r) for d, p, r, c in clone_url_specs], config["branch"]
+        [(p, r) for _, p, r, _ in clone_url_specs], config["branch"]
     )
     has_branch_map = {repo_spec: has for repo_spec, has in has_branch_specs}
 
@@ -78,7 +78,9 @@ def get_config_commands(config, branch=None, flat=False):
     )
 
 
-def main(root_dir, projects=None, repos=None, config=None, branch=None, flat=False):
+def clone_repos(
+    root_dir, projects=None, repos=None, config=None, branch=None, flat=False
+):
     n = 1
     if projects:
         commands = get_projects_commands(projects, branch, flat)
@@ -89,7 +91,7 @@ def main(root_dir, projects=None, repos=None, config=None, branch=None, flat=Fal
             commands = get_config_commands(load(cfg), branch, flat)
 
     for process in clone(
-        [command for clone_dir, project, repo, command in commands],
+        [command for _, _, _, command in commands],
         root_dir,
     ):
         try:
@@ -125,5 +127,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    clone_repos(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

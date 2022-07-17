@@ -5,7 +5,7 @@ from sys import argv
 from vang.tfs.api import call
 
 
-def delete_build_definition(project, definition_id):
+def do_delete_build_definition(project, definition_id):
     organisation, project = project.split("/")
     return call(
         f"/{organisation}/{project}/_apis/build/definitions/{definition_id}?api-version=3.2",
@@ -14,9 +14,9 @@ def delete_build_definition(project, definition_id):
     )
 
 
-def main(project, definition_ids):
+def delete_build_definition(project, definition_ids):
     for definition_id in definition_ids:
-        response_code = delete_build_definition(project, definition_id)
+        response_code = do_delete_build_definition(project, definition_id)
         print(definition_id, response_code)
 
 
@@ -29,5 +29,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    delete_build_definition(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

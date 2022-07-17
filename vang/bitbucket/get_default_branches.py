@@ -18,7 +18,7 @@ def get_default_branch(repo_specs, max_processes=10):
         return pool.map(get_repo_default_branch, repo_specs)
 
 
-def main(dirs, repos=None, projects=None):
+def get_default_branches(dirs, repos=None, projects=None):
     specs = get_repo_specs(dirs, repos, projects)
     for spec, response in get_default_branch(specs):
         print(f'{spec[0]}/{spec[1]}: {response["displayId"]}')
@@ -43,5 +43,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    get_default_branches(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

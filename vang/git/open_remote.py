@@ -21,7 +21,7 @@ def get_origin_remote_url(repo_dir, remote):
     return None
 
 
-def open_remote(repo_dir, remote):
+def do_open_remote(repo_dir, remote):
     url = get_origin_remote_url(repo_dir, remote)
     if url:
         print(f"Opening {url}")
@@ -30,8 +30,8 @@ def open_remote(repo_dir, remote):
         print(f"Found no url to open in {repo_dir}")
 
 
-def main(repo_dir, remote):  # pragma: no cover
-    open_remote(abspath(repo_dir), remote)
+def open_remote(repo_dir, remote):  # pragma: no cover
+    do_open_remote(abspath(repo_dir), remote)
 
 
 def parse_args(args):
@@ -47,5 +47,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    open_remote(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

@@ -53,7 +53,15 @@ def download_config(output_dir, job_name, jenkins_spec):
         return f"{job_name}: {e}"
 
 
-def download_configs(
+def get_all_job_names(jenkins_spec=get_default_jenkins_spec()):
+    params = create_params(jenkins_spec)
+    params["url"] = f'{jenkins_spec["url"]}/api/json'
+    response = get(**params)
+    response.raise_for_status()
+    return [job["name"] for job in response.json()["jobs"]]
+
+
+def do_download_configs(
     output_dir, job_names, jenkins_spec=get_default_jenkins_spec(), max_processes=10
 ):
     yield from pmap_unordered(
@@ -61,14 +69,6 @@ def download_configs(
         job_names,
         max_processes,
     )
-
-
-def get_all_job_names(jenkins_spec=get_default_jenkins_spec(), max_processes=10):
-    params = create_params(jenkins_spec)
-    params["url"] = f'{jenkins_spec["url"]}/api/json'
-    response = get(**params)
-    response.raise_for_status()
-    return [job["name"] for job in response.json()["jobs"]]
 
 
 def parse_args(args):
@@ -85,12 +85,16 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(output_dir, job_names, all):
-    for job_name in download_configs(
+def download_configs(output_dir, job_names, all):
+    for job_name in do_download_configs(
         output_dir, get_all_job_names() if all else job_names
     ):
         print(job_name)
 
 
+def main() -> None:  # pragma: no cover
+    download_configs(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

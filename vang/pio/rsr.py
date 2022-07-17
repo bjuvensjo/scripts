@@ -66,14 +66,11 @@ def rsr(
     old: str,
     new: str,
     dirs: Iterable[str],
-    replace_function: Callable[[str, str, str], str],
+    regexp: bool,
 ) -> None:
+    replace_function = get_replace_function(regexp)
     for d in dirs:
         _rsr(d, [".git", ".gitignore", "target"], old, new, replace_function)
-
-
-def main(old: str, new: str, dirs: Iterable[str], regexp: bool) -> None:
-    rsr(old, new, dirs, get_replace_function(regexp))
 
 
 def parse_args(args):
@@ -88,5 +85,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    rsr(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

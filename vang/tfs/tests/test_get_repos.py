@@ -3,7 +3,7 @@ from unittest.mock import call, patch
 import pytest
 from pytest import raises
 
-from vang.tfs.get_repos import get_repos, main, parse_args
+from vang.tfs.get_repos import do_get_repos, get_repos, parse_args
 
 
 @pytest.mark.parametrize(
@@ -35,24 +35,24 @@ from vang.tfs.get_repos import get_repos, main, parse_args
         ({"projects": ["organisation/project"], "urls": True}, ["remoteUrl"]),
     ],
 )
-@patch("vang.tfs.get_repos.get_projects", autospec=True)
+@patch("vang.tfs.get_repos.do_get_projects", autospec=True)
 @patch("vang.tfs.get_repos.call", autospec=True)
-def test_get_repos(mock_call, mock_get_projects, params, expected):
+def test_do_get_repos(mock_call, mock_do_get_projects, params, expected):
     mock_call.return_value = {"value": [{"name": "name", "remoteUrl": "remoteUrl"}]}
-    mock_get_projects.return_value = ["organisation/project"]
-    assert [] == get_repos()
-    assert expected == get_repos(**params)
+    mock_do_get_projects.return_value = ["organisation/project"]
+    assert do_get_repos() == []
+    assert do_get_repos(**params) == expected
 
 
 @patch("vang.tfs.get_repos.print")
-@patch("vang.tfs.get_repos.get_repos", autospec=True)
-def test_main(mock_get_repos, mock_print):
-    mock_get_repos.return_value = ["repo1", "repo2"]
-    main("organisations", "projects", "names", "repo_specs", "urls")
-    assert [
+@patch("vang.tfs.get_repos.do_get_repos", autospec=True)
+def test_get_repos(mock_do_get_repos, mock_print):
+    mock_do_get_repos.return_value = ["repo1", "repo2"]
+    get_repos("organisations", "projects", "names", "repo_specs", "urls")
+    assert mock_do_get_repos.mock_calls == [
         call("organisations", "projects", "names", "repo_specs", "urls")
-    ] == mock_get_repos.mock_calls
-    assert [call("repo1"), call("repo2")] == mock_print.mock_calls
+    ]
+    assert mock_print.mock_calls == [call("repo1"), call("repo2")]
 
 
 @pytest.mark.parametrize(
@@ -129,4 +129,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ")).__dict__
+    assert parse_args(args.split(" ")).__dict__ == expected

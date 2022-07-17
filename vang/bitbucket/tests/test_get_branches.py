@@ -3,8 +3,8 @@ from unittest.mock import call, patch
 import pytest
 from pytest import raises
 
+from vang.bitbucket.get_branches import do_get_branches
 from vang.bitbucket.get_branches import get_branches
-from vang.bitbucket.get_branches import main
 from vang.bitbucket.get_branches import parse_args
 
 
@@ -31,20 +31,20 @@ def branches_fixture():
 
 
 @patch("vang.bitbucket.get_branches.get_all")
-def test_get_branches(mock_get_all, branches_fixture):
+def test_do_get_branches(mock_get_all, branches_fixture):
     mock_get_all.return_value = branches_fixture
-    assert list(
-        get_branches(
+    assert [
+        (["project_key", "repo_slug"], branches_fixture),
+        (["project_key", "repo_slug"], branches_fixture),
+    ] == list(
+        do_get_branches(
             [
                 ["project_key", "repo_slug"],
                 ["project_key", "repo_slug"],
             ],
             "",
         )
-    ) == [
-        (["project_key", "repo_slug"], branches_fixture),
-        (["project_key", "repo_slug"], branches_fixture),
-    ]
+    )
 
 
 @pytest.mark.parametrize(
@@ -67,22 +67,22 @@ def test_get_branches(mock_get_all, branches_fixture):
     ],
 )
 @patch("vang.bitbucket.get_branches.print")
-@patch("vang.bitbucket.get_branches.get_branches")
+@patch("vang.bitbucket.get_branches.do_get_branches")
 @patch("vang.bitbucket.get_branches.get_repo_specs")
-def test_main(
+def test_get_branches(
     mock_get_repo_specs,
-    mock_get_branches,
+    mock_do_get_branches,
     mock_print,
     name,
     print_calls,
     branches_fixture,
 ):
     mock_get_repo_specs.return_value = [["project_key", "repo_slug"]]
-    mock_get_branches.return_value = [[["project_key", "repo_slug"], branches_fixture]]
-    main(name=name, dirs=["."])
-    assert [call(["."], None, None)] == mock_get_repo_specs.mock_calls
-    assert [call([["project_key", "repo_slug"]], "")] == mock_get_branches.mock_calls
-    assert print_calls == mock_print.mock_calls
+    mock_do_get_branches.return_value = [[["project_key", "repo_slug"], branches_fixture]]
+    get_branches(name=name, dirs=["."])
+    assert mock_get_repo_specs.mock_calls == [call(["."], None, None)]
+    assert mock_do_get_branches.mock_calls == [call([["project_key", "repo_slug"]], "")]
+    assert mock_print.mock_calls == print_calls
 
 
 @pytest.mark.parametrize(
@@ -145,4 +145,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

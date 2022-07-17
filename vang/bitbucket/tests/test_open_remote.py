@@ -3,8 +3,7 @@ from unittest.mock import call, patch
 import pytest
 from pytest import raises
 
-from vang.bitbucket.open_remote import main
-from vang.bitbucket.open_remote import open_remote
+from vang.bitbucket.open_remote import do_open_remote, open_remote
 from vang.bitbucket.open_remote import parse_args
 
 
@@ -46,7 +45,7 @@ from vang.bitbucket.open_remote import parse_args
 @patch("vang.bitbucket.open_remote.run", autospec=True)
 @patch("vang.bitbucket.open_remote.get_branch", autospec=True)
 @patch("vang.bitbucket.open_remote.get_project_and_repo", autospec=True)
-def test_open_remote(
+def test_do_open_remote(
     mock_get_project_and_repo,
     mock_get_branch,
     mock_run,
@@ -58,8 +57,8 @@ def test_open_remote(
     mock_get_project_and_repo.return_value = ("project_key", "repo_slug")
     mock_get_branch.return_value = "develop"
 
-    open_remote(git_dir, repo, project, "base_url")
-    assert expected == mock_run.mock_calls
+    do_open_remote(git_dir, repo, project, "base_url")
+    assert mock_run.mock_calls == expected
 
 
 @pytest.mark.parametrize(
@@ -89,9 +88,9 @@ def test_open_remote(
     ],
 )
 @patch("vang.bitbucket.open_remote.abspath", autospec=True)
-@patch("vang.bitbucket.open_remote.open_remote", autospec=True)
-def test_main(
-    mock_open_remote,
+@patch("vang.bitbucket.open_remote.do_open_remote", autospec=True)
+def test_open_remote(
+    mock_do_open_remote,
     mock_abspath,
     repo_dir,
     repo,
@@ -100,15 +99,15 @@ def test_main(
     expected,
 ):
     mock_abspath.return_value = "abspath"
-    main(repo_dir, repo, project, baseurl)
-    assert expected == mock_open_remote.mock_calls
-    assert [call("./.git")] == mock_abspath.mock_calls
+    open_remote(repo_dir, repo, project, baseurl)
+    assert mock_do_open_remote.mock_calls == expected
+    assert mock_abspath.mock_calls == [call("./.git")]
 
 
 @pytest.mark.parametrize(
     "args",
     [
-        "1" "-d d -r r",
+        "1-d d -r r",
         "-d d -p p",
         "-r r -p p",
     ],
@@ -161,4 +160,4 @@ def test_parse_args_raises(args):
 )
 def test_parse_args_valid(args, expected):
     with patch("vang.bitbucket.open_remote.environ", {"BITBUCKET_REST_URL": "url"}):
-        assert expected == parse_args(args.split(" ") if args else "").__dict__
+        assert parse_args(args.split(" ") if args else "").__dict__ == expected

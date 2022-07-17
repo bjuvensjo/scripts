@@ -4,11 +4,11 @@ from sys import argv
 
 from vang.tfs.api import call_url
 from vang.tfs.definition_utils import get_definition, get_definition_name
-from vang.tfs.list_release_definitions import list_release_definitions
+from vang.tfs.list_release_definitions import do_list_release_definitions
 
 
 def get_current_definition(organisation, project, definition_name):
-    return list_release_definitions(
+    return do_list_release_definitions(
         projects=(f"{organisation}/{project}",), filter_name=definition_name
     )[definition_name]
 
@@ -40,7 +40,7 @@ def get_release_definition(
     )
 
 
-def update_release_definition(definition_url, release_definition):
+def do_update_release_definition(definition_url, release_definition):
     return call_url(
         f"{definition_url}?api-version=3.2-preview",
         request_data=release_definition,
@@ -49,14 +49,14 @@ def update_release_definition(definition_url, release_definition):
     )
 
 
-def main(project, repo, branch, template, comment=None):
+def update_release_definition(project, repo, branch, template, comment=None):
     organisation, project = project.split("/")
     definition_name = get_definition_name(project, repo, branch)
     definition = get_current_definition(organisation, project, definition_name)
     definition_url = definition["url"]
     definition_id = definition["id"]
     revision = definition["revision"]
-    response = update_release_definition(
+    response = do_update_release_definition(
         definition_url,
         get_release_definition(
             template,
@@ -90,5 +90,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    update_release_definition(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

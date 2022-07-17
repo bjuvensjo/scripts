@@ -5,16 +5,17 @@ from pytest import raises
 
 from vang.bitbucket.enable_webhooks import enable_repo_web_hook
 from vang.bitbucket.enable_webhooks import enable_web_hook
-from vang.bitbucket.enable_webhooks import main
+from vang.bitbucket.enable_webhooks import enable_web_hooks
 from vang.bitbucket.enable_webhooks import parse_args
 
 
 @patch("vang.bitbucket.enable_webhooks.call", return_value="enabled")
 def test_enable_repo_web_hook(mock_enable_repo_web_hook):
-    assert (("project", "repo"), "enabled") == enable_repo_web_hook(
-        ("project", "repo"), "url"
+    assert enable_repo_web_hook(("project", "repo"), "url") == (
+        ("project", "repo"),
+        "enabled",
     )
-    assert [
+    assert mock_enable_repo_web_hook.mock_calls == [
         call(
             "/rest/api/1.0/projects/project/repos/repo/settings/hooks/"
             "com.atlassian.stash.plugin.stash-web-post-receive-hooks-plugin:"
@@ -22,7 +23,7 @@ def test_enable_repo_web_hook(mock_enable_repo_web_hook):
             {"hook-url-0": "url"},
             "PUT",
         )
-    ] == mock_enable_repo_web_hook.mock_calls
+    ]
 
 
 @patch(
@@ -30,21 +31,21 @@ def test_enable_repo_web_hook(mock_enable_repo_web_hook):
     side_effect=lambda x, y: (x, "enabled"),
 )
 def test_enable_web_hook(mock_enable_repo_web_hook):
-    assert [
-        (("projects", "repo1"), "enabled"),
-        (("project", "repo2"), "enabled"),
-    ] == enable_web_hook(
+    assert enable_web_hook(
         [
             ("projects", "repo1"),
             ("project", "repo2"),
         ],
         "url",
         max_processes=5,
-    )
-    assert [
+    ) == [
+        (("projects", "repo1"), "enabled"),
+        (("project", "repo2"), "enabled"),
+    ]
+    assert mock_enable_repo_web_hook.mock_calls == [
         call(("projects", "repo1"), "url"),
         call(("project", "repo2"), "url"),
-    ] == mock_enable_repo_web_hook.mock_calls
+    ]
 
 
 @patch("builtins.print")
@@ -64,10 +65,10 @@ def test_enable_web_hook(mock_enable_repo_web_hook):
         ("project", "repo2"),
     ],
 )
-def test_main(mock_get_repo_specs, mock_enable_web_hook, mock_print):
-    assert not main("url", dirs=None, projects=["project"])
-    assert [call(None, None, ["project"])] == mock_get_repo_specs.mock_calls
-    assert [
+def test_enable_webhooks(mock_get_repo_specs, mock_enable_web_hook, mock_print):
+    assert not enable_web_hooks("url", dirs=None, projects=["project"])
+    assert mock_get_repo_specs.mock_calls == [call(None, None, ["project"])]
+    assert mock_enable_web_hook.mock_calls == [
         call(
             [
                 ("project", "repo1"),
@@ -75,11 +76,11 @@ def test_main(mock_get_repo_specs, mock_enable_web_hook, mock_print):
             ],
             "url",
         )
-    ] == mock_enable_web_hook.mock_calls
-    assert [
+    ]
+    assert mock_print.mock_calls == [
         call("project/repo1: enabled"),
         call("project/repo1: enabled"),
-    ] == mock_print.mock_calls
+    ]
 
 
 @pytest.mark.parametrize(
@@ -119,4 +120,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

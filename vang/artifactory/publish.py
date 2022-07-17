@@ -79,7 +79,7 @@ def publish_maven_artifact(repository, pom_dirs):
         ]
 
 
-def main(repository, dirs):
+def publish(repository, dirs):
     for response in publish_maven_artifact(repository, dirs):
         print(json.dumps(json.loads(str(response).replace("'", '"')), indent=2))
 
@@ -97,5 +97,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    publish(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

@@ -3,12 +3,12 @@ from unittest.mock import call, patch
 import pytest
 from pytest import raises
 
-from vang.tfs.get_projects import get_projects, main, parse_args
+from vang.tfs.get_projects import do_get_projects, get_projects, parse_args
 
 
-def test_get_projects():
-    assert [] == get_projects(None)
-    assert [] == get_projects([])
+def test_do_get_projects():
+    assert do_get_projects(None) == []
+    assert do_get_projects([]) == []
     with patch(
         "vang.tfs.get_projects.call",
         return_value={
@@ -26,7 +26,7 @@ def test_get_projects():
         },
         autospec=True,
     ):
-        assert [
+        assert do_get_projects(["organisation"]) == [
             (
                 "organisation",
                 {
@@ -38,14 +38,14 @@ def test_get_projects():
                     "visibility": "private",
                 },
             )
-        ] == get_projects(["organisation"])
-        assert ["organisation/project"] == get_projects(
-            ["organisation"], project_specs=True
-        )
-        assert ["project"] == get_projects(["organisation"], names=True)
-        assert ["project"] == get_projects(
-            ["organisation"], project_specs=True, names=True
-        )
+        ]
+        assert do_get_projects(["organisation"], project_specs=True) == [
+            "organisation/project"
+        ]
+        assert do_get_projects(["organisation"], names=True) == ["project"]
+        assert do_get_projects(["organisation"], project_specs=True, names=True) == [
+            "project"
+        ]
 
 
 @pytest.mark.parametrize(
@@ -72,16 +72,16 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ")).__dict__
+    assert parse_args(args.split(" ")).__dict__ == expected
 
 
-def test_main():
+def test_get_projects():
     with patch(
-        "vang.tfs.get_projects.get_projects",
+        "vang.tfs.get_projects.do_get_projects",
         return_value=["project1", "project2"],
         autospec=True,
-    ) as mock_get_projects:
+    ) as mock_do_get_projects:
         with patch("vang.tfs.get_projects.print") as mock_print:
-            main("organisations", False, True)
-            assert [call("organisations", False, True)] == mock_get_projects.mock_calls
-            assert [call("project1"), call("project2")] == mock_print.mock_calls
+            get_projects("organisations", False, True)
+            assert mock_do_get_projects.mock_calls == [call("organisations", False, True)]
+            assert mock_print.mock_calls == [call("project1"), call("project2")]

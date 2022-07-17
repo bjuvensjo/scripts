@@ -5,7 +5,7 @@ from pytest import raises
 
 from vang.tfs.create_from_template import commit_all
 from vang.tfs.create_from_template import create_and_push_to_dest_repo
-from vang.tfs.create_from_template import main
+from vang.tfs.create_from_template import create_from_template
 from vang.tfs.create_from_template import parse_args
 from vang.tfs.create_from_template import setup as c_setup
 from vang.tfs.create_from_template import update
@@ -13,22 +13,22 @@ from vang.tfs.create_from_template import update
 
 @patch("vang.tfs.create_from_template.run_command", autospec=True)
 @patch(
-    "vang.tfs.create_from_template.clone_repos",
+    "vang.tfs.create_from_template.do_clone_repos",
     return_value=[("clone_url", "repo_dir")],
     autospec=True,
 )
-def test_setup(mock_clone_repos, mock_run_command):
-    assert ("clone_url", "work_dir/dest_repo") == c_setup(
+def test_setup(mock_do_clone_repos, mock_run_command):
+    assert c_setup(
         "repo",
         "branch",
         "dest_repo",
         "dest_branch",
         "work_dir",
-    )
-    assert [
+    ) == ("clone_url", "work_dir/dest_repo")
+    assert mock_do_clone_repos.mock_calls == [
         call("work_dir", branch="branch", repos=["repo"]),
-    ] == mock_clone_repos.mock_calls
-    assert [
+    ]
+    assert mock_run_command.mock_calls == [
         call("mv repo_dir work_dir/dest_repo"),
         call("rm -rf .git", cwd="work_dir/dest_repo", return_output=True),
         call("git init", cwd="work_dir/dest_repo", return_output=True),
@@ -37,20 +37,20 @@ def test_setup(mock_clone_repos, mock_run_command):
             cwd="work_dir/dest_repo",
             return_output=True,
         ),
-    ] == mock_run_command.mock_calls
+    ]
 
 
 @patch("vang.tfs.create_from_template.run_command", autospec=True)
 def test_commit_all(mock_run_command):
     commit_all("repo_dir")
-    assert [
+    assert mock_run_command.mock_calls == [
         call("git add --all", cwd="repo_dir", return_output=True),
         call(
             'git commit -m "Initial commit"',
             cwd="repo_dir",
             return_output=True,
         ),
-    ] == mock_run_command.mock_calls
+    ]
 
 
 @patch(
@@ -75,26 +75,29 @@ def test_update(mock_rsr, mock_get_replace_function):
 
 
 @patch(
-    "vang.tfs.create_from_template.create_repo",
+    "vang.tfs.create_from_template.do_create_repo",
     return_value={"remoteUrl": "dest_repo_origin"},
     autospec=True,
 )
 @patch("vang.tfs.create_from_template.run_command", autospec=True)
 def test_create_and_push_to_dest_repo(mock_run_command, mock_create_repo):
-    assert "dest_repo_origin" == create_and_push_to_dest_repo(
-        "branch",
-        "dest_repo",
-        "dest_repo_dir",
+    assert (
+        create_and_push_to_dest_repo(
+            "branch",
+            "dest_repo",
+            "dest_repo_dir",
+        )
+        == "dest_repo_origin"
     )
-    assert [call("dest_repo")] == mock_create_repo.mock_calls
-    assert [
+    assert mock_create_repo.mock_calls == [call("dest_repo")]
+    assert mock_run_command.mock_calls == [
         call(
             "git remote add origin dest_repo_origin",
             cwd="dest_repo_dir",
             return_output=True,
         ),
         call("git push -u origin branch", cwd="dest_repo_dir", return_output=True),
-    ] == mock_run_command.mock_calls
+    ]
 
 
 @pytest.mark.parametrize(
@@ -138,7 +141,7 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args(args, expected):
-    assert expected == parse_args(args.split(" ")).__dict__
+    assert parse_args(args.split(" ")).__dict__ == expected
 
 
 @patch(
@@ -154,14 +157,14 @@ def test_parse_args(args, expected):
     autospec=True,
 )
 @patch("vang.tfs.create_from_template.print")
-def test_main(
+def test_create_from_template(
     mock_print,
     mock_create_and_push_to_dest_repo,
     mock_commit_all,
     mock_update,
     mock_setup,
 ):
-    main(
+    create_from_template(
         "src_repo",
         "branch",
         "dest_repo",
@@ -169,18 +172,18 @@ def test_main(
         "work_dir",
         ["old1", "new1", "old2", "new2"],
     )
-    assert [
+    assert mock_setup.mock_calls == [
         call("src_repo", "branch", "dest_repo", "dest_branch", "work_dir"),
-    ] == mock_setup.mock_calls
-    assert [
+    ]
+    assert mock_update.mock_calls == [
         call([("old1", "new1"), ("old2", "new2")], "dest_repo_dir"),
-    ] == mock_update.mock_calls
-    assert [
+    ]
+    assert mock_commit_all.mock_calls == [
         call("dest_repo_dir"),
-    ] == mock_commit_all.mock_calls
-    assert [
+    ]
+    assert mock_create_and_push_to_dest_repo.mock_calls == [
         call("dest_branch", "dest_repo", "dest_repo_dir"),
-    ] == mock_create_and_push_to_dest_repo.mock_calls
-    assert [
+    ]
+    assert mock_print.mock_calls == [
         call("Created", "dest_repo_origin"),
-    ] == mock_print.mock_calls
+    ]

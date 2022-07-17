@@ -4,8 +4,8 @@ import pytest
 from pytest import raises
 
 from vang.bitbucket.get_tags import get_all_tags
+from vang.bitbucket.get_tags import do_get_tags
 from vang.bitbucket.get_tags import get_tags
-from vang.bitbucket.get_tags import main
 from vang.bitbucket.get_tags import parse_args
 
 
@@ -27,7 +27,7 @@ def fixtures():
 @patch("vang.bitbucket.get_tags.get_all")
 def test_get_all_tags(mock_get_all, fixtures):
     mock_get_all.return_value = fixtures
-    assert [
+    assert list(get_all_tags(["project_key", "repo_slug"], "")) == [
         (
             ["project_key", "repo_slug"],
             {
@@ -40,7 +40,7 @@ def test_get_all_tags(mock_get_all, fixtures):
             },
         )
         for n in range(50)
-    ] == list(get_all_tags(["project_key", "repo_slug"], ""))
+    ]
 
 
 @pytest.fixture
@@ -61,16 +61,19 @@ def tags_fixture():
 
 
 @patch("vang.bitbucket.get_tags.get_all_tags")
-def test_get_tags(mock_get_all_tags, tags_fixture):
+def test_do_get_tags(mock_get_all_tags, tags_fixture):
     mock_get_all_tags.return_value = tags_fixture
-    assert [tags_fixture[0]] * 2 == list(
-        get_tags(
-            [
-                ["project_key", "repo_slug"],
-                ["project_key", "repo_slug"],
-            ],
-            "",
+    assert (
+        list(
+            do_get_tags(
+                [
+                    ["project_key", "repo_slug"],
+                    ["project_key", "repo_slug"],
+                ],
+                "",
+            )
         )
+        == [tags_fixture[0]] * 2
     )
 
 
@@ -82,22 +85,22 @@ def test_get_tags(mock_get_all_tags, tags_fixture):
     ],
 )
 @patch("vang.bitbucket.get_tags.print")
-@patch("vang.bitbucket.get_tags.get_tags")
+@patch("vang.bitbucket.get_tags.do_get_tags")
 @patch("vang.bitbucket.get_tags.get_repo_specs")
-def test_main(
+def test_get_tags(
     mock_get_repo_specs,
-    mock_get_tags,
+    mock_do_get_tags,
     mock_print,
     name,
     print_calls,
     tags_fixture,
 ):
     mock_get_repo_specs.return_value = [["project_key", "repo_slug"]]
-    mock_get_tags.return_value = tags_fixture
-    main(name=name, dirs=["."])
-    assert [call(["."], None, None)] == mock_get_repo_specs.mock_calls
-    assert [call([["project_key", "repo_slug"]], "")] == mock_get_tags.mock_calls
-    assert print_calls == mock_print.mock_calls
+    mock_do_get_tags.return_value = tags_fixture
+    get_tags(name=name, dirs=["."])
+    assert mock_get_repo_specs.mock_calls == [call(["."], None, None)]
+    assert mock_do_get_tags.mock_calls == [call([["project_key", "repo_slug"]], "")]
+    assert mock_print.mock_calls == print_calls
 
 
 @pytest.mark.parametrize(
@@ -160,4 +163,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

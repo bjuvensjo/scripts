@@ -2,13 +2,13 @@
 import argparse
 from sys import argv
 
-from vang.bitbucket.get_tags import get_tags
+from vang.bitbucket.get_tags import do_get_tags
 from vang.bitbucket.utils import get_repo_specs
 
 
 def has_tag(repo_specs, tag):
     for spec in repo_specs:
-        tags = [t["displayId"] for spec, t in get_tags((spec,), tag)]
+        tags = [t["displayId"] for spec, t in do_get_tags((spec,), tag)]
         yield spec, tag in tags
 
 

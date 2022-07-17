@@ -10,7 +10,7 @@ def is_included(patterns, name):
     return any([fullmatch(r"{}".format(p), name) for p in patterns])
 
 
-def zip_read(zip_file, patterns, encoding="utf-8"):  # pragma: no cover
+def do_zip_read(zip_file, patterns, encoding="utf-8"):  # pragma: no cover
     with ZipFile(zip_file, "r") as z:
         return [
             (name, z.read(name).decode(encoding))
@@ -19,8 +19,8 @@ def zip_read(zip_file, patterns, encoding="utf-8"):  # pragma: no cover
         ]
 
 
-def main(zip_file, patterns, only_content=False, encoding="utf-8"):
-    for file_name, content in zip_read(zip_file, patterns, encoding):
+def zip_read(zip_file, patterns, only_content=False, encoding="utf-8"):
+    for file_name, content in do_zip_read(zip_file, patterns, encoding):
         print("#" * 80)
         if not only_content:
             print("#" * 5, file_name, "#" * 5)
@@ -56,5 +56,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    zip_read(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

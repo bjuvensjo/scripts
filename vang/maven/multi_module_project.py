@@ -40,7 +40,7 @@ def get_pom(pom_infos, output_dir, group_id, artifact_id, version):
     )
 
 
-def make_project(pom_infos, output_dir, group_id, artifact_id, version, **kwargs):
+def make_project(pom_infos, output_dir, group_id, artifact_id, version):
     """Makes a Maven multi module project."""
     pom = get_pom(pom_infos, output_dir, group_id, artifact_id, version)
     makedirs(output_dir)
@@ -72,7 +72,7 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(use_defaults):
+def multi_module_project(use_defaults):
     artifact_id = f"ws-{getcwd().split(sep)[-1]}"
     defaults = {
         "group_id": "my.group",
@@ -114,5 +114,9 @@ def main(use_defaults):
         make_project(pom_infos, output_dir, group_id, artifact_id, version)
 
 
+def main() -> None:  # pragma: no cover
+    multi_module_project(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

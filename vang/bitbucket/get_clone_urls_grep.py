@@ -3,23 +3,25 @@ import argparse
 import re
 from sys import argv
 
-from vang.bitbucket.get_clone_urls import get_clone_urls
-from vang.bitbucket.get_projects import get_projects
+from vang.bitbucket.get_clone_urls import do_get_clone_urls
+from vang.bitbucket.get_projects import do_get_projects
 
 
-def get_clone_urls_grep(patterns, command=False):
-    return get_clone_urls(
+def do_get_clone_urls_grep(patterns, command=False):
+    return do_get_clone_urls(
         [
             p["key"]
-            for p in get_projects()
+            for p in do_get_projects()
             if any((re.match(r"{}".format(pattern), p["key"]) for pattern in patterns))
         ],
         command,
     )
 
 
-def main(patterns, command):
-    for clone_dir, project, repo, clone_url in get_clone_urls_grep(patterns, command):
+def get_clone_urls_grep(patterns, command):
+    for clone_dir, project, repo, clone_url in do_get_clone_urls_grep(
+        patterns, command
+    ):
         print(clone_url)
 
 
@@ -34,5 +36,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    get_clone_urls_grep(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

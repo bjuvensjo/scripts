@@ -6,7 +6,7 @@ from sys import argv
 from vang.bitbucket.get_repos import get_all_repos
 
 
-def get_clone_urls(keys, command=False, branch=False, flat=False):
+def do_get_clone_urls(keys, command=False, branch=False, flat=False):
     for repo in get_all_repos(keys):
         project, repo, clone_url = (
             repo["project"]["key"],
@@ -24,8 +24,8 @@ def get_clone_urls(keys, command=False, branch=False, flat=False):
             yield None, project, repo, clone_url
 
 
-def main(projects, command, branch, flat):
-    for clone_dir, project, repo, clone_output in get_clone_urls(
+def get_clone_urls(projects, command, branch, flat):
+    for clone_dir, project, repo, clone_output in do_get_clone_urls(
         projects,
         command,
         branch,
@@ -52,5 +52,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    get_clone_urls(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

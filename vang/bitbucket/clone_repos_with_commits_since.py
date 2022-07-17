@@ -70,8 +70,6 @@ def main(since, projects, branch, clone_dir):
 if __name__ == "__main__":  # pragma: no cover
     the_since = datetime.datetime(2018, 1, 1)
     the_projects = ["ESBU", "ESBES"]
-    # branch = 'develop'
-    # clone_dir = '/Users/ei4577/slask/crap/develop'
     a_branch = "feature/bosse"
     a_clone_dir = "/Users/ei4577/slask/crap/bosse"
 

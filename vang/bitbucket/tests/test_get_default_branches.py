@@ -5,7 +5,7 @@ from pytest import raises
 
 from vang.bitbucket.get_default_branches import get_default_branch
 from vang.bitbucket.get_default_branches import get_repo_default_branch
-from vang.bitbucket.get_default_branches import main
+from vang.bitbucket.get_default_branches import get_default_branches
 from vang.bitbucket.get_default_branches import parse_args
 
 
@@ -24,7 +24,7 @@ def call_fixtures():
 @patch("vang.bitbucket.get_default_branches.call")
 def test_get_repo_default_branch(mock_call, call_fixtures):
     mock_call.return_value = call_fixtures
-    assert (
+    assert get_repo_default_branch(["project_key", "repo_slug"]) == (
         ["project_key", "repo_slug"],
         {
             "displayId": "develop",
@@ -34,41 +34,45 @@ def test_get_repo_default_branch(mock_call, call_fixtures):
             "latestCommit": "9b56af5e9d9e8bb55d6b9b6065ef488e5449187c",
             "type": "BRANCH",
         },
-    ) == get_repo_default_branch(["project_key", "repo_slug"])
+    )
 
 
 @patch("vang.bitbucket.get_default_branches.call")
 def test_get_default_branch(mock_call, call_fixtures):
     mock_call.return_value = call_fixtures
-    assert [
-        (
-            ["project_key", "repo_slug"],
-            {
-                "displayId": "develop",
-                "id": "refs/heads/develop",
-                "isDefault": True,
-                "latestChangeset": "9b56af5e9d9e8bb55d6b9b6065ef488e5449187c",
-                "latestCommit": "9b56af5e9d9e8bb55d6b9b6065ef488e5449187c",
-                "type": "BRANCH",
-            },
-        )
-    ] * 2 == get_default_branch([["project_key", "repo_slug"]] * 2)
+    assert (
+        get_default_branch([["project_key", "repo_slug"]] * 2)
+        == [
+            (
+                ["project_key", "repo_slug"],
+                {
+                    "displayId": "develop",
+                    "id": "refs/heads/develop",
+                    "isDefault": True,
+                    "latestChangeset": "9b56af5e9d9e8bb55d6b9b6065ef488e5449187c",
+                    "latestCommit": "9b56af5e9d9e8bb55d6b9b6065ef488e5449187c",
+                    "type": "BRANCH",
+                },
+            )
+        ]
+        * 2
+    )
 
 
 @patch("vang.bitbucket.get_default_branches.print")
 @patch("vang.bitbucket.get_default_branches.get_repo_specs")
 @patch("vang.bitbucket.get_default_branches.call")
-def test_main(mock_call, mock_get_repo_specs, mock_print, call_fixtures):
+def test_get_default_branches(mock_call, mock_get_repo_specs, mock_print, call_fixtures):
     mock_call.return_value = call_fixtures
     mock_get_repo_specs.return_value = [["project_key", "repo_slug"]] * 2
-    main(["."], None, ["project_key"] * 2)
-    assert [
+    get_default_branches(["."], None, ["project_key"] * 2)
+    assert mock_print.mock_calls == [
         call("project_key/repo_slug: develop"),
         call("project_key/repo_slug: develop"),
-    ] == mock_print.mock_calls
-    assert [
+    ]
+    assert mock_get_repo_specs.mock_calls == [
         call(["."], None, ["project_key", "project_key"])
-    ] == mock_get_repo_specs.mock_calls
+    ]
 
 
 @pytest.mark.parametrize(
@@ -123,4 +127,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

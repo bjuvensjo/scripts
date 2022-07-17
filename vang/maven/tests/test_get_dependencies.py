@@ -3,7 +3,7 @@ from pytest import raises
 
 from vang.maven.get_dependencies import (
     split_dependency_tree,
-    get_dependencies,
+    do_get_dependencies,
     parse_args,
 )
 
@@ -97,10 +97,11 @@ multi_module_dependency_tree = r"""[INFO] Scanning for projects...
 
 def test_split_dependency_tree():
     splits = split_dependency_tree(multi_module_dependency_tree)
-    assert 3 == len(splits)
-    assert [] == split_dependency_tree("foo")
+    assert len(splits) == 3
+    assert split_dependency_tree("foo") == []
     assert (
-        r"""[INFO] myorg:common.event:jar:1.0.15
+        splits[1]
+        == r"""[INFO] myorg:common.event:jar:1.0.15
 [INFO] +- org.apache.camel:camel-core:jar:2.16.0:compile
 [INFO] |  +- org.slf4j:slf4j-api:jar:1.6.6:compile
 [INFO] |  +- com.sun.xml.bind:jaxb-core:jar:2.2.11:compile
@@ -111,12 +112,11 @@ def test_split_dependency_tree():
 [INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
 [INFO] \- org.mockito:mockito-core:jar:1.9.5:test
 [INFO]    \- org.objenesis:objenesis:jar:1.0:test"""
-        == splits[1]
     )
-    assert r"""[INFO] my.group:ws:pom:1.0.0-SNAPSHOT""" == splits[2]
+    assert splits[2] == r"""[INFO] my.group:ws:pom:1.0.0-SNAPSHOT"""
 
 
-def test_get_dependencies():
+def test_do_get_dependencies():
     split = r"""[INFO] myorg:common.event:jar:1.0.15
 [INFO] +- org.apache.camel:camel-core:jar:2.16.0:compile
 [INFO] |  +- org.slf4j:slf4j-api:jar:1.6.6:compile
@@ -128,22 +128,22 @@ def test_get_dependencies():
 [INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
 [INFO] \- org.mockito:mockito-core:jar:1.9.5:test
 [INFO]    \- org.objenesis:objenesis:jar:1.0:test"""
-    module, direct, transitive = get_dependencies(split)
-    assert "myorg:common.event:jar:1.0.15" == module
-    assert [
+    module, direct, transitive = do_get_dependencies(split)
+    assert module == "myorg:common.event:jar:1.0.15"
+    assert direct == [
         "ch.qos.logback:logback-classic:jar:1.0.13:compile",
         "junit:junit:jar:4.11:test",
         "org.apache.camel:camel-core:jar:2.16.0:compile",
         "org.mockito:mockito-core:jar:1.9.5:test",
-    ] == direct
-    assert [
+    ]
+    assert transitive == [
         "ch.qos.logback:logback-core:jar:1.0.13:compile",
         "com.sun.xml.bind:jaxb-core:jar:2.2.11:compile",
         "com.sun.xml.bind:jaxb-impl:jar:2.2.11:compile",
         "org.hamcrest:hamcrest-core:jar:1.3:test",
         "org.objenesis:objenesis:jar:1.0:test",
         "org.slf4j:slf4j-api:jar:1.6.6:compile",
-    ] == transitive
+    ]
 
 
 @pytest.mark.parametrize(
@@ -196,4 +196,4 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected

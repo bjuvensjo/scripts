@@ -4,14 +4,14 @@ import argparse
 from sys import argv
 
 from vang.tfs.api import call
-from vang.tfs.get_projects import get_projects
+from vang.tfs.get_projects import do_get_projects
 
 
-def get_repos(
+def do_get_repos(
     organisations=None, projects=None, names=False, repo_specs=False, urls=False
 ):
     if organisations:
-        projects = get_projects(organisations, project_specs=True)
+        projects = do_get_projects(organisations, project_specs=True)
     if not projects:
         return []
     repos = [
@@ -28,8 +28,8 @@ def get_repos(
     return repos
 
 
-def main(organisations, projects, names, repo_specs, urls):
-    for repo in get_repos(organisations, projects, names, repo_specs, urls):
+def get_repos(organisations, projects, names, repo_specs, urls):
+    for repo in do_get_repos(organisations, projects, names, repo_specs, urls):
         print(repo)
 
 
@@ -59,5 +59,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    get_repos(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

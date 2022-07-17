@@ -3,16 +3,16 @@ from unittest.mock import patch, call
 import pytest
 from pytest import raises
 
+from vang.jenkins.delete_jobs import do_delete_jobs
 from vang.jenkins.delete_jobs import delete_jobs
-from vang.jenkins.delete_jobs import main
 from vang.jenkins.delete_jobs import parse_args
 
 
 @patch("vang.jenkins.delete_jobs.call", autospec=True)
-def test_delete_jobs(mock_call):
+def test_do_delete_jobs(mock_call):
     mock_call.return_value = 201
 
-    assert [("j1", 201), ("j2", 201)] == delete_jobs(["j1", "j2"])
+    assert do_delete_jobs(["j1", "j2"]) == [("j1", 201), ("j2", 201)]
 
 
 @pytest.mark.parametrize(
@@ -33,14 +33,14 @@ def test_parse_args_raises(args):
     ],
 )
 def test_parse_args_valid(args, expected):
-    assert expected == parse_args(args.split(" ") if args else "").__dict__
+    assert parse_args(args.split(" ") if args else "").__dict__ == expected
 
 
 @patch("vang.jenkins.delete_jobs.print")
-@patch("vang.jenkins.delete_jobs.delete_jobs", autospec=True)
-def test_main(mock_delete_jobs, mock_print):
-    mock_delete_jobs.return_value = [("j1", 201), ("j2", 201)]
+@patch("vang.jenkins.delete_jobs.do_delete_jobs", autospec=True)
+def test_delete_jobs(mock_do_delete_jobs, mock_print):
+    mock_do_delete_jobs.return_value = [("j1", 201), ("j2", 201)]
 
-    main(["j1", "j2"])
-    assert [call(["j1", "j2"])] == mock_delete_jobs.mock_calls
-    assert [call("j1", 201), call("j2", 201)] == mock_print.mock_calls
+    delete_jobs(["j1", "j2"])
+    assert mock_do_delete_jobs.mock_calls == [call(["j1", "j2"])]
+    assert mock_print.mock_calls == [call("j1", 201), call("j2", 201)]

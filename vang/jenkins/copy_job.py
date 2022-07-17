@@ -43,7 +43,7 @@ def update_config(config, replacements):
         return config
 
 
-def copy_job(
+def do_copy_job(
     from_name,
     to_name,
     from_jenkins_spec=get_default_jenkins_spec(),
@@ -76,8 +76,8 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(from_name, to_name, replacements=()):
-    response = copy_job(
+def copy_job(from_name, to_name, replacements=()):
+    response = do_copy_job(
         from_name, to_name, replacements=zip(replacements[0::2], replacements[1::2])
     )
     response_code = response["response_code"]
@@ -88,5 +88,9 @@ def main(from_name, to_name, replacements=()):
     )
 
 
+def main() -> None:  # pragma: no cover
+    copy_job(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

@@ -6,7 +6,7 @@ from sys import argv
 from vang.tfs.api import call
 
 
-def get_projects(organisations, project_specs=False, names=False):
+def do_get_projects(organisations, project_specs=False, names=False):
     if not organisations:
         return []
     projects = [
@@ -41,10 +41,14 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def main(organisations, project_specs, names):
-    for a_project in get_projects(organisations, project_specs, names):
+def get_projects(organisations, project_specs, names):
+    for a_project in do_get_projects(organisations, project_specs, names):
         print(a_project)
 
 
+def main() -> None:  # pragma: no cover
+    get_projects(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()

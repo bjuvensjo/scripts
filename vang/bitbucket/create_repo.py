@@ -7,15 +7,14 @@ from sys import argv
 from vang.bitbucket.api import call
 
 
-def create_repo(project, repo):
+def do_create_repo(project, repo):
     uri = f"/rest/api/1.0/projects/{project}/repos"
-    # request_data = f'{{"name":"{repo}","scmId":"git","forkable":true}}'
     request_data = {"name": repo, "scmId": "git", "forkable": True}
     return call(uri, request_data, "POST")
 
 
-def main(project, repository):
-    response = create_repo(project, repository)
+def create_repo(project, repository):
+    response = do_create_repo(project, repository)
     commands = (
         "    git remote add origin "
         f'{response["links"]["clone"][0]["href"]}\n'
@@ -38,5 +37,9 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
+def main() -> None:  # pragma: no cover
+    create_repo(**parse_args(argv[1:]).__dict__)
+
+
 if __name__ == "__main__":  # pragma: no cover
-    main(**parse_args(argv[1:]).__dict__)
+    main()
