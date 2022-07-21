@@ -17,6 +17,7 @@ keywords=["python", "pipx", "script", "artifactory", "azdo", "bitbucket", "git",
 dependencies = [
     "more-itertools",
     "requests",
+    "rich"
 ]
 [project.optional-dependencies]
 dev = [
