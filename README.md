@@ -22,6 +22,59 @@ If you want shorter names, one option is aliases, e.g.
 
     alias acr=vang-azdo-clone-repos
 
+### Set environment variables
+
+Some scrips uses environment variables to shorten the parameter list. 
+
+For newer scripts it is optional to set the environment variables. 
+Currently, the packages for these newer scripts and the corresponding environment variables are:
+
+#### vang.azdo
+
+* AZDO_TOKEN
+* AZDO_ORGANISATION
+* AZDO_PROJECT
+* AZDO_TOKEN
+* 
+
+#### vang.nexus3
+ 
+* NEXUS3_REST_URL
+* NEXUS3_USERNAME
+* NEXUS3_PASSWORD
+
+For older scripts it is mandatory to set the environment variables. 
+Currently, the packages for these older scripts and the corresponding environment variables are:
+
+
+#### vang.artifactory
+ 
+* ARTIFACTORY_REST_URL
+* ARTIFACTORY_USERNAME
+* ARTIFACTORY_PASSWORD
+* 
+
+#### vang.bitbucket
+ 
+* BITBUCKET_REST_URL
+* BITBUCKET_USERNAME
+* BITBUCKET_PASSWORD
+* BITBUCKET_IGNORE_CERTIFICATE
+* 
+
+#### vang.jenkins
+ 
+* JENKINS_REST_URL
+* JENKINS_USERNAME
+* JENKINS_PASSWORD
+* JENKINS_IGNORE_CERTIFICATE
+* 
+
+#### vang.tfs
+ 
+* TFS_REST_URL
+* TFS_TOKEN
+
 ### Use help
 
 All Python scripts has help, e.g.
