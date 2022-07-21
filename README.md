@@ -35,7 +35,6 @@ Currently, the packages for these newer scripts and the corresponding environmen
 * AZDO_ORGANISATION
 * AZDO_PROJECT
 * AZDO_TOKEN
-* 
 
 #### vang.nexus3
  
@@ -52,15 +51,13 @@ Currently, the packages for these older scripts and the corresponding environmen
 * ARTIFACTORY_REST_URL
 * ARTIFACTORY_USERNAME
 * ARTIFACTORY_PASSWORD
-* 
 
 #### vang.bitbucket
  
 * BITBUCKET_REST_URL
 * BITBUCKET_USERNAME
 * BITBUCKET_PASSWORD
-* BITBUCKET_IGNORE_CERTIFICATE
-* 
+* BITBUCKET_IGNORE_CERTIFICATE 
 
 #### vang.jenkins
  
@@ -68,7 +65,6 @@ Currently, the packages for these older scripts and the corresponding environmen
 * JENKINS_USERNAME
 * JENKINS_PASSWORD
 * JENKINS_IGNORE_CERTIFICATE
-* 
 
 #### vang.tfs
  
