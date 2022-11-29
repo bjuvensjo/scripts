@@ -3,26 +3,28 @@ from unittest.mock import call, mock_open, patch
 import pytest
 from pytest import raises
 
-from vang.maven.multi_module_project import get_pom
-from vang.maven.multi_module_project import get_pom_infos
-from vang.maven.multi_module_project import multi_module_project
-from vang.maven.multi_module_project import make_project
-from vang.maven.multi_module_project import parse_args
+from vang.maven.multi_module_project import (
+    get_pom,
+    get_pom_infos,
+    make_project,
+    multi_module_project,
+    parse_args,
+)
 
 
 @pytest.fixture
 def pom_infos_fixture():
     return [
         {
-            "pom_path": "/root/m1/pom.xml",
-            "artifact_id": "m1",
+            "pom_path": "/root/m2/pom.xml",
+            "artifact_id": "m2",
             "group_id": "com.example",
             "version": "1.0.0-SNAPSHOT",
             "packaging": "jar",
         },
         {
-            "pom_path": "/root/m2/pom.xml",
-            "artifact_id": "m2",
+            "pom_path": "/root/m1/pom.xml",
+            "artifact_id": "m1",
             "group_id": "com.example",
             "version": "1.0.0-SNAPSHOT",
             "packaging": "jar",
@@ -74,15 +76,15 @@ def test_make_project(mock_get_pom, mock_makedirs, pom_infos_fixture):
             call(
                 [
                     {
-                        "pom_path": "/root/m1/pom.xml",
-                        "artifact_id": "m1",
+                        "pom_path": "/root/m2/pom.xml",
+                        "artifact_id": "m2",
                         "group_id": "com.example",
                         "version": "1.0.0-SNAPSHOT",
                         "packaging": "jar",
                     },
                     {
-                        "pom_path": "/root/m2/pom.xml",
-                        "artifact_id": "m2",
+                        "pom_path": "/root/m1/pom.xml",
+                        "artifact_id": "m1",
                         "group_id": "com.example",
                         "version": "1.0.0-SNAPSHOT",
                         "packaging": "jar",
@@ -114,17 +116,17 @@ def test_get_pom_infos(mock_get_pom_paths, mock_get_pom_info, pom_infos_fixture)
 
     assert get_pom_infos("source_dir") == [
         {
-            "artifact_id": "m1",
-            "group_id": "com.example",
-            "packaging": "jar",
-            "pom_path": "/root/m1/pom.xml",
-            "version": "1.0.0-SNAPSHOT",
-        },
-        {
             "artifact_id": "m2",
             "group_id": "com.example",
             "packaging": "jar",
             "pom_path": "/root/m2/pom.xml",
+            "version": "1.0.0-SNAPSHOT",
+        },
+        {
+            "artifact_id": "m1",
+            "group_id": "com.example",
+            "packaging": "jar",
+            "pom_path": "/root/m1/pom.xml",
             "version": "1.0.0-SNAPSHOT",
         },
     ]
@@ -168,15 +170,15 @@ def test_parse_args_valid(args, expected):
                 call(
                     [
                         {
-                            "pom_path": "/root/m1/pom.xml",
-                            "artifact_id": "m1",
+                            "pom_path": "/root/m2/pom.xml",
+                            "artifact_id": "m2",
                             "group_id": "com.example",
                             "version": "1.0.0-SNAPSHOT",
                             "packaging": "jar",
                         },
                         {
-                            "pom_path": "/root/m2/pom.xml",
-                            "artifact_id": "m2",
+                            "pom_path": "/root/m1/pom.xml",
+                            "artifact_id": "m1",
                             "group_id": "com.example",
                             "version": "1.0.0-SNAPSHOT",
                             "packaging": "jar",
@@ -196,15 +198,15 @@ def test_parse_args_valid(args, expected):
                 call(
                     [
                         {
-                            "pom_path": "/root/m1/pom.xml",
-                            "artifact_id": "m1",
+                            "pom_path": "/root/m2/pom.xml",
+                            "artifact_id": "m2",
                             "group_id": "com.example",
                             "version": "1.0.0-SNAPSHOT",
                             "packaging": "jar",
                         },
                         {
-                            "pom_path": "/root/m2/pom.xml",
-                            "artifact_id": "m2",
+                            "pom_path": "/root/m1/pom.xml",
+                            "artifact_id": "m1",
                             "group_id": "com.example",
                             "version": "1.0.0-SNAPSHOT",
                             "packaging": "jar",

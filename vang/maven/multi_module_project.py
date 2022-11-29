@@ -2,8 +2,8 @@
 """ Makes Maven multi module project. """
 
 from argparse import ArgumentParser
-from os import makedirs, getcwd
-from os.path import realpath, relpath, dirname, normpath, sep
+from os import getcwd, makedirs
+from os.path import dirname, normpath, realpath, relpath, sep
 from sys import argv
 
 import vang.maven.pom as pom
@@ -30,7 +30,7 @@ def get_pom(pom_infos, output_dir, group_id, artifact_id, version):
         "        <module>{}</module>".format(
             relpath(realpath(dirname(info["pom_path"])), realpath(output_dir))
         )
-        for info in pom_infos
+        for info in sorted(pom_infos, key=lambda d: d["pom_path"])
     )
     return (
         POM_TEMPLATE.replace("###group_id###", group_id)
