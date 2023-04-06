@@ -12,4 +12,4 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   pipeline:
-    uses: bjuvensjo/.github/workflows/python-build.yml@main
+    uses: bjuvensjo/.github/.github/workflows/python-build.yml@main
