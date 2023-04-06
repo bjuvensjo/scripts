@@ -13,3 +13,5 @@ on:
 jobs:
   build:
     uses: bjuvensjo/.github/.github/workflows/python-build.yml@main
+    with:
+      coverage_source: vang
