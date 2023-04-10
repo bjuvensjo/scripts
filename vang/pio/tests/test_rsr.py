@@ -1,16 +1,18 @@
+from os.path import sep
 from unittest.mock import MagicMock, call, mock_open, patch
 
+import pytest
 from pytest import raises
 
-from vang.pio.rsr import _in
-from vang.pio.rsr import _replace_in_file
-from vang.pio.rsr import _replace_file
-from vang.pio.rsr import _rsr
-from vang.pio.rsr import get_replace_function
-from vang.pio.rsr import rsr
-from vang.pio.rsr import parse_args
-
-import pytest
+from vang.pio.rsr import (
+    _in,
+    _replace_file,
+    _replace_in_file,
+    _rsr,
+    get_replace_function,
+    parse_args,
+    rsr,
+)
 
 
 def test_get_replace_function():
@@ -51,7 +53,7 @@ def test__replace_in_file(mock_replace, mock_remove):
 @pytest.mark.parametrize(
     "file, expected",
     [
-        ("foox", [call("path/foox", "path/barx")]),
+        ("foox", [call(f"path{sep}foox", f"path{sep}barx")]),
         ("baz", []),
     ],
 )
@@ -80,9 +82,9 @@ def test__in(name, expected):
 @patch("vang.pio.rsr._replace_file", autospec=True)
 def test__rsr(mock__replace_file, mock__replace_in_file, mock_walk):
     mock_walk.return_value = [
-        ("/old", ("older", ".git"), ("baz", ".gitignore")),
-        ("/old/older", (), ("oldest", "eggs")),
-        ("/old/.git", (), ("oldest", "eggs")),
+        (f"{sep}old", ("older", ".git"), ("baz", ".gitignore")),
+        (f"{sep}old{sep}older", (), ("oldest", "eggs")),
+        (f"{sep}old{sep}.git", (), ("oldest", "eggs")),
     ]
 
     def replace_function(x, y, z):
@@ -99,16 +101,16 @@ def test__rsr(mock__replace_file, mock__replace_in_file, mock_walk):
     assert mock_walk.mock_calls == [call("root", False)]
 
     assert mock__replace_file.mock_calls == [
-        call("old", "new", "/old", "baz", replace_function),
-        call("old", "new", "/old", "older", replace_function),
-        call("old", "new", "/old/older", "oldest", replace_function),
-        call("old", "new", "/old/older", "eggs", replace_function),
+        call("old", "new", f"{sep}old", "baz", replace_function),
+        call("old", "new", f"{sep}old", "older", replace_function),
+        call("old", "new", f"{sep}old{sep}older", "oldest", replace_function),
+        call("old", "new", f"{sep}old{sep}older", "eggs", replace_function),
     ]
 
     assert mock__replace_in_file.mock_calls == [
-        call("old", "new", "/old/baz", replace_function),
-        call("old", "new", "/old/older/oldest", replace_function),
-        call("old", "new", "/old/older/eggs", replace_function),
+        call("old", "new", f"{sep}old{sep}baz", replace_function),
+        call("old", "new", f"{sep}old{sep}older{sep}oldest", replace_function),
+        call("old", "new", f"{sep}old{sep}older{sep}eggs", replace_function),
     ]
 
 

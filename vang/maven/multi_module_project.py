@@ -28,7 +28,9 @@ def get_pom(pom_infos, output_dir, group_id, artifact_id, version):
     with paths relative to output_dir."""
     modules = "\n".join(
         "        <module>{}</module>".format(
-            relpath(realpath(dirname(info["pom_path"])), realpath(output_dir))
+            relpath(realpath(dirname(info["pom_path"])), realpath(output_dir)).replace(
+                "\\", "/"
+            )
         )
         for info in sorted(pom_infos, key=lambda d: d["pom_path"])
     )

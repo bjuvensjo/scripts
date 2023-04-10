@@ -1,4 +1,5 @@
 from unittest.mock import call, mock_open, patch
+from os.path import sep
 
 import pytest
 from pytest import raises
@@ -98,7 +99,7 @@ def test_make_project(mock_get_pom, mock_makedirs, pom_infos_fixture):
         ]
         assert mock_makedirs.mock_calls == [call("/root/ws")]
         assert m.mock_calls == [
-            call("/root/ws/pom.xml", "wt", encoding="utf-8"),
+            call(f"{sep}root{sep}ws{sep}pom.xml", "wt", encoding="utf-8"),
             call().__enter__(),
             call().write("pom"),
             call().__exit__(None, None, None),

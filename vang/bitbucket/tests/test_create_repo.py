@@ -1,11 +1,10 @@
+from os import name
 from unittest.mock import call, patch
 
 import pytest
 from pytest import raises
 
-from vang.bitbucket.create_repo import do_create_repo
-from vang.bitbucket.create_repo import create_repo
-from vang.bitbucket.create_repo import parse_args
+from vang.bitbucket.create_repo import create_repo, do_create_repo, parse_args
 
 
 @patch("vang.bitbucket.create_repo.call")
@@ -27,7 +26,7 @@ def test_do_create_repo(mock_call):
 @patch("builtins.print")
 def test_create_repo(mock_print, mock_create_repo):
     assert not create_repo("project", "repo")
-    with patch("vang.bitbucket.create_repo.name", "posix"):
+    if name == "posix":
         assert mock_print.mock_calls == [
             call(
                 "If you already have code ready to be pushed to this "
@@ -36,9 +35,7 @@ def test_create_repo(mock_print, mock_create_repo):
             call("    git remote add origin clone_url\n    git push -u origin develop"),
             call("(The commands are copied to the clipboard)"),
         ]
-    mock_print.reset_mock()
-    with patch("vang.bitbucket.create_repo.name", "not-posix"):
-        create_repo("project", "repo")
+    if name != "posix":
         assert mock_print.mock_calls == [
             call(
                 "If you already have code ready to be pushed to this "

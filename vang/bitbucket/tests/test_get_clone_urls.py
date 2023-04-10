@@ -1,11 +1,10 @@
+from os.path import sep
 from unittest.mock import call, patch
 
 import pytest
 from pytest import raises
 
-from vang.bitbucket.get_clone_urls import do_get_clone_urls
-from vang.bitbucket.get_clone_urls import get_clone_urls
-from vang.bitbucket.get_clone_urls import parse_args
+from vang.bitbucket.get_clone_urls import do_get_clone_urls, get_clone_urls, parse_args
 
 
 @pytest.fixture
@@ -71,11 +70,11 @@ def repos_fixture():
             False,
             [
                 (
-                    f"project_key/foo/r{n}",
+                    f"project_key{sep}foo{sep}r{n}",
                     "project_key",
                     f"foo.r{n}",
                     "git clone http://myorg/stash/scm/project_key/"
-                    f"foo.r{n}.git project_key/foo/r{n}",
+                    f"foo.r{n}.git project_key{sep}foo{sep}r{n}",
                 )
                 for n in range(10)
             ],
@@ -86,11 +85,11 @@ def repos_fixture():
             True,
             [
                 (
-                    f"project_key/foo.r{n}",
+                    f"project_key{sep}foo.r{n}",
                     "project_key",
                     f"foo.r{n}",
                     "git clone -b develop http://myorg/stash/scm/project_key/"
-                    f"foo.r{n}.git project_key/foo.r{n}",
+                    f"foo.r{n}.git project_key{sep}foo.r{n}",
                 )
                 for n in range(10)
             ],
@@ -142,7 +141,7 @@ def test_do_get_clone_urls(
             [
                 call(
                     "git clone http://myorg/stash/scm/project_key/"
-                    f"foo.r{n}.git project_key/foo/r{n}"
+                    f"foo.r{n}.git project_key{sep}foo{sep}r{n}"
                 )
                 for n in range(10)
             ],
@@ -154,7 +153,7 @@ def test_do_get_clone_urls(
             [
                 call(
                     "git clone -b develop http://myorg/stash/scm/project_key/"
-                    f"foo.r{n}.git project_key/foo.r{n}"
+                    f"foo.r{n}.git project_key{sep}foo.r{n}"
                 )
                 for n in range(10)
             ],

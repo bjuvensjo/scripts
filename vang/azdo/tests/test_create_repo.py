@@ -1,13 +1,15 @@
 from json import dumps
+from os import name
 from unittest.mock import Mock, call, patch
 
 import pytest
 from requests import Response
+
 from vang.azdo.create_repo import create_repo, parse_args
 
 
 @pytest.mark.parametrize(
-    "args, expected",
+    "args, expected_posix, expected_non_posix",
     [
         (
             "r1",
@@ -22,12 +24,22 @@ from vang.azdo.create_repo import create_repo, parse_args
                 ),
                 call("(The commands are copied to the clipboard)"),
             ],
+            [
+                call(200),
+                call(
+                    "If you already have code ready to be pushed to this repository then run this in your terminal."
+                ),
+                call(
+                    "    git remote add origin https://myorg@myazure/myorg/myproject/_git/r1\n"
+                    "    git push -u origin --all"
+                ),
+            ],
         )
     ],
 )
 @patch("vang.azdo.create_repo.print")
 @patch("vang.azdo.create_repo.post")
-def test_create_repo(mock_post, mock_print, args, expected):
+def test_create_repo(mock_post, mock_print, args, expected_posix, expected_non_posix):
     mock_post.return_value = Mock(
         Response,
         status_code=200,
@@ -49,4 +61,7 @@ def test_create_repo(mock_post, mock_print, args, expected):
         ),
         call().raise_for_status(),
     ]
-    assert mock_print.mock_calls == expected
+    if name == "posix":
+        assert mock_print.mock_calls == expected_posix
+    else:
+        assert mock_print.mock_calls == expected_non_posix

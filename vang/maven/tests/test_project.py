@@ -1,11 +1,9 @@
+from os.path import sep
 from unittest.mock import call, patch
 
 import pytest
 
-from vang.maven.project import get_pom
-from vang.maven.project import project
-from vang.maven.project import make_dirs
-from vang.maven.project import make_project
+from vang.maven.project import get_pom, make_dirs, make_project, project
 
 
 def test_get_pom():
@@ -72,21 +70,37 @@ def test_get_pom():
             "jar",
             [
                 call("output_dir"),
-                call("output_dir/src/main/java/group_id/artifact_id"),
-                call("output_dir/src/main/resources/group_id/artifact_id"),
-                call("output_dir/src/test/java/group_id/artifact_id"),
-                call("output_dir/src/test/resources/group_id/artifact_id"),
+                call(
+                    f"output_dir{sep}src{sep}main{sep}java{sep}group_id{sep}artifact_id"
+                ),
+                call(
+                    f"output_dir{sep}src{sep}main{sep}resources{sep}group_id{sep}artifact_id"
+                ),
+                call(
+                    f"output_dir{sep}src{sep}test{sep}java{sep}group_id{sep}artifact_id"
+                ),
+                call(
+                    f"output_dir{sep}src{sep}test{sep}resources{sep}group_id{sep}artifact_id"
+                ),
             ],
         ),
         (
             "war",
             [
                 call("output_dir"),
-                call("output_dir/src/main/java/group_id/artifact_id"),
-                call("output_dir/src/main/resources/group_id/artifact_id"),
-                call("output_dir/src/test/java/group_id/artifact_id"),
-                call("output_dir/src/test/resources/group_id/artifact_id"),
-                call("output_dir/src/main/webapp"),
+                call(
+                    f"output_dir{sep}src{sep}main{sep}java{sep}group_id{sep}artifact_id"
+                ),
+                call(
+                    f"output_dir{sep}src{sep}main{sep}resources{sep}group_id{sep}artifact_id"
+                ),
+                call(
+                    f"output_dir{sep}src{sep}test{sep}java{sep}group_id{sep}artifact_id"
+                ),
+                call(
+                    f"output_dir{sep}src{sep}test{sep}resources{sep}group_id{sep}artifact_id"
+                ),
+                call(f"output_dir{sep}src{sep}main{sep}webapp"),
             ],
         ),
     ],
@@ -127,7 +141,7 @@ def test_make_project():
                     )
                 ]
                 assert mock_open.mock_calls == [
-                    call("output_dir/pom.xml", "wt", encoding="utf-8"),
+                    call(f"output_dir{sep}pom.xml", "wt", encoding="utf-8"),
                     call().__enter__(),
                     call().__enter__().write("pom"),
                     call().__exit__(None, None, None),
