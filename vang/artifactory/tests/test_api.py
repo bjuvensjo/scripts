@@ -22,15 +22,18 @@ def test_call(mock_create_request, mock_urlopen, return_code, output):
     )
     expected = output or return_code
 
-    assert artifactory_call(
-        "/uri",
-        {"extra_header": "extra-header-value"},
-        b"request_data",
-        "POST",
-        "rest_url",
-        "username",
-        "password",
-    ) == expected
+    assert (
+        artifactory_call(
+            "/uri",
+            {"extra_header": "extra-header-value"},
+            b"request_data",
+            "POST",
+            "rest_url",
+            "username",
+            "password",
+        )
+        == expected
+    )
 
     assert [
         call(

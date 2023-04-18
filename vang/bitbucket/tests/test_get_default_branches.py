@@ -62,7 +62,9 @@ def test_get_default_branch(mock_call, call_fixtures):
 @patch("vang.bitbucket.get_default_branches.print")
 @patch("vang.bitbucket.get_default_branches.get_repo_specs")
 @patch("vang.bitbucket.get_default_branches.call")
-def test_get_default_branches(mock_call, mock_get_repo_specs, mock_print, call_fixtures):
+def test_get_default_branches(
+    mock_call, mock_get_repo_specs, mock_print, call_fixtures
+):
     mock_call.return_value = call_fixtures
     mock_get_repo_specs.return_value = [["project_key", "repo_slug"]] * 2
     get_default_branches(["."], None, ["project_key"] * 2)

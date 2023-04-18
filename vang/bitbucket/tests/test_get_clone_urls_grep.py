@@ -47,7 +47,9 @@ def test_do_get_clone_urls_grep(
 
 @patch("vang.bitbucket.get_clone_urls_grep.print")
 @patch("vang.bitbucket.get_clone_urls_grep.do_get_clone_urls_grep", autospec=True)
-def test_get_clone_urls_grep(mock_do_get_clone_urls_grep, mock_print, clone_urls_fixture):
+def test_get_clone_urls_grep(
+    mock_do_get_clone_urls_grep, mock_print, clone_urls_fixture
+):
     mock_do_get_clone_urls_grep.return_value = clone_urls_fixture
     get_clone_urls_grep([".*"], False)
     assert mock_print.mock_calls == [call("http://myorgn/stash/scm/px/repo_slug.git")]

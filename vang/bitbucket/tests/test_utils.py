@@ -82,7 +82,10 @@ def test_get_repo_specs(mock_get_all_repos, mock_get_project_and_repo):
             only_spec=True,
         )
     ]
-    assert mock_get_project_and_repo.mock_calls == [ call("PROJECT/r1"), call("PROJECT/r2"), ] 
+    assert mock_get_project_and_repo.mock_calls == [
+        call("PROJECT/r1"),
+        call("PROJECT/r2"),
+    ]
     assert mock_get_project_and_repo.mock_calls == [
         call("PROJECT/r1"),
         call("PROJECT/r2"),

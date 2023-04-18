@@ -63,7 +63,9 @@ def list_repos(
     urls: bool,
     verify_certificate: bool,
 ) -> None:
-    repos = do_list_repos(azure_devops_url, token, organisation, project, verify_certificate)
+    repos = do_list_repos(
+        azure_devops_url, token, organisation, project, verify_certificate
+    )
     if not any((names, repo_specs, urls)):
         print(repos)
     else:

@@ -78,7 +78,9 @@ def test_get_branches(
     branches_fixture,
 ):
     mock_get_repo_specs.return_value = [["project_key", "repo_slug"]]
-    mock_do_get_branches.return_value = [[["project_key", "repo_slug"], branches_fixture]]
+    mock_do_get_branches.return_value = [
+        [["project_key", "repo_slug"], branches_fixture]
+    ]
     get_branches(name=name, dirs=["."])
     assert mock_get_repo_specs.mock_calls == [call(["."], None, None)]
     assert mock_do_get_branches.mock_calls == [call([["project_key", "repo_slug"]], "")]

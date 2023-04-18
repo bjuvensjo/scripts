@@ -83,5 +83,7 @@ def test_get_projects():
     ) as mock_do_get_projects:
         with patch("vang.tfs.get_projects.print") as mock_print:
             get_projects("organisations", False, True)
-            assert mock_do_get_projects.mock_calls == [call("organisations", False, True)]
+            assert mock_do_get_projects.mock_calls == [
+                call("organisations", False, True)
+            ]
             assert mock_print.mock_calls == [call("project1"), call("project2")]
