@@ -1,38 +1,42 @@
-[project]
+[tool.poetry]
 name = "vang"
 version = "1.4.2-beta"
-authors = [
-  { name="Magnus Bjuvensjö", email="bjuvensjo@gmail.com" },
-]
+authors =  ["Magnus Bjuvensjö <bjuvensjo@gmail.com>"]
 description = "Scripts"
 readme = "README.md"
-license = { file="LICENSE" }
-requires-python = ">=3.10"
+license = "LICENSE"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
 keywords=["python", "pipx", "script", "artifactory", "azdo", "bitbucket", "git", "github", "jenkins", "maven", "nexus3", "tfs"]
-dependencies = [
-    "more-itertools",
-    "requests",
-    "rich"
-]
-[project.optional-dependencies]
-dev = [
-    "pytest"
-]
+
+[tool.poetry.dependencies]
+more-itertools = "^8.13.0"
+python = "^3.10"
+rich = "^12.6.0"
+requests = "^2.28.1"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.2.0"
+coverage = "^6.5.0"
+flake8 = "^6.0.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^22.10.0"
+ipython = "^8.7.0"
+pre-commit = "^3.0.0"
 
 [project.urls]
 "Homepage" = "https://github.com/bjuvensjo/scripts"
 "Bug Tracker" = "https://github.com/bjuvensjo/scripts/issues"
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
-[project.scripts]
+[tool.poetry.scripts]
 vang-artifactory-delete = "vang.artifactory.delete:main"
 vang-artifactory-diff-repos = "vang.artifactory.diff_repos:main"
 vang-artifactory-download-repo-content = "vang.artifactory.download_repo_content:main"
