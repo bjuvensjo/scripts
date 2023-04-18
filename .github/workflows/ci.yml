@@ -12,6 +12,9 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
-    uses: bjuvensjo/.github/.github/workflows/python-ci.yml@main
+    uses: bjuvensjo/.github/.github/workflows/python-poetry-ci.yml@main
     with:
-      coverage_source: vang
+      cov: vang
+      src: vang
+      runs-on: '["ubuntu-latest"]'
+      version: '["3.11"]'
