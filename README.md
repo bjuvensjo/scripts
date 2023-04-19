@@ -103,16 +103,9 @@ All Python scripts has help, e.g.
 For the use of non-python scripts, look at the documentation in the scripts
       
 ## Develop
-### Using pyenv and virtualenv
+### Using pyenv and poetry
 
     pyenv install 3.10.5
     pyenv global 3.10.5 # or pyenv local 3.10.5
-    virtualenv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
-
-### Using conda
-
-    conda create -n scripts python=3.10 
-    conda activate scripts
-    pip install -r requirements.txt
+    poetry venv use 3.10.5
+    poetry install
