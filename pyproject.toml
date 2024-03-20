@@ -25,7 +25,7 @@ coverage = "^6.5.0"
 flake8 = "^6.0.0"
 
 [tool.poetry.group.dev.dependencies]
-black = "^22.10.0"
+black = ">=22.10,<25.0"
 ipython = "^8.7.0"
 pre-commit = "^3.0.0"
 
